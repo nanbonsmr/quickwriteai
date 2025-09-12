@@ -14,13 +14,93 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      content_generations: {
+        Row: {
+          created_at: string
+          generated_content: string
+          id: string
+          keywords: string[] | null
+          language: string | null
+          prompt: string
+          template_type: string
+          user_id: string
+          word_count: number
+        }
+        Insert: {
+          created_at?: string
+          generated_content: string
+          id?: string
+          keywords?: string[] | null
+          language?: string | null
+          prompt: string
+          template_type: string
+          user_id: string
+          word_count: number
+        }
+        Update: {
+          created_at?: string
+          generated_content?: string
+          id?: string
+          keywords?: string[] | null
+          language?: string | null
+          prompt?: string
+          template_type?: string
+          user_id?: string
+          word_count?: number
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          subscription_end_date: string | null
+          subscription_plan: string | null
+          subscription_start_date: string | null
+          updated_at: string
+          user_id: string
+          words_limit: number | null
+          words_used: number | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          subscription_end_date?: string | null
+          subscription_plan?: string | null
+          subscription_start_date?: string | null
+          updated_at?: string
+          user_id: string
+          words_limit?: number | null
+          words_used?: number | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          subscription_end_date?: string | null
+          subscription_plan?: string | null
+          subscription_start_date?: string | null
+          updated_at?: string
+          user_id?: string
+          words_limit?: number | null
+          words_used?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      update_word_usage: {
+        Args: { user_uuid: string; words_to_add: number }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

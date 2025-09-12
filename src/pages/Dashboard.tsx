@@ -117,24 +117,42 @@ export default function Dashboard() {
     setIsGenerating(true);
 
     try {
-      // Simulate content generation (replace with actual API call later)
-      const mockContent = generateMockContent(selectedTemplate, prompt);
-      const wordCount = mockContent.split(' ').length;
+      // Call the edge function to generate content with Gemini API
+      const { data, error } = await supabase.functions.invoke('generate-content', {
+        body: {
+          template_type: selectedTemplate,
+          prompt: prompt,
+          language: language,
+          keywords: keywords.split(',').map(k => k.trim()).filter(k => k)
+        }
+      });
+
+      if (error) {
+        console.error('Edge function error:', error);
+        throw new Error(error.message || 'Failed to generate content');
+      }
+
+      if (!data || !data.generated_content) {
+        throw new Error('No content generated');
+      }
+
+      const generatedContent = data.generated_content;
+      const wordCount = data.word_count || generatedContent.split(' ').length;
       
       // Save to database
-      const { error } = await supabase
+      const { error: insertError } = await supabase
         .from('content_generations')
         .insert({
           user_id: profile.user_id,
           template_type: selectedTemplate,
           prompt: prompt,
-          generated_content: mockContent,
+          generated_content: generatedContent,
           word_count: wordCount,
           language: language,
           keywords: keywords.split(',').map(k => k.trim()).filter(k => k)
         });
 
-      if (error) throw error;
+      if (insertError) throw insertError;
 
       // Update word usage
       const { error: updateError } = await supabase.rpc('update_word_usage', {
@@ -144,16 +162,17 @@ export default function Dashboard() {
 
       if (updateError) throw updateError;
 
-      setGeneratedContent(mockContent);
+      setGeneratedContent(generatedContent);
       await refreshProfile();
       await loadRecentContent();
       
       toast({
         title: "Content generated!",
-        description: `Generated ${wordCount} words successfully.`
+        description: `Generated ${wordCount} words successfully using Google Gemini AI.`
       });
 
     } catch (error: any) {
+      console.error('Content generation error:', error);
       toast({
         title: "Generation failed",
         description: error.message || "Failed to generate content.",

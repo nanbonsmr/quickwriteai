@@ -1,0 +1,163 @@
+import "https://deno.land/x/xhr@0.1.0/mod.ts";
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+
+const geminiApiKey = Deno.env.get('GOOGLE_GEMINI_API_KEY');
+
+const corsHeaders = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+};
+
+interface GenerateContentRequest {
+  template_type: string;
+  prompt: string;
+  language: string;
+  keywords?: string[];
+}
+
+function buildSystemPrompt(templateType: string, language: string, keywords: string[] = []): string {
+  const basePrompts = {
+    'blog-post': `You are an expert blog writer. Create a comprehensive, engaging blog post with proper structure including:
+- An attention-grabbing headline
+- An engaging introduction
+- Well-organized main content with subheadings
+- Key points and actionable advice
+- A compelling conclusion
+Format the output in markdown.`,
+
+    'social-media': `You are a social media content expert. Create engaging social media content that is:
+- Attention-grabbing and shareable
+- Includes relevant emojis and hashtags
+- Optimized for engagement
+- Concise but impactful
+- Platform-appropriate tone`,
+
+    'ad-copy': `You are a professional copywriter specializing in advertising. Create compelling ad copy that includes:
+- A powerful headline that grabs attention
+- A compelling value proposition
+- Benefits-focused content
+- A strong call-to-action
+- Persuasive language that drives action`,
+
+    'email': `You are an expert email marketer. Write professional email content that includes:
+- A compelling subject line
+- Personalized greeting
+- Clear value proposition
+- Well-structured body content
+- Professional closing and call-to-action`
+  };
+
+  let systemPrompt = basePrompts[templateType as keyof typeof basePrompts] || 
+    'You are a professional content writer. Create high-quality, engaging content based on the user\'s requirements.';
+
+  systemPrompt += `\n\nGenerate content in ${language === 'en' ? 'English' : 
+    language === 'es' ? 'Spanish' : 
+    language === 'fr' ? 'French' : 
+    language === 'de' ? 'German' : 'English'}.`;
+
+  if (keywords && keywords.length > 0) {
+    systemPrompt += `\n\nIncorporate these keywords naturally: ${keywords.join(', ')}`;
+  }
+
+  systemPrompt += '\n\nMake the content professional, engaging, and valuable to the target audience.';
+
+  return systemPrompt;
+}
+
+serve(async (req) => {
+  // Handle CORS preflight requests
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    if (!geminiApiKey) {
+      console.error('Google Gemini API key not found');
+      return new Response(JSON.stringify({ error: 'API key not configured' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const { template_type, prompt, language, keywords }: GenerateContentRequest = await req.json();
+
+    if (!template_type || !prompt) {
+      return new Response(JSON.stringify({ error: 'Template type and prompt are required' }), {
+        status: 400,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const systemPrompt = buildSystemPrompt(template_type, language, keywords);
+    const fullPrompt = `${systemPrompt}\n\nUser Request: ${prompt}`;
+
+    console.log('Calling Gemini API with prompt:', fullPrompt);
+
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiApiKey}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        contents: [{
+          parts: [{
+            text: fullPrompt
+          }]
+        }],
+        generationConfig: {
+          temperature: 0.7,
+          topK: 40,
+          topP: 0.95,
+          maxOutputTokens: 2048,
+        },
+        safetySettings: [
+          {
+            category: "HARM_CATEGORY_HARASSMENT",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          },
+          {
+            category: "HARM_CATEGORY_HATE_SPEECH",
+            threshold: "BLOCK_MEDIUM_AND_ABOVE"
+          }
+        ]
+      }),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Gemini API error:', response.status, errorText);
+      return new Response(JSON.stringify({ error: `API error: ${response.status}` }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const data = await response.json();
+    console.log('Gemini API response:', JSON.stringify(data, null, 2));
+
+    if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+      console.error('Unexpected API response structure:', data);
+      return new Response(JSON.stringify({ error: 'Unexpected API response format' }), {
+        status: 500,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    const generatedContent = data.candidates[0].content.parts[0].text;
+    const wordCount = generatedContent.split(' ').length;
+
+    return new Response(JSON.stringify({ 
+      generated_content: generatedContent,
+      word_count: wordCount 
+    }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+
+  } catch (error) {
+    console.error('Error in generate-content function:', error);
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
+  }
+});

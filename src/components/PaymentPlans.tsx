@@ -106,9 +106,7 @@ export function PaymentPlans({ onSuccess }: PaymentPlansProps) {
   };
 
   const paypalInitialOptions = {
-    clientId: process.env.NODE_ENV === 'production' 
-      ? "YOUR_PAYPAL_CLIENT_ID_PROD" 
-      : "YOUR_PAYPAL_CLIENT_ID_SANDBOX",
+    clientId: "ASHXMyzicUa9m_qUxEBGDptHfTS083aFoDoLbpjQaAmjGZoRlcHxueB5BBnExfAj_vk0Jfnj0IvgaAtB",
     currency: "USD",
     intent: "capture"
   };

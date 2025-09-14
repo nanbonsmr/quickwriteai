@@ -34,7 +34,6 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               <Route path="/auth" element={<Auth />} />
-              <Route path="/pricing" element={<Pricing />} />
               <Route path="/*" element={
                 <ProtectedRoute>
                   <SidebarProvider>

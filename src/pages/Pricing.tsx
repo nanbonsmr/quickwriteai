@@ -9,10 +9,16 @@ export default function Pricing() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-subtle">
-      <div className="container mx-auto px-4 py-16">
-        <PaymentPlans onSuccess={handlePaymentSuccess} />
+    <div className="max-w-6xl mx-auto space-y-6">
+      {/* Header */}
+      <div className="space-y-0.5">
+        <h2 className="text-2xl font-bold tracking-tight">Billing & Pricing</h2>
+        <p className="text-muted-foreground">
+          Choose the plan that works best for you and upgrade your content creation experience.
+        </p>
       </div>
+      
+      <PaymentPlans onSuccess={handlePaymentSuccess} />
     </div>
   );
 }

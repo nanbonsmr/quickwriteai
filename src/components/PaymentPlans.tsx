@@ -68,19 +68,30 @@ export function PaymentPlans({ onSuccess }: PaymentPlansProps) {
   const { user, refreshProfile } = useAuth();
   const { toast } = useToast();
 
+  // Debug: Log user authentication status
+  console.log('PaymentPlans - User:', user?.id ? 'Authenticated' : 'Not authenticated');
+
   const handlePaymentSuccess = async (planId: string, details: any) => {
     try {
       setIsProcessing(true);
       
+      console.log('Payment success details:', { planId, paymentId: details.id, userId: user?.id });
+      
+      if (!user?.id) {
+        throw new Error('User not authenticated');
+      }
+      
       // Call edge function to verify payment and update subscription
       const { data, error } = await supabase.functions.invoke('handle-payment', {
         body: {
-          userId: user?.id,
+          userId: user.id,
           planId,
           paymentDetails: details,
           provider: 'paypal'
         }
       });
+
+      console.log('Edge function response:', { data, error });
 
       if (error) throw error;
 
@@ -96,7 +107,7 @@ export function PaymentPlans({ onSuccess }: PaymentPlansProps) {
       console.error('Payment processing error:', error);
       toast({
         title: "Payment Error",
-        description: "There was an issue processing your payment. Please contact support.",
+        description: error instanceof Error ? error.message : "There was an issue processing your payment. Please contact support.",
         variant: "destructive"
       });
     } finally {
@@ -108,8 +119,25 @@ export function PaymentPlans({ onSuccess }: PaymentPlansProps) {
   const paypalInitialOptions = {
     clientId: "ASHXMyzicUa9m_qUxEBGDptHfTS083aFoDoLbpjQaAmjGZoRlcHxueB5BBnExfAj_vk0Jfnj0IvgaAtB",
     currency: "USD",
-    intent: "capture"
+    intent: "capture",
+    // Enable debugging for sandbox environment
+    "enable-funding": "venmo,paylater",
+    "disable-funding": ""
   };
+
+  // Don't render PayPal if user is not authenticated
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <p className="text-muted-foreground mb-4">Please log in to view pricing plans</p>
+          <Button onClick={() => window.location.href = '/auth'}>
+            Sign In
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <PayPalScriptProvider options={paypalInitialOptions}>
@@ -168,10 +196,19 @@ export function PaymentPlans({ onSuccess }: PaymentPlansProps) {
               <CardFooter>
                 {selectedPlan === plan.id ? (
                   <div className="w-full space-y-4">
+                    <div className="text-sm text-muted-foreground text-center">
+                      {isProcessing ? 'Processing payment...' : 'Complete your payment with PayPal'}
+                    </div>
                     <PayPalButtons
-                      style={{ layout: "vertical" }}
+                      style={{ 
+                        layout: "vertical",
+                        color: "blue",
+                        shape: "rect",
+                        label: "paypal"
+                      }}
                       disabled={isProcessing}
                       createOrder={(data, actions) => {
+                        console.log('Creating PayPal order for plan:', plan.id);
                         return actions.order.create({
                           intent: "CAPTURE",
                           purchase_units: [{
@@ -184,8 +221,10 @@ export function PaymentPlans({ onSuccess }: PaymentPlansProps) {
                         });
                       }}
                       onApprove={async (data, actions) => {
+                        console.log('PayPal payment approved:', data);
                         if (actions.order) {
                           const details = await actions.order.capture();
+                          console.log('Payment captured:', details);
                           handlePaymentSuccess(plan.id, details);
                         }
                       }}
@@ -198,11 +237,20 @@ export function PaymentPlans({ onSuccess }: PaymentPlansProps) {
                         });
                         setSelectedPlan(null);
                       }}
+                      onCancel={() => {
+                        console.log('PayPal payment cancelled');
+                        toast({
+                          title: "Payment Cancelled",
+                          description: "Your payment was cancelled.",
+                        });
+                        setSelectedPlan(null);
+                      }}
                     />
                     <Button 
                       variant="outline" 
                       onClick={() => setSelectedPlan(null)}
                       className="w-full"
+                      disabled={isProcessing}
                     >
                       Cancel
                     </Button>
@@ -226,8 +274,11 @@ export function PaymentPlans({ onSuccess }: PaymentPlansProps) {
             All plans include a 7-day free trial. Cancel anytime.
           </p>
           <p className="text-xs text-muted-foreground">
-            Payments are processed securely through PayPal
+            Payments are processed securely through PayPal • Sandbox Mode for Testing
           </p>
+          <div className="text-xs text-orange-600 bg-orange-50 dark:bg-orange-900/20 p-2 rounded-lg inline-block">
+            <strong>Test Mode:</strong> Use PayPal sandbox accounts for testing payments
+          </div>
         </div>
       </div>
     </PayPalScriptProvider>

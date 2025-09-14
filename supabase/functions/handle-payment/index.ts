@@ -20,11 +20,26 @@ serve(async (req) => {
 
     const { userId, planId, paymentDetails, provider } = await req.json();
 
-    console.log('Processing payment:', { userId, planId, provider });
+    console.log('Processing payment:', { 
+      userId, 
+      planId, 
+      provider, 
+      paymentId: paymentDetails?.id,
+      timestamp: new Date().toISOString()
+    });
+
+    // Validate required fields
+    if (!userId) {
+      throw new Error('User ID is required');
+    }
+
+    if (!planId) {
+      throw new Error('Plan ID is required');
+    }
 
     // Verify payment with PayPal API
     if (!paymentDetails || !paymentDetails.id) {
-      throw new Error('Invalid payment details');
+      throw new Error('Invalid payment details - missing payment ID');
     }
 
     // Verify the payment with PayPal (optional but recommended for production)
@@ -44,13 +59,23 @@ serve(async (req) => {
 
     const config = planConfigs[planId as keyof typeof planConfigs];
     if (!config) {
-      throw new Error('Invalid plan ID');
+      throw new Error(`Invalid plan ID: ${planId}`);
     }
+
+    console.log('Plan configuration:', config);
 
     // Calculate subscription dates
     const now = new Date();
     const endDate = new Date(now);
     endDate.setMonth(endDate.getMonth() + 1);
+
+    console.log('Updating user subscription:', {
+      userId,
+      plan: config.subscription_plan,
+      wordsLimit: config.words_limit,
+      startDate: now.toISOString(),
+      endDate: endDate.toISOString()
+    });
 
     // Update user profile with new subscription
     const { error: updateError } = await supabaseClient
@@ -67,15 +92,18 @@ serve(async (req) => {
 
     if (updateError) {
       console.error('Error updating profile:', updateError);
-      throw new Error('Failed to update subscription');
+      throw new Error(`Failed to update subscription: ${updateError.message}`);
     }
 
-    // Log the payment transaction (optional - you could create a payments table)
+    console.log('Subscription updated successfully');
+
+    // Log the payment transaction
     console.log('Payment processed successfully:', {
       userId,
       planId,
       paymentId: paymentDetails.id,
       provider,
+      amount: paymentDetails.purchase_units?.[0]?.amount?.value,
       timestamp: now.toISOString()
     });
 

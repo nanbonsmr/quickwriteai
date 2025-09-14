@@ -6,11 +6,11 @@ import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Copy, Download, Sparkles, Zap, Crown, TrendingUp, CreditCard } from "lucide-react";
+import { Copy, Download, Sparkles, Zap, Crown, TrendingUp, CreditCard, FileText, BarChart3, Clock } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 
 const templates = [
   {
@@ -207,25 +207,25 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-primary/[0.02] to-accent/[0.03]">
-      <div className="space-y-8 p-6">
+      <div className="space-y-6 sm:space-y-8 p-4 sm:p-6">
         {/* Welcome Header */}
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-primary/90 via-primary to-primary/80 p-8 text-white shadow-2xl">
+        <div className="relative overflow-hidden rounded-2xl sm:rounded-3xl bg-gradient-to-r from-primary/90 via-primary to-primary/80 p-6 sm:p-8 text-white shadow-2xl">
           <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-white/10 opacity-20"></div>
           <div className="relative">
-            <div className="flex items-center gap-3 mb-4">
-              <div className="p-3 bg-white/20 rounded-2xl backdrop-blur-sm">
-                <Sparkles className="h-8 w-8" />
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 mb-4">
+              <div className="p-2 sm:p-3 bg-white/20 rounded-xl sm:rounded-2xl backdrop-blur-sm">
+                <Sparkles className="h-6 w-6 sm:h-8 sm:w-8" />
               </div>
               <div>
-                <h1 className="text-4xl font-bold">Welcome back, {profile?.display_name || 'Creator'}!</h1>
-                <p className="text-white/90 text-lg mt-1">Let's create something amazing today</p>
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold">{profile?.display_name || 'Creator'}!</h1>
+                <p className="text-white/90 text-base sm:text-lg mt-1">Let's create something amazing today</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Stats Overview */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:gap-6 grid-cols-2 lg:grid-cols-4">
           <div className="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20 p-6 shadow-lg hover:shadow-xl transition-all duration-300 border border-blue-200/50 dark:border-blue-700/50">
             <div className="flex items-center justify-between mb-4">
               <div className="p-3 bg-blue-500/10 rounded-xl">
@@ -304,18 +304,18 @@ export default function Dashboard() {
         {/* Templates Section */}
         <div className="space-y-6">
           <div className="text-center">
-            <h2 className="text-3xl font-bold mb-3">Choose Your Template</h2>
-            <p className="text-muted-foreground text-lg">Select from our professionally designed templates to get started</p>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-3">Choose Your Template</h2>
+            <p className="text-muted-foreground text-base sm:text-lg">Select from our professionally designed templates to get started</p>
           </div>
           
-          <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+          <div className="grid gap-4 sm:gap-6 lg:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
             {templates.map((template, index) => (
               <div
                 key={template.title}
                 onClick={() => setSelectedTemplate(template.href.split('/').pop())}
-                className={`group relative overflow-hidden rounded-3xl p-6 cursor-pointer transition-all duration-500 hover:scale-105 hover:shadow-2xl ${
+                className={`group relative overflow-hidden rounded-2xl sm:rounded-3xl p-4 sm:p-6 cursor-pointer transition-all duration-500 hover:scale-105 hover:shadow-2xl ${
                   selectedTemplate === template.href.split('/').pop()
-                    ? 'ring-4 ring-primary ring-offset-4 shadow-2xl'
+                    ? 'ring-2 sm:ring-4 ring-primary ring-offset-2 sm:ring-offset-4 shadow-2xl'
                     : 'shadow-lg hover:shadow-xl'
                 } ${
                   index === 0 ? 'bg-gradient-to-br from-pink-50 to-rose-100 dark:from-pink-900/20 dark:to-rose-800/20 border border-pink-200/50 dark:border-pink-700/50' :
@@ -363,7 +363,7 @@ export default function Dashboard() {
         </div>
 
         {/* Content Generator */}
-        <div className="grid gap-8 lg:grid-cols-2">
+        <div className="grid gap-6 sm:gap-8 lg:grid-cols-2">
           <Card className="border-0 shadow-2xl rounded-3xl overflow-hidden bg-gradient-to-br from-background to-muted/30">
             <CardHeader className="bg-gradient-to-r from-primary/10 via-primary/5 to-transparent pb-8">
               <CardTitle className="flex items-center gap-3 text-2xl">

@@ -11,6 +11,9 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import Dashboard from "./pages/Dashboard";
 import Auth from "./pages/Auth";
 import Pricing from "./pages/Pricing";
+import Settings from "./pages/Settings";
+import Usage from "./pages/Usage";
+import Templates from "./pages/Templates";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -25,15 +28,22 @@ const App = () => (
           <Routes>
             <Route path="/auth" element={<Auth />} />
             <Route path="/pricing" element={<Pricing />} />
-            <Route path="/" element={
+            <Route path="/*" element={
               <ProtectedRoute>
                 <SidebarProvider>
                   <div className="flex min-h-screen w-full">
                     <AppSidebar />
-                    <SidebarInset>
+                    <SidebarInset className="flex-1">
                       <Header />
-                      <main className="flex-1 p-6">
-                        <Dashboard />
+                      <main className="flex-1 p-4 sm:p-6 overflow-auto">
+                        <Routes>
+                          <Route path="/" element={<Dashboard />} />
+                          <Route path="/settings" element={<Settings />} />
+                          <Route path="/usage" element={<Usage />} />
+                          <Route path="/templates" element={<Templates />} />
+                          <Route path="/templates/*" element={<Templates />} />
+                          <Route path="/pricing" element={<Pricing />} />
+                        </Routes>
                       </main>
                     </SidebarInset>
                   </div>

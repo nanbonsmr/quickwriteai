@@ -117,7 +117,7 @@ export function PaymentPlans({ onSuccess }: PaymentPlansProps) {
   };
 
   const paypalInitialOptions = {
-    clientId: "ASHXMyzicUa9m_qUxEBGDptHfTS083aFoDoLbpjQaAmjGZoRlcHxueB5BBnExfAj_vk0Jfnj0IvgaAtB",
+    clientId: "ASDFCrKePgaDQ3SNKMCsnYY0B8rLiuYSUGHa84iEYLO14B3ETN_08R4RMZEYbQe60ClikWMFRdhuaqR_",
     currency: "USD",
     intent: "capture",
     "enable-funding": "venmo,paylater",

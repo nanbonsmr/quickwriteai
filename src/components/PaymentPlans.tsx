@@ -120,7 +120,6 @@ export function PaymentPlans({ onSuccess }: PaymentPlansProps) {
     clientId: "ASHXMyzicUa9m_qUxEBGDptHfTS083aFoDoLbpjQaAmjGZoRlcHxueB5BBnExfAj_vk0Jfnj0IvgaAtB",
     currency: "USD",
     intent: "capture",
-    // Enable debugging for sandbox environment
     "enable-funding": "venmo,paylater",
     "disable-funding": ""
   };
@@ -274,11 +273,8 @@ export function PaymentPlans({ onSuccess }: PaymentPlansProps) {
             All plans include a 7-day free trial. Cancel anytime.
           </p>
           <p className="text-xs text-muted-foreground">
-            Payments are processed securely through PayPal • Sandbox Mode for Testing
+            Payments are processed securely through PayPal
           </p>
-          <div className="text-xs text-orange-600 bg-orange-50 dark:bg-orange-900/20 p-2 rounded-lg inline-block">
-            <strong>Test Mode:</strong> Use PayPal sandbox accounts for testing payments
-          </div>
         </div>
       </div>
     </PayPalScriptProvider>

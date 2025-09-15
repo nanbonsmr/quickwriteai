@@ -10,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Copy, Download, Sparkles, Zap, Crown, TrendingUp, CreditCard, FileText, BarChart3, Clock, Calendar, Hash } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
-import { toast } from "@/hooks/use-toast";
+import { useToast } from "@/hooks/use-toast";
 import { useNavigate, Link } from "react-router-dom";
 
 const templates = [
@@ -59,6 +59,7 @@ const templates = [
 export default function Dashboard() {
   const { profile, refreshProfile } = useAuth();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [selectedTemplate, setSelectedTemplate] = useState('');
   const [prompt, setPrompt] = useState('');
   const [keywords, setKeywords] = useState('');

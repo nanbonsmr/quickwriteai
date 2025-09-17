@@ -195,6 +195,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      apply_discount_code: {
+        Args: { discount_code_text: string; user_uuid: string }
+        Returns: Json
+      }
       is_admin: {
         Args: { user_uuid: string }
         Returns: boolean
@@ -206,6 +210,10 @@ export type Database = {
       update_word_usage: {
         Args: { user_uuid: string; words_to_add: number }
         Returns: undefined
+      }
+      validate_discount_code: {
+        Args: { discount_code_text: string; user_uuid: string }
+        Returns: Json
       }
     }
     Enums: {

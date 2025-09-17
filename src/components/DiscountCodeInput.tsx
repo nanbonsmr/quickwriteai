@@ -24,92 +24,46 @@ export function DiscountCodeInput({ onDiscountApplied, className }: DiscountCode
 
     setLoading(true);
     try {
-      // Check if discount code exists and is valid
-      const { data: discountCode, error: fetchError } = await supabase
-        .from('discount_codes')
-        .select('*')
-        .eq('code', code.toUpperCase())
-        .eq('is_active', true)
-        .single();
-
-      if (fetchError || !discountCode) {
-        toast({
-          title: "Invalid Code",
-          description: "The discount code you entered is not valid or has expired.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      // Check if code has expired
-      if (discountCode.expires_at && new Date(discountCode.expires_at) < new Date()) {
-        toast({
-          title: "Code Expired",
-          description: "This discount code has expired.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      // Check if max uses reached
-      if (discountCode.max_uses && discountCode.used_count >= discountCode.max_uses) {
-        toast({
-          title: "Code Limit Reached",
-          description: "This discount code has reached its usage limit.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      // Check if user has already used this code
-      const { data: existingUsage, error: usageError } = await supabase
-        .from('discount_code_usage')
-        .select('id')
-        .eq('discount_code_id', discountCode.id)
-        .eq('user_id', user.id)
-        .single();
-
-      if (existingUsage && !usageError) {
-        toast({
-          title: "Code Already Used",
-          description: "You have already used this discount code.",
-          variant: "destructive",
-        });
-        return;
-      }
-
-      // Apply the discount
-      setAppliedDiscount(discountCode.discount_percent);
-      onDiscountApplied(discountCode.discount_percent);
-
-      // Record usage
-      const { error: usageInsertError } = await supabase
-        .from('discount_code_usage')
-        .insert({
-          discount_code_id: discountCode.id,
-          user_id: user.id,
-        });
-
-      // Update usage count
-      const { error: updateError } = await supabase
-        .from('discount_codes')
-        .update({ used_count: discountCode.used_count + 1 })
-        .eq('id', discountCode.id);
-
-      if (usageInsertError || updateError) {
-        console.error('Error recording usage:', usageInsertError || updateError);
-      }
-
-      toast({
-        title: "Code Applied!",
-        description: `${discountCode.discount_percent}% discount has been applied to your order.`,
+      // Use the secure server-side function to validate and apply the discount code
+      const { data, error } = await supabase.rpc('apply_discount_code', {
+        discount_code_text: code.trim(),
+        user_uuid: user.id
       });
 
+      if (error) {
+        throw error;
+      }
+
+      // Type the response properly
+      const result = data as any;
+
+      // Check if the code validation was successful
+      if (!result?.valid) {
+        toast({
+          title: "Invalid Code",
+          description: result?.error || "The discount code you entered is not valid.",
+          variant: "destructive",
+        });
+        return;
+      }
+
+      // Code was successfully applied
+      if (result?.applied) {
+        const discountPercent = Number(result.discount_percent);
+        setAppliedDiscount(discountPercent);
+        onDiscountApplied(discountPercent);
+
+        toast({
+          title: "Code Applied!",
+          description: `${discountPercent}% discount has been applied to your order.`,
+        });
+      }
+
     } catch (error) {
-      console.error('Error validating discount code:', error);
+      console.error('Error applying discount code:', error);
       toast({
         title: "Error",
-        description: "Failed to validate discount code. Please try again.",
+        description: "Failed to apply discount code. Please try again.",
         variant: "destructive",
       });
     } finally {

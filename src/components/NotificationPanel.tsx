@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -38,77 +39,85 @@ export function NotificationPanel() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
   useEffect(() => {
-    // Generate sample notifications based on user state
-    const generateNotifications = () => {
-      const baseNotifications: Notification[] = [];
+    const fetchNotifications = async () => {
+      try {
+        const { data: dbNotifications, error } = await supabase
+          .from('notifications')
+          .select('*')
+          .order('created_at', { ascending: false });
 
-      // Welcome notification for new users
-      if (profile?.words_used === 0) {
-        baseNotifications.push({
-          id: 'welcome',
-          type: 'info',
-          title: 'Welcome to QuickWrite AI!',
-          message: 'Start creating amazing content with our AI-powered templates.',
-          timestamp: new Date(Date.now() - 5 * 60 * 1000), // 5 minutes ago
-          read: false,
-          actionLabel: 'Get Started',
-          actionUrl: '/'
-        });
-      }
+        if (error) {
+          console.error('Error fetching notifications:', error);
+          return;
+        }
 
-      // Usage warnings
-      if (profile?.words_used && profile?.words_limit) {
-        const usagePercentage = (profile.words_used / profile.words_limit) * 100;
-        
-        if (usagePercentage >= 90) {
-          baseNotifications.push({
-            id: 'usage-critical',
-            type: 'warning',
-            title: 'Word Limit Almost Reached',
-            message: `You've used ${Math.round(usagePercentage)}% of your monthly word limit. Consider upgrading your plan.`,
-            timestamp: new Date(Date.now() - 30 * 60 * 1000), // 30 minutes ago
-            read: false,
-            actionLabel: 'Upgrade Plan',
-            actionUrl: '/pricing'
-          });
-        } else if (usagePercentage >= 75) {
-          baseNotifications.push({
-            id: 'usage-warning',
+        // Convert database notifications to component format
+        const formattedNotifications: Notification[] = (dbNotifications || []).map(notif => ({
+          id: notif.id,
+          type: notif.type as Notification['type'],
+          title: notif.title,
+          message: notif.message,
+          timestamp: new Date(notif.created_at),
+          read: true // Default to read for now, we can add read status later
+        }));
+
+        // Add dynamic notifications based on user state
+        const dynamicNotifications: Notification[] = [];
+
+        // Welcome notification for new users
+        if (profile?.words_used === 0) {
+          dynamicNotifications.push({
+            id: 'welcome',
             type: 'info',
-            title: 'Word Usage Update',
-            message: `You've used ${Math.round(usagePercentage)}% of your monthly word limit.`,
-            timestamp: new Date(Date.now() - 60 * 60 * 1000), // 1 hour ago
-            read: false
+            title: 'Welcome to QuickWrite AI!',
+            message: 'Start creating amazing content with our AI-powered templates.',
+            timestamp: new Date(Date.now() - 5 * 60 * 1000), // 5 minutes ago
+            read: false,
+            actionLabel: 'Get Started',
+            actionUrl: '/templates'
           });
         }
-      }
 
-      // Feature announcements
-      baseNotifications.push(
-        {
-          id: 'new-templates',
-          type: 'success',
-          title: 'New Templates Available!',
-          message: 'Check out our latest AI templates for social media and email marketing.',
-          timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 day ago
-          read: true,
-          actionLabel: 'Explore Templates',
-          actionUrl: '/templates'
-        },
-        {
-          id: 'system-update',
-          type: 'info',
-          title: 'System Improvements',
-          message: 'We\'ve improved our AI generation speed and quality based on your feedback.',
-          timestamp: new Date(Date.now() - 3 * 24 * 60 * 60 * 1000), // 3 days ago
-          read: true
+        // Usage warnings
+        if (profile?.words_used && profile?.words_limit) {
+          const usagePercentage = (profile.words_used / profile.words_limit) * 100;
+          
+          if (usagePercentage >= 90) {
+            dynamicNotifications.push({
+              id: 'usage-critical',
+              type: 'warning',
+              title: 'Word Limit Almost Reached',
+              message: `You've used ${Math.round(usagePercentage)}% of your monthly word limit. Consider upgrading your plan.`,
+              timestamp: new Date(Date.now() - 30 * 60 * 1000), // 30 minutes ago
+              read: false,
+              actionLabel: 'Upgrade Plan',
+              actionUrl: '/pricing'
+            });
+          } else if (usagePercentage >= 75) {
+            dynamicNotifications.push({
+              id: 'usage-warning',
+              type: 'info',
+              title: 'Word Usage Update',
+              message: `You've used ${Math.round(usagePercentage)}% of your monthly word limit.`,
+              timestamp: new Date(Date.now() - 60 * 60 * 1000), // 1 hour ago
+              read: false
+            });
+          }
         }
-      );
 
-      return baseNotifications.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+        // Combine database notifications with dynamic ones
+        const allNotifications = [...dynamicNotifications, ...formattedNotifications]
+          .sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+
+        setNotifications(allNotifications);
+      } catch (error) {
+        console.error('Error in fetchNotifications:', error);
+      }
     };
 
-    setNotifications(generateNotifications());
+    if (profile) {
+      fetchNotifications();
+    }
   }, [profile]);
 
   const getNotificationIcon = (type: Notification['type']) => {

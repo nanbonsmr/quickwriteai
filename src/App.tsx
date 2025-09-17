@@ -15,6 +15,7 @@ import Pricing from "./pages/Pricing";
 import Settings from "./pages/Settings";
 import Usage from "./pages/Usage";
 import Templates from "./pages/Templates";
+import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -49,6 +50,7 @@ const App = () => (
                             <Route path="/templates" element={<Templates />} />
                             <Route path="/templates/*" element={<Templates />} />
                             <Route path="/pricing" element={<Pricing />} />
+                            <Route path="/admin" element={<Admin />} />
                           </Routes>
                         </main>
                       </SidebarInset>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
   PenTool,
@@ -10,7 +10,10 @@ import {
   Settings,
   Sparkles,
   Home,
+  Shield,
 } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 
 import {
   Sidebar,
@@ -25,14 +28,6 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
-const mainItems = [
-  { title: "Dashboard", url: "/", icon: Home },
-  { title: "Templates", url: "/templates", icon: Sparkles },
-  { title: "Usage", url: "/usage", icon: BarChart3 },
-  { title: "Pricing", url: "/pricing", icon: CreditCard },
-  { title: "Settings", url: "/settings", icon: Settings },
-];
-
 const templateItems = [
   { title: "Blog Posts", url: "/templates/blog", icon: PenTool },
   { title: "Social Media", url: "/templates/social", icon: MessageSquare },
@@ -42,8 +37,43 @@ const templateItems = [
 
 export function AppSidebar() {
   const { state } = useSidebar();
+  const { user } = useAuth();
   const location = useLocation();
   const currentPath = location.pathname;
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    checkAdminAccess();
+  }, [user]);
+
+  const checkAdminAccess = async () => {
+    if (!user) return;
+    
+    try {
+      const { data, error } = await supabase.rpc('is_admin', { user_uuid: user.id });
+      if (error) throw error;
+      setIsAdmin(data);
+    } catch (error) {
+      console.error('Error checking admin access:', error);
+    }
+  };
+
+  const mainItems = [
+    { title: "Dashboard", url: "/", icon: Home },
+    { title: "Templates", url: "/templates", icon: Sparkles },
+    { title: "Usage", url: "/usage", icon: BarChart3 },
+    { title: "Pricing", url: "/pricing", icon: CreditCard },
+    { title: "Settings", url: "/settings", icon: Settings },
+  ];
+
+  // Add admin item if user is admin
+  if (isAdmin) {
+    mainItems.push({
+      title: "Admin",
+      url: "/admin",
+      icon: Shield,
+    });
+  }
 
   const isActive = (path: string) => currentPath === path;
   const isTemplateActive = templateItems.some((item) => isActive(item.url));

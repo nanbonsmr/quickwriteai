@@ -60,13 +60,18 @@ const plans = [
 
 interface PaymentPlansProps {
   onSuccess?: () => void;
+  discount?: number;
 }
 
-export function PaymentPlans({ onSuccess }: PaymentPlansProps) {
+export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const { user, refreshProfile } = useAuth();
   const { toast } = useToast();
+
+  const calculateDiscountedPrice = (originalPrice: number) => {
+    return originalPrice * (1 - discount / 100);
+  };
 
   // Debug: Log user authentication status
   console.log('PaymentPlans - User:', user?.id ? 'Authenticated' : 'Not authenticated');
@@ -167,11 +172,17 @@ export function PaymentPlans({ onSuccess }: PaymentPlansProps) {
                 </div>
               )}
               
-              <CardHeader className="text-center pb-2">
+               <CardHeader className="text-center pb-2">
                 <CardTitle className="text-xl font-semibold">{plan.name}</CardTitle>
                 <div className="flex items-center justify-center space-x-1">
-                  <span className="text-3xl font-bold">${plan.price}</span>
+                  {discount > 0 && (
+                    <span className="text-lg line-through text-muted-foreground">${plan.price}</span>
+                  )}
+                  <span className="text-3xl font-bold">${calculateDiscountedPrice(plan.price).toFixed(2)}</span>
                   <span className="text-muted-foreground">/month</span>
+                  {discount > 0 && (
+                    <Badge variant="secondary" className="ml-2">{discount}% OFF</Badge>
+                  )}
                 </div>
                 <CardDescription>{plan.description}</CardDescription>
               </CardHeader>
@@ -212,10 +223,10 @@ export function PaymentPlans({ onSuccess }: PaymentPlansProps) {
                           intent: "CAPTURE",
                           purchase_units: [{
                             amount: {
-                              value: plan.price.toString(),
+                              value: calculateDiscountedPrice(plan.price).toFixed(2),
                               currency_code: "USD"
                             },
-                            description: `${plan.name} Plan - ${plan.words.toLocaleString()} words/month`
+                            description: `${plan.name} Plan - ${plan.words.toLocaleString()} words/month${discount > 0 ? ` (${discount}% discount applied)` : ''}`
                           }]
                         });
                       }}

@@ -39,5 +39,14 @@ port = 54323
 [functions.generate-content]
 verify_jwt = false
 
-[functions.handle-payment]
+[functions.expire-subscriptions]
+verify_jwt = false
+
+[functions.get-paddle-token]
 verify_jwt = true
+
+[functions.create-paddle-checkout]
+verify_jwt = true
+
+[functions.paddle-webhook]
+verify_jwt = false

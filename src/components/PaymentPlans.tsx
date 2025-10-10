@@ -1,5 +1,4 @@
-import { useState } from 'react';
-import { PayPalScriptProvider, PayPalButtons } from '@paypal/react-paypal-js';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -63,9 +62,16 @@ interface PaymentPlansProps {
   discount?: number;
 }
 
+declare global {
+  interface Window {
+    Paddle?: any;
+  }
+}
+
 export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [paddleLoaded, setPaddleLoaded] = useState(false);
   const { user, refreshProfile } = useAuth();
   const { toast } = useToast();
 
@@ -73,38 +79,62 @@ export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
     return originalPrice * (1 - discount / 100);
   };
 
-  // Debug: Log user authentication status
-  console.log('PaymentPlans - User:', user?.id ? 'Authenticated' : 'Not authenticated');
+  useEffect(() => {
+    // Load Paddle.js script
+    const script = document.createElement('script');
+    script.src = 'https://cdn.paddle.com/paddle/v2/paddle.js';
+    script.async = true;
+    script.onload = async () => {
+      // Get client token from edge function
+      try {
+        const { data, error } = await supabase.functions.invoke('get-paddle-token');
+        if (error) throw error;
+        
+        if (window.Paddle && data?.clientToken) {
+          window.Paddle.Initialize({
+            token: data.clientToken,
+            environment: 'sandbox', // Change to 'production' when ready
+            eventCallback: (event: any) => {
+              if (event.name === 'checkout.completed') {
+                handlePaymentSuccess(event.data);
+              } else if (event.name === 'checkout.error') {
+                handlePaymentError(event.data);
+              }
+            }
+          });
+          setPaddleLoaded(true);
+        }
+      } catch (error) {
+        console.error('Failed to initialize Paddle:', error);
+        toast({
+          title: "Initialization Error",
+          description: "Failed to load payment system. Please refresh the page.",
+          variant: "destructive"
+        });
+      }
+    };
+    document.body.appendChild(script);
 
-  const handlePaymentSuccess = async (planId: string, details: any) => {
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
+
+  const handlePaymentSuccess = async (data: any) => {
     try {
       setIsProcessing(true);
       
-      console.log('Payment success details:', { planId, paymentId: details.id, userId: user?.id });
+      console.log('Payment success:', data);
       
       if (!user?.id) {
         throw new Error('User not authenticated');
       }
-      
-      // Call edge function to verify payment and update subscription
-      const { data, error } = await supabase.functions.invoke('handle-payment', {
-        body: {
-          userId: user.id,
-          planId,
-          paymentDetails: details,
-          provider: 'paypal'
-        }
-      });
-
-      console.log('Edge function response:', { data, error });
-
-      if (error) throw error;
 
       await refreshProfile();
       
       toast({
         title: "Payment Successful!",
-        description: `You've successfully upgraded to ${plans.find(p => p.id === planId)?.name} plan.`,
+        description: `You've successfully upgraded to your new plan.`,
       });
 
       onSuccess?.();
@@ -121,15 +151,78 @@ export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
     }
   };
 
-  const paypalInitialOptions = {
-    clientId: "ASDFCrKePgaDQ3SNKMCsnYY0B8rLiuYSUGHa84iEYLO14B3ETN_08R4RMZEYbQe60ClikWMFRdhuaqR_",
-    currency: "USD",
-    intent: "capture",
-    "enable-funding": "venmo,paylater",
-    "disable-funding": ""
+  const handlePaymentError = (error: any) => {
+    console.error('Paddle error:', error);
+    toast({
+      title: "Payment Error",
+      description: "There was an issue with the payment. Please try again.",
+      variant: "destructive"
+    });
+    setIsProcessing(false);
+    setSelectedPlan(null);
   };
 
-  // Don't render PayPal if user is not authenticated
+  const handleSelectPlan = async (plan: typeof plans[0]) => {
+    if (!paddleLoaded || !window.Paddle) {
+      toast({
+        title: "Not Ready",
+        description: "Payment system is still loading. Please try again.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (!user?.id) {
+      toast({
+        title: "Authentication Required",
+        description: "Please log in to purchase a plan.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsProcessing(true);
+    setSelectedPlan(plan.id);
+
+    try {
+      // Create a checkout session via edge function
+      const { data, error } = await supabase.functions.invoke('create-paddle-checkout', {
+        body: {
+          planId: plan.id,
+          userId: user.id,
+          amount: calculateDiscountedPrice(plan.price),
+          discount: discount
+        }
+      });
+
+      if (error) throw error;
+
+      if (data?.priceId) {
+        // Open Paddle checkout
+        window.Paddle.Checkout.open({
+          items: [{
+            priceId: data.priceId,
+            quantity: 1
+          }],
+          customData: {
+            userId: user.id,
+            planId: plan.id
+          }
+        });
+      }
+    } catch (error) {
+      console.error('Checkout error:', error);
+      toast({
+        title: "Checkout Error",
+        description: error instanceof Error ? error.message : "Failed to start checkout. Please try again.",
+        variant: "destructive"
+      });
+      setSelectedPlan(null);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
   if (!user) {
     return (
       <div className="flex items-center justify-center min-h-[400px]">
@@ -144,150 +237,91 @@ export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
   }
 
   return (
-    <PayPalScriptProvider options={paypalInitialOptions}>
-      <div className="space-y-8">
-        <div className="text-center space-y-4">
-          <h2 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
-            Choose Your Plan
-          </h2>
-          <p className="text-muted-foreground max-w-2xl mx-auto">
-            Unlock the full potential of AI-powered content generation with our flexible pricing plans
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {plans.map((plan) => (
-            <Card 
-              key={plan.id} 
-              className={`relative transition-all duration-300 hover:shadow-elegant ${
-                plan.popular ? 'border-primary shadow-glow' : ''
-              } ${selectedPlan === plan.id ? 'ring-2 ring-primary' : ''}`}
-            >
-              {plan.popular && (
-                <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                  <Badge className="bg-gradient-primary text-primary-foreground px-4 py-1">
-                    <Star className="w-3 h-3 mr-1" />
-                    Most Popular
-                  </Badge>
-                </div>
-              )}
-              
-               <CardHeader className="text-center pb-2">
-                <CardTitle className="text-xl font-semibold">{plan.name}</CardTitle>
-                <div className="flex items-center justify-center space-x-1">
-                  {discount > 0 && (
-                    <span className="text-lg line-through text-muted-foreground">${plan.price}</span>
-                  )}
-                  <span className="text-3xl font-bold">${calculateDiscountedPrice(plan.price).toFixed(2)}</span>
-                  <span className="text-muted-foreground">/month</span>
-                  {discount > 0 && (
-                    <Badge variant="secondary" className="ml-2">{discount}% OFF</Badge>
-                  )}
-                </div>
-                <CardDescription>{plan.description}</CardDescription>
-              </CardHeader>
-
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-center space-x-2 p-3 bg-primary/5 rounded-lg">
-                  <Zap className="w-4 h-4 text-primary" />
-                  <span className="font-medium">{plan.words.toLocaleString()} words/month</span>
-                </div>
-                
-                <ul className="space-y-2">
-                  {plan.features.map((feature, index) => (
-                    <li key={index} className="flex items-start space-x-2">
-                      <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
-                      <span className="text-sm">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </CardContent>
-
-              <CardFooter>
-                {selectedPlan === plan.id ? (
-                  <div className="w-full space-y-4">
-                    <div className="text-sm text-muted-foreground text-center">
-                      {isProcessing ? 'Processing payment...' : 'Complete your payment with PayPal'}
-                    </div>
-                    <PayPalButtons
-                      style={{ 
-                        layout: "vertical",
-                        color: "blue",
-                        shape: "rect",
-                        label: "paypal"
-                      }}
-                      disabled={isProcessing}
-                      createOrder={(data, actions) => {
-                        console.log('Creating PayPal order for plan:', plan.id);
-                        return actions.order.create({
-                          intent: "CAPTURE",
-                          purchase_units: [{
-                            amount: {
-                              value: calculateDiscountedPrice(plan.price).toFixed(2),
-                              currency_code: "USD"
-                            },
-                            description: `${plan.name} Plan - ${plan.words.toLocaleString()} words/month${discount > 0 ? ` (${discount}% discount applied)` : ''}`
-                          }]
-                        });
-                      }}
-                      onApprove={async (data, actions) => {
-                        console.log('PayPal payment approved:', data);
-                        if (actions.order) {
-                          const details = await actions.order.capture();
-                          console.log('Payment captured:', details);
-                          handlePaymentSuccess(plan.id, details);
-                        }
-                      }}
-                      onError={(err) => {
-                        console.error('PayPal error:', err);
-                        toast({
-                          title: "Payment Error",
-                          description: "There was an issue with PayPal. Please try again.",
-                          variant: "destructive"
-                        });
-                        setSelectedPlan(null);
-                      }}
-                      onCancel={() => {
-                        console.log('PayPal payment cancelled');
-                        toast({
-                          title: "Payment Cancelled",
-                          description: "Your payment was cancelled.",
-                        });
-                        setSelectedPlan(null);
-                      }}
-                    />
-                    <Button 
-                      variant="outline" 
-                      onClick={() => setSelectedPlan(null)}
-                      className="w-full"
-                      disabled={isProcessing}
-                    >
-                      Cancel
-                    </Button>
-                  </div>
-                ) : (
-                  <Button 
-                    className="w-full bg-gradient-primary hover:opacity-90 transition-opacity"
-                    onClick={() => setSelectedPlan(plan.id)}
-                    disabled={isProcessing}
-                  >
-                    {plan.popular ? 'Get Started' : 'Choose Plan'}
-                  </Button>
-                )}
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
-
-        <div className="text-center space-y-2">
-          <p className="text-sm text-muted-foreground">
-            All plans include a 7-day free trial. Cancel anytime.
-          </p>
-          <p className="text-xs text-muted-foreground">
-            Payments are processed securely through PayPal
-          </p>
-        </div>
+    <div className="space-y-8">
+      <div className="text-center space-y-4">
+        <h2 className="text-3xl font-bold bg-gradient-primary bg-clip-text text-transparent">
+          Choose Your Plan
+        </h2>
+        <p className="text-muted-foreground max-w-2xl mx-auto">
+          Unlock the full potential of AI-powered content generation with our flexible pricing plans
+        </p>
       </div>
-    </PayPalScriptProvider>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {plans.map((plan) => (
+          <Card 
+            key={plan.id} 
+            className={`relative transition-all duration-300 hover:shadow-elegant ${
+              plan.popular ? 'border-primary shadow-glow' : ''
+            } ${selectedPlan === plan.id ? 'ring-2 ring-primary' : ''}`}
+          >
+            {plan.popular && (
+              <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
+                <Badge className="bg-gradient-primary text-primary-foreground px-4 py-1">
+                  <Star className="w-3 h-3 mr-1" />
+                  Most Popular
+                </Badge>
+              </div>
+            )}
+            
+            <CardHeader className="text-center pb-2">
+              <CardTitle className="text-xl font-semibold">{plan.name}</CardTitle>
+              <div className="flex items-center justify-center space-x-1">
+                {discount > 0 && (
+                  <span className="text-lg line-through text-muted-foreground">${plan.price}</span>
+                )}
+                <span className="text-3xl font-bold">${calculateDiscountedPrice(plan.price).toFixed(2)}</span>
+                <span className="text-muted-foreground">/month</span>
+                {discount > 0 && (
+                  <Badge variant="secondary" className="ml-2">{discount}% OFF</Badge>
+                )}
+              </div>
+              <CardDescription>{plan.description}</CardDescription>
+            </CardHeader>
+
+            <CardContent className="space-y-4">
+              <div className="flex items-center justify-center space-x-2 p-3 bg-primary/5 rounded-lg">
+                <Zap className="w-4 h-4 text-primary" />
+                <span className="font-medium">{plan.words.toLocaleString()} words/month</span>
+              </div>
+              
+              <ul className="space-y-2">
+                {plan.features.map((feature, index) => (
+                  <li key={index} className="flex items-start space-x-2">
+                    <Check className="w-4 h-4 text-primary mt-0.5 flex-shrink-0" />
+                    <span className="text-sm">{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+
+            <CardFooter>
+              <Button 
+                className="w-full bg-gradient-primary hover:opacity-90 transition-opacity"
+                onClick={() => handleSelectPlan(plan)}
+                disabled={isProcessing || !paddleLoaded}
+              >
+                {isProcessing && selectedPlan === plan.id 
+                  ? 'Processing...' 
+                  : !paddleLoaded 
+                  ? 'Loading...' 
+                  : plan.popular 
+                  ? 'Get Started' 
+                  : 'Choose Plan'}
+              </Button>
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
+
+      <div className="text-center space-y-2">
+        <p className="text-sm text-muted-foreground">
+          All plans include a 7-day free trial. Cancel anytime.
+        </p>
+        <p className="text-xs text-muted-foreground">
+          Payments are processed securely through Paddle
+        </p>
+      </div>
+    </div>
   );
 }

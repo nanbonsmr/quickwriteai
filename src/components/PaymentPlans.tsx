@@ -93,7 +93,6 @@ export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
         if (window.Paddle && data?.clientToken) {
           window.Paddle.Initialize({
             token: data.clientToken,
-            environment: 'sandbox', // Change to 'production' when ready
             eventCallback: (event: any) => {
               if (event.name === 'checkout.completed') {
                 handlePaymentSuccess(event.data);

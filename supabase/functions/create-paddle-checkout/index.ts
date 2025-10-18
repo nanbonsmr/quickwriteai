@@ -40,7 +40,7 @@ serve(async (req) => {
     const priceMap: Record<string, string> = {
       'basic': 'pri_01k7ta4f93netkx9k1tdbh1ynk',     // Starter plan
       'pro': 'pri_01k7ta7e7ztvak64n3bd94zeda',       // Pro plan
-      'enterprise': 'pri_01k7ta7e7ztvak64n3bd94zeda' // Using Pro plan for enterprise
+      'enterprise': 'pri_01k7tar6rfsk1hntaskrsnrbvs' // Enterprise plan
     };
 
     const priceId = priceMap[planId];

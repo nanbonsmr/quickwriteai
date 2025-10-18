@@ -36,11 +36,11 @@ serve(async (req) => {
       throw new Error('Paddle API key not configured');
     }
 
-    // Map plan IDs to Paddle price IDs (you need to create these in Paddle dashboard)
+    // Map plan IDs to Paddle price IDs
     const priceMap: Record<string, string> = {
-      'basic': 'pri_basic_monthly',     // Replace with your actual Paddle price ID
-      'pro': 'pri_pro_monthly',         // Replace with your actual Paddle price ID
-      'enterprise': 'pri_enterprise_monthly' // Replace with your actual Paddle price ID
+      'basic': 'pri_01k7ta4f93netkx9k1tdbh1ynk',     // Starter plan
+      'pro': 'pri_01k7ta7e7ztvak64n3bd94zeda',       // Pro plan
+      'enterprise': 'pri_01k7ta7e7ztvak64n3bd94zeda' // Using Pro plan for enterprise
     };
 
     const priceId = priceMap[planId];
@@ -48,8 +48,8 @@ serve(async (req) => {
       throw new Error(`Invalid plan ID: ${planId}`);
     }
 
-    // Create a transaction in Paddle
-    const paddleResponse = await fetch('https://sandbox-api.paddle.com/transactions', {
+    // Create a transaction in Paddle (using production API)
+    const paddleResponse = await fetch('https://api.paddle.com/transactions', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${paddleApiKey}`,

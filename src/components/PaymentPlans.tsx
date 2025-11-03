@@ -95,8 +95,23 @@ export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
           script.setAttribute('data-storefront', `${data.storeId}.onfastspring.com`);
           
           script.onload = () => {
-            setFastspringLoaded(true);
-            console.log('FastSpring loaded successfully');
+            // Wait for FastSpring to be fully initialized
+            const checkFastSpring = setInterval(() => {
+              if (window.fastspring && window.fastspring.builder) {
+                clearInterval(checkFastSpring);
+                setFastspringLoaded(true);
+                console.log('FastSpring loaded successfully');
+              }
+            }, 100);
+            
+            // Timeout after 10 seconds
+            setTimeout(() => {
+              clearInterval(checkFastSpring);
+              if (!window.fastspring) {
+                console.error('FastSpring failed to initialize');
+                toast.error('Payment system failed to initialize');
+              }
+            }, 10000);
           };
 
           script.onerror = () => {
@@ -180,24 +195,27 @@ export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
 
       console.log('Session created:', data);
 
-      // Open FastSpring checkout with session
-      if (window.fastspring) {
-        window.fastspring.builder.secure(data.sessionId, data.productPath);
-        
-        // Set up event listeners for checkout completion
-        window.fastspring.builder.on('popup.closed', () => {
-          setIsProcessing(false);
-          setSelectedPlan(null);
-        });
-
-        window.fastspring.builder.on('data.ready', (orderData: any) => {
-          if (orderData && orderData.status === 'completed') {
-            handlePaymentSuccess(orderData);
-          }
-        });
-      } else {
+      // Verify FastSpring is available
+      if (!window.fastspring || !window.fastspring.builder) {
         throw new Error('FastSpring not initialized');
       }
+
+      // Set up event listeners before opening checkout
+      window.fastspring.builder.on('popup.closed', () => {
+        console.log('Checkout popup closed');
+        setIsProcessing(false);
+        setSelectedPlan(null);
+      });
+
+      window.fastspring.builder.on('data.ready', (orderData: any) => {
+        console.log('Order data received:', orderData);
+        if (orderData && orderData.status === 'completed') {
+          handlePaymentSuccess(orderData);
+        }
+      });
+
+      // Open FastSpring checkout with session ID
+      window.fastspring.builder.checkout(data.sessionId);
 
     } catch (error: any) {
       console.error('Error creating checkout:', error);

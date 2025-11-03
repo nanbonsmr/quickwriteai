@@ -55,12 +55,15 @@ serve(async (req) => {
       throw new Error(`Invalid plan ID: ${planId}`);
     }
 
-    // Create session payload
+    // Create session payload with purchaser contact info
     const sessionPayload = {
       items: [{
         product: productPath,
         quantity: 1
       }],
+      contact: {
+        email: userData.user.email
+      },
       tags: {
         user_id: userId,
         plan_id: planId

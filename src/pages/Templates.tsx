@@ -342,7 +342,7 @@ export default function Templates() {
               </div>
 
               <Button className="w-full group-hover:shadow-sm" asChild>
-                <a href={`/templates/${template.id}`}>
+                <a href={`/app/templates/${template.id}`}>
                   <Sparkles className="w-4 h-4 mr-2" />
                   Use Template
                 </a>

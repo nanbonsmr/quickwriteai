@@ -16,6 +16,7 @@ import Pricing from "./pages/Pricing";
 import Settings from "./pages/Settings";
 import Usage from "./pages/Usage";
 import Templates from "./pages/Templates";
+import Tasks from "./pages/Tasks";
 import Admin from "./pages/Admin";
 import NotFound from "./pages/NotFound";
 
@@ -52,6 +53,7 @@ const App = () => (
                             <Route path="usage" element={<Usage />} />
                             <Route path="templates" element={<Templates />} />
                             <Route path="templates/*" element={<Templates />} />
+                            <Route path="tasks" element={<Tasks />} />
                             <Route path="pricing" element={<Pricing />} />
                             <Route path="admin" element={<Admin />} />
                           </Routes>

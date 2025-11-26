@@ -1,0 +1,164 @@
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/contexts/AuthContext";
+import { TaskCard } from "./TaskCard";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { useToast } from "@/hooks/use-toast";
+import { Loader2 } from "lucide-react";
+
+interface Task {
+  id: string;
+  title: string;
+  description: string | null;
+  priority: string;
+  status: string;
+  due_date: string | null;
+  template_type: string | null;
+  created_at: string;
+}
+
+interface KanbanBoardProps {
+  refreshTrigger: number;
+  onEditTask: (taskId: string) => void;
+}
+
+const STATUS_COLUMNS = [
+  { id: 'todo', label: 'To-Do', color: 'border-blue-500' },
+  { id: 'in_progress', label: 'In Progress', color: 'border-yellow-500' },
+  { id: 'review', label: 'Review', color: 'border-purple-500' },
+  { id: 'completed', label: 'Completed', color: 'border-green-500' },
+];
+
+export function KanbanBoard({ refreshTrigger, onEditTask }: KanbanBoardProps) {
+  const { user } = useAuth();
+  const { toast } = useToast();
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchTasks();
+  }, [user, refreshTrigger]);
+
+  const fetchTasks = async () => {
+    if (!user) return;
+    
+    setLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('tasks')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setTasks(data || []);
+    } catch (error: any) {
+      toast({
+        title: "Error loading tasks",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleStatusChange = async (taskId: string, newStatus: string) => {
+    try {
+      const { error } = await supabase
+        .from('tasks')
+        .update({ 
+          status: newStatus,
+          completed_at: newStatus === 'completed' ? new Date().toISOString() : null
+        })
+        .eq('id', taskId);
+
+      if (error) throw error;
+
+      // Update local state
+      setTasks(prev => 
+        prev.map(task => 
+          task.id === taskId ? { ...task, status: newStatus } : task
+        )
+      );
+
+      toast({
+        title: "Task updated",
+        description: "Task status has been changed",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error updating task",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeleteTask = async (taskId: string) => {
+    try {
+      const { error } = await supabase
+        .from('tasks')
+        .delete()
+        .eq('id', taskId);
+
+      if (error) throw error;
+
+      setTasks(prev => prev.filter(task => task.id !== taskId));
+
+      toast({
+        title: "Task deleted",
+        description: "Task has been removed",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error deleting task",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {STATUS_COLUMNS.map(column => {
+        const columnTasks = tasks.filter(task => task.status === column.id);
+        
+        return (
+          <div key={column.id} className="flex flex-col">
+            <div className={`border-t-4 ${column.color} bg-card rounded-lg p-4`}>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="font-semibold text-lg">{column.label}</h3>
+                <span className="text-sm text-muted-foreground">
+                  {columnTasks.length}
+                </span>
+              </div>
+              
+              <ScrollArea className="h-[600px] pr-4">
+                <div className="space-y-3">
+                  {columnTasks.map(task => (
+                    <TaskCard
+                      key={task.id}
+                      task={task}
+                      onStatusChange={handleStatusChange}
+                      onEdit={() => onEditTask(task.id)}
+                      onDelete={handleDeleteTask}
+                    />
+                  ))}
+                </div>
+              </ScrollArea>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}

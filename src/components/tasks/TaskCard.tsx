@@ -61,21 +61,31 @@ export function TaskCard({ task, onStatusChange, onEdit, onDelete }: TaskCardPro
     <Card 
       ref={setNodeRef}
       style={style}
-      className={`hover:shadow-lg transition-shadow cursor-grab active:cursor-grabbing group w-full ${isDragging ? 'shadow-2xl ring-2 ring-primary' : ''}`}
-      {...attributes}
-      {...listeners}
+      className={`hover:shadow-lg transition-shadow group w-full ${isDragging ? 'shadow-2xl ring-2 ring-primary cursor-grabbing' : 'cursor-grab'}`}
     >
       <CardHeader className="p-3 sm:p-4 pb-2">
         <div className="flex items-start justify-between gap-2">
-          <h4 className="font-semibold text-xs sm:text-sm line-clamp-2 flex-1">{task.title}</h4>
+          <div className="flex-1 flex items-start gap-2" {...listeners} {...attributes}>
+            <div className="mt-1 cursor-grab active:cursor-grabbing">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" className="text-muted-foreground opacity-50">
+                <circle cx="4" cy="4" r="1.5"/>
+                <circle cx="4" cy="8" r="1.5"/>
+                <circle cx="4" cy="12" r="1.5"/>
+                <circle cx="8" cy="4" r="1.5"/>
+                <circle cx="8" cy="8" r="1.5"/>
+                <circle cx="8" cy="12" r="1.5"/>
+              </svg>
+            </div>
+            <h4 className="font-semibold text-xs sm:text-sm line-clamp-2 flex-1">{task.title}</h4>
+          </div>
           <DropdownMenu>
-            <DropdownMenuTrigger asChild>
+            <DropdownMenuTrigger asChild onClick={(e) => e.stopPropagation()}>
               <Button variant="ghost" size="icon" className="h-7 w-7 sm:h-8 sm:w-8 opacity-0 group-hover:opacity-100">
                 <MoreVertical className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={onEdit}>
+            <DropdownMenuContent align="end" onClick={(e) => e.stopPropagation()}>
+              <DropdownMenuItem onClick={(e) => { e.stopPropagation(); onEdit(); }}>
                 <Pencil className="mr-2 h-4 w-4" />
                 Edit
               </DropdownMenuItem>
@@ -83,14 +93,14 @@ export function TaskCard({ task, onStatusChange, onEdit, onDelete }: TaskCardPro
               {STATUS_OPTIONS.map(status => (
                 <DropdownMenuItem
                   key={status.value}
-                  onClick={() => onStatusChange(task.id, status.value)}
+                  onClick={(e) => { e.stopPropagation(); onStatusChange(task.id, status.value); }}
                 >
                   Move to {status.label}
                 </DropdownMenuItem>
               ))}
               <DropdownMenuSeparator />
               <DropdownMenuItem
-                onClick={() => onDelete(task.id)}
+                onClick={(e) => { e.stopPropagation(); onDelete(task.id); }}
                 className="text-destructive"
               >
                 <Trash2 className="mr-2 h-4 w-4" />

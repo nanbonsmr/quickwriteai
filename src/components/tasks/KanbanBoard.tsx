@@ -169,8 +169,13 @@ export function KanbanBoard({ refreshTrigger, onEditTask }: KanbanBoardProps) {
   }
 
   return (
-    <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <div className="w-full">
+    <DndContext 
+      sensors={sensors} 
+      onDragStart={handleDragStart} 
+      onDragEnd={handleDragEnd}
+      autoScroll={{ enabled: false }}
+    >
+      <div className="w-full relative">
         {/* Mobile/Tablet: Horizontal scroll */}
         <div className="lg:hidden">
           <ScrollArea className="w-full whitespace-nowrap rounded-lg border bg-muted/20 p-4">
@@ -179,7 +184,7 @@ export function KanbanBoard({ refreshTrigger, onEditTask }: KanbanBoardProps) {
                 const columnTasks = tasks.filter(task => task.status === column.id);
                 
                 return (
-                  <DroppableColumn key={column.id} id={column.id}>
+                  <DroppableColumn key={column.id} id={column.id} isOver={false}>
                     <div className={`border-t-4 ${column.color} bg-card rounded-lg p-3 h-[420px] flex flex-col`}>
                       <div className="flex items-center justify-between mb-3">
                         <h3 className="font-semibold text-sm">{column.label}</h3>
@@ -189,10 +194,10 @@ export function KanbanBoard({ refreshTrigger, onEditTask }: KanbanBoardProps) {
                       </div>
                       
                       <ScrollArea className="flex-1 -mr-3 pr-3">
-                        <div className="space-y-2.5">
+                        <div className="space-y-2.5 min-h-[300px]">
                           {columnTasks.length === 0 ? (
                             <p className="text-xs text-muted-foreground text-center py-8">
-                              No tasks
+                              Drop here
                             </p>
                           ) : (
                             columnTasks.map(task => (
@@ -219,10 +224,11 @@ export function KanbanBoard({ refreshTrigger, onEditTask }: KanbanBoardProps) {
         <div className="hidden lg:grid lg:grid-cols-4 gap-4">
           {STATUS_COLUMNS.map(column => {
             const columnTasks = tasks.filter(task => task.status === column.id);
+            const isActiveColumn = activeTask?.status === column.id;
             
             return (
-              <DroppableColumn key={column.id} id={column.id}>
-                <div className={`border-t-4 ${column.color} bg-card rounded-lg p-4 h-[500px] flex flex-col transition-colors ${column.id === activeTask?.status ? 'ring-2 ring-primary' : ''}`}>
+              <DroppableColumn key={column.id} id={column.id} isOver={false}>
+                <div className={`border-t-4 ${column.color} bg-card rounded-lg p-4 h-[500px] flex flex-col transition-all ${isActiveColumn ? 'opacity-50' : ''}`}>
                   <div className="flex items-center justify-between mb-4">
                     <h3 className="font-semibold text-base">{column.label}</h3>
                     <span className="text-sm text-muted-foreground bg-muted px-2.5 py-1 rounded-full">
@@ -231,11 +237,13 @@ export function KanbanBoard({ refreshTrigger, onEditTask }: KanbanBoardProps) {
                   </div>
                   
                   <ScrollArea className="flex-1 -mr-4 pr-4">
-                    <div className="space-y-3">
+                    <div className="space-y-3 min-h-[350px]">
                       {columnTasks.length === 0 ? (
-                        <p className="text-sm text-muted-foreground text-center py-12">
-                          Drop tasks here
-                        </p>
+                        <div className="flex items-center justify-center h-32 border-2 border-dashed border-muted-foreground/20 rounded-lg">
+                          <p className="text-sm text-muted-foreground">
+                            Drop tasks here
+                          </p>
+                        </div>
                       ) : (
                         columnTasks.map(task => (
                           <TaskCard
@@ -256,9 +264,9 @@ export function KanbanBoard({ refreshTrigger, onEditTask }: KanbanBoardProps) {
         </div>
       </div>
 
-      <DragOverlay>
+      <DragOverlay dropAnimation={null}>
         {activeTask ? (
-          <div className="rotate-3 opacity-80">
+          <div className="rotate-2 scale-105">
             <TaskCard
               task={activeTask}
               onStatusChange={() => {}}
@@ -272,11 +280,14 @@ export function KanbanBoard({ refreshTrigger, onEditTask }: KanbanBoardProps) {
   );
 }
 
-function DroppableColumn({ id, children }: { id: string; children: React.ReactNode }) {
-  const { setNodeRef, isOver } = useDroppable({ id });
+function DroppableColumn({ id, children, isOver }: { id: string; children: React.ReactNode; isOver: boolean }) {
+  const { setNodeRef, isOver: isOverDrop } = useDroppable({ id });
 
   return (
-    <div ref={setNodeRef} className={`transition-all ${isOver ? 'scale-[1.02]' : ''}`}>
+    <div 
+      ref={setNodeRef} 
+      className={`transition-all ${isOverDrop ? 'ring-2 ring-primary ring-offset-2' : ''}`}
+    >
       {children}
     </div>
   );

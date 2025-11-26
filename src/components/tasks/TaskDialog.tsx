@@ -262,12 +262,12 @@ export function TaskDialog({ open, onOpenChange, taskId, onTaskCreated }: TaskDi
 
           <div>
             <Label htmlFor="recurrence">Recurrence</Label>
-            <Select value={recurrencePattern} onValueChange={setRecurrencePattern}>
+            <Select value={recurrencePattern || "none"} onValueChange={(value) => setRecurrencePattern(value === "none" ? "" : value)}>
               <SelectTrigger>
                 <SelectValue placeholder="No recurrence" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">No recurrence</SelectItem>
+                <SelectItem value="none">No recurrence</SelectItem>
                 <SelectItem value="daily">Daily</SelectItem>
                 <SelectItem value="weekly">Weekly</SelectItem>
                 <SelectItem value="monthly">Monthly</SelectItem>

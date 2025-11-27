@@ -81,7 +81,7 @@ export default function Contact() {
             <Mail className="h-6 w-6 text-primary" />
           </div>
           <h3 className="font-bold mb-2">Email Us</h3>
-          <p className="text-sm text-muted-foreground">support@quickwriteai.com</p>
+          <p className="text-sm text-muted-foreground">nanbonkayu@gmail.com</p>
         </Card>
 
         <Card className="p-6 text-center hover:shadow-elegant transition-all">
@@ -89,7 +89,7 @@ export default function Contact() {
             <Phone className="h-6 w-6 text-primary" />
           </div>
           <h3 className="font-bold mb-2">Call Us</h3>
-          <p className="text-sm text-muted-foreground">+1 (555) 123-4567</p>
+          <p className="text-sm text-muted-foreground">+251976892311</p>
         </Card>
 
         <Card className="p-6 text-center hover:shadow-elegant transition-all">
@@ -97,7 +97,7 @@ export default function Contact() {
             <MapPin className="h-6 w-6 text-primary" />
           </div>
           <h3 className="font-bold mb-2">Visit Us</h3>
-          <p className="text-sm text-muted-foreground">123 AI Street, Tech City, TC 12345</p>
+          <p className="text-sm text-muted-foreground">Addis Ababa</p>
         </Card>
       </div>
 

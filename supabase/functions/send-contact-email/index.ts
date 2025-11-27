@@ -65,7 +65,7 @@ const handler = async (req: Request): Promise<Response> => {
           </div>
           
           <p style="color: #666;">
-            If you have any urgent concerns, please don't hesitate to reach out to us directly at support@quickwriteai.com
+            If you have any urgent concerns, please don't hesitate to reach out to us directly at nanbonkayu@gmail.com
           </p>
           
           <p style="color: #666;">
@@ -79,7 +79,7 @@ const handler = async (req: Request): Promise<Response> => {
     // Send notification email to support team
     const supportEmailResponse = await resend.emails.send({
       from: "QuickWrite AI Contact Form <onboarding@resend.dev>",
-      to: ["support@quickwriteai.com"], // Replace with your actual support email
+      to: ["nanbonkayu@gmail.com"],
       subject: `New Contact Form Submission: ${subject}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">

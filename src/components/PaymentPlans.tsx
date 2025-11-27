@@ -117,6 +117,7 @@ export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
           // Determine environment based on client token prefix
           const isLive = data.clientToken.startsWith('live_');
           
+          // Set environment BEFORE initializing (required for Paddle v2)
           window.Paddle.Environment.set(isLive ? 'production' : 'sandbox');
           
           window.Paddle.Initialize({

@@ -44,7 +44,8 @@ import {
   Video,
   Lightbulb,
   Image,
-  Film
+  Film,
+  Trash2
 } from 'lucide-react';
 
 const templates = [
@@ -221,6 +222,30 @@ export default function Templates() {
     });
   };
 
+  const handleDeleteContent = async (contentId: string) => {
+    try {
+      const { error } = await supabase
+        .from('content_generations')
+        .delete()
+        .eq('id', contentId);
+
+      if (error) throw error;
+
+      setRecentContent(prev => prev.filter(item => item.id !== contentId));
+      
+      toast({
+        title: "Deleted!",
+        description: "Content deleted successfully."
+      });
+    } catch (error: any) {
+      toast({
+        title: "Delete failed",
+        description: error.message || "Failed to delete content.",
+        variant: "destructive"
+      });
+    }
+  };
+
   useEffect(() => {
     if (currentTemplate && currentTemplate !== 'templates' && profile) {
       loadRecentContent(currentTemplate);
@@ -282,12 +307,13 @@ export default function Templates() {
                             </div>
                           </div>
                         </div>
-                        <Dialog>
-                          <DialogTrigger asChild>
-                            <Button variant="ghost" size="sm" className="rounded-xl group-hover:bg-primary/10 group-hover:text-primary transition-colors">
-                              <Clock className="w-4 h-4" />
-                            </Button>
-                          </DialogTrigger>
+                        <div className="flex items-center gap-2">
+                          <Dialog>
+                            <DialogTrigger asChild>
+                              <Button variant="ghost" size="sm" className="rounded-xl group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                                <Clock className="w-4 h-4" />
+                              </Button>
+                            </DialogTrigger>
                           <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
                             <DialogHeader>
                               <DialogTitle className="flex items-center gap-2">
@@ -340,7 +366,16 @@ export default function Templates() {
                             </div>
                           </DialogContent>
                         </Dialog>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteContent(content.id)}
+                          className="rounded-xl text-destructive hover:bg-destructive/10 hover:text-destructive transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
                       </div>
+                    </div>
                     ))
                   ) : (
                     <div className="text-center py-8">

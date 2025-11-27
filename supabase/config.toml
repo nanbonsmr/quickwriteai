@@ -42,11 +42,11 @@ verify_jwt = false
 [functions.expire-subscriptions]
 verify_jwt = false
 
-[functions.get-fastspring-config]
+[functions.send-contact-email]
+verify_jwt = false
+
+[functions.create-paddle-checkout]
 verify_jwt = true
 
-[functions.create-fastspring-session]
-verify_jwt = true
-
-[functions.fastspring-webhook]
+[functions.paddle-webhook]
 verify_jwt = false

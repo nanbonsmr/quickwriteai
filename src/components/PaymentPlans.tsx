@@ -7,10 +7,10 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 
-// Declare FastSpring global
+// Declare Paddle global
 declare global {
   interface Window {
-    fastspring?: any;
+    Paddle?: any;
   }
 }
 
@@ -73,78 +73,71 @@ export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
   const { user, refreshProfile } = useAuth();
   const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [fastspringLoaded, setFastspringLoaded] = useState(false);
-  const [storeId, setStoreId] = useState<string>('');
+  const [paddleLoaded, setPaddleLoaded] = useState(false);
 
   useEffect(() => {
-    const loadFastSpring = async () => {
+    const loadPaddle = async () => {
       try {
-        // Get store configuration from edge function
-        const { data, error } = await supabase.functions.invoke('get-fastspring-config');
-        
-        if (error) throw error;
-        
-        if (data?.storeId) {
-          setStoreId(data.storeId);
-          
-          const storefrontUrl = data.storefront || `${data.storeId}.onfastspring.com/popup-${data.storeId.toLowerCase()}`;
-          console.log('Loading FastSpring with storefront:', storefrontUrl);
-          
-          // Load FastSpring Store Builder Library
+        // Load Paddle.js script
+        if (!document.getElementById('paddle-js')) {
           const script = document.createElement('script');
-          script.id = 'fsc-api';
-          script.src = 'https://d1f8f9xcsvx3ha.cloudfront.net/sbl/0.8.5/fastspring-builder.min.js';
-          script.type = 'text/javascript';
-          script.setAttribute('data-storefront', storefrontUrl);
-          script.setAttribute('data-debug', 'true');
+          script.id = 'paddle-js';
+          script.src = 'https://cdn.paddle.com/paddle/v2/paddle.js';
+          script.async = true;
           
           script.onload = () => {
-            console.log('FastSpring script loaded, checking for initialization...');
-            // Wait for FastSpring to be fully initialized
-            let attempts = 0;
-            const maxAttempts = 100; // 10 seconds total
-            
-            const checkFastSpring = setInterval(() => {
-              attempts++;
-              console.log(`Checking FastSpring initialization (attempt ${attempts})...`, {
-                hasFastspring: !!window.fastspring,
-                hasBuilder: !!(window.fastspring && window.fastspring.builder)
-              });
-              
-              if (window.fastspring && window.fastspring.builder) {
-                clearInterval(checkFastSpring);
-                setFastspringLoaded(true);
-                console.log('FastSpring initialized successfully!');
-              } else if (attempts >= maxAttempts) {
-                clearInterval(checkFastSpring);
-                console.error('FastSpring failed to initialize after', attempts, 'attempts');
-                console.error('Window.fastspring:', window.fastspring);
-                toast.error('Payment system failed to initialize. Please refresh and try again.');
-              }
-            }, 100);
+            console.log('Paddle script loaded');
+            // Initialize Paddle after script loads
+            initializePaddle();
           };
 
           script.onerror = (error) => {
-            console.error('Failed to load FastSpring library:', error);
+            console.error('Failed to load Paddle script:', error);
             toast.error('Failed to load payment system');
           };
 
-          document.body.appendChild(script);
-
-          return () => {
-            if (document.body.contains(script)) {
-              document.body.removeChild(script);
-            }
-          };
+          document.head.appendChild(script);
+        } else if (window.Paddle) {
+          initializePaddle();
         }
       } catch (error) {
-        console.error('Failed to load FastSpring config:', error);
+        console.error('Failed to load Paddle:', error);
         toast.error('Failed to initialize payment system');
       }
     };
 
-    loadFastSpring();
-  }, []);
+    const initializePaddle = async () => {
+      try {
+        // Get client token from edge function
+        const { data, error } = await supabase.functions.invoke('create-paddle-checkout', {
+          body: { planId: 'basic', userId: user?.id || 'init' }
+        });
+
+        if (data?.clientToken && window.Paddle) {
+          window.Paddle.Initialize({
+            token: data.clientToken,
+            eventCallback: (event: any) => {
+              console.log('Paddle event:', event);
+              if (event.name === 'checkout.completed') {
+                handlePaymentSuccess(event.data);
+              } else if (event.name === 'checkout.closed') {
+                setIsProcessing(false);
+                setSelectedPlan(null);
+              }
+            }
+          });
+          setPaddleLoaded(true);
+          console.log('Paddle initialized successfully');
+        }
+      } catch (error) {
+        console.error('Failed to initialize Paddle:', error);
+      }
+    };
+
+    if (user) {
+      loadPaddle();
+    }
+  }, [user]);
 
   const calculateDiscountedPrice = (originalPrice: number) => {
     if (discount > 0) {
@@ -167,20 +160,13 @@ export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
     setSelectedPlan(null);
   };
 
-  const handlePaymentError = (error: any) => {
-    console.error('Payment error:', error);
-    toast.error('Payment failed. Please try again.');
-    setIsProcessing(false);
-    setSelectedPlan(null);
-  };
-
   const handleSelectPlan = async (plan: typeof plans[0]) => {
     if (!user) {
       toast.error('Please sign in to subscribe');
       return;
     }
 
-    if (!fastspringLoaded) {
+    if (!paddleLoaded || !window.Paddle) {
       toast.error('Payment system is still loading. Please try again.');
       return;
     }
@@ -189,8 +175,8 @@ export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
     setIsProcessing(true);
 
     try {
-      // Create session via edge function
-      const { data, error } = await supabase.functions.invoke('create-fastspring-session', {
+      // Get checkout data from edge function
+      const { data, error } = await supabase.functions.invoke('create-paddle-checkout', {
         body: {
           planId: plan.id,
           userId: user.id
@@ -199,41 +185,31 @@ export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
 
       if (error) throw error;
 
-      if (!data.success || !data.sessionId) {
+      if (!data.success || !data.priceId) {
         throw new Error('Failed to create checkout session');
       }
 
-      console.log('Session created:', data);
+      console.log('Opening Paddle checkout:', data);
 
-      // Verify FastSpring is available
-      if (!window.fastspring || !window.fastspring.builder) {
-        throw new Error('FastSpring not initialized');
-      }
-
-      console.log('Opening FastSpring checkout with session:', data.sessionId);
-
-      // Set up global callback for popup closed
-      (window as any).onFSPopupClosed = () => {
-        console.log('FastSpring popup closed');
-        setIsProcessing(false);
-        setSelectedPlan(null);
-      };
-
-      // Set up global callback for order completion
-      (window as any).dataPopupWebhookReceived = (orderData: any) => {
-        console.log('FastSpring order data received:', orderData);
-        if (orderData && orderData.data && orderData.data.id) {
-          handlePaymentSuccess(orderData.data);
+      // Open Paddle checkout
+      window.Paddle.Checkout.open({
+        items: [{ priceId: data.priceId, quantity: 1 }],
+        customer: {
+          email: data.customerEmail
+        },
+        customData: data.customData,
+        settings: {
+          displayMode: 'overlay',
+          theme: 'light',
+          locale: 'en'
         }
-      };
-
-      // Open FastSpring checkout with session ID
-      window.fastspring.builder.checkout(data.sessionId);
+      });
 
     } catch (error: any) {
       console.error('Error creating checkout:', error);
-      handlePaymentError(error);
       toast.error(error.message || 'Failed to start checkout process');
+      setIsProcessing(false);
+      setSelectedPlan(null);
     }
   };
 
@@ -313,14 +289,14 @@ export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
               <Button 
                 className="w-full bg-gradient-primary hover:opacity-90 transition-opacity"
                 onClick={() => handleSelectPlan(plan)}
-                disabled={isProcessing || !fastspringLoaded}
+                disabled={isProcessing || !paddleLoaded}
               >
                 {isProcessing && selectedPlan === plan.id ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Processing...
                   </>
-                ) : !fastspringLoaded ? (
+                ) : !paddleLoaded ? (
                   'Loading...'
                 ) : (
                   plan.popular ? 'Get Started' : 'Choose Plan'
@@ -336,7 +312,7 @@ export function PaymentPlans({ onSuccess, discount = 0 }: PaymentPlansProps) {
           All plans include a 7-day free trial. Cancel anytime.
         </p>
         <p className="text-xs text-muted-foreground">
-          Payments are processed securely through FastSpring
+          Payments are processed securely through Paddle
         </p>
         <p className="text-xs text-muted-foreground mt-2">
           By subscribing, you agree to our{' '}

@@ -4,12 +4,13 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Mail, Phone, MapPin, Send, Loader2 } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, Loader2, Home } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { useNavigate } from 'react-router-dom';
 
 const contactSchema = z.object({
   name: z.string().trim().min(1, { message: "Name is required" }).max(100, { message: "Name must be less than 100 characters" }),
@@ -21,6 +22,7 @@ const contactSchema = z.object({
 type ContactFormData = z.infer<typeof contactSchema>;
 
 export default function Contact() {
+  const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
   
   const {
@@ -59,11 +61,17 @@ export default function Contact() {
 
   return (
     <div className="max-w-6xl mx-auto space-y-8 p-6">
-      <div className="text-center space-y-2">
-        <h1 className="text-4xl font-bold tracking-tight">Contact Us</h1>
-        <p className="text-muted-foreground text-lg">
-          Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
-        </p>
+      <div className="flex items-center justify-between">
+        <div className="text-center flex-1 space-y-2">
+          <h1 className="text-4xl font-bold tracking-tight">Contact Us</h1>
+          <p className="text-muted-foreground text-lg">
+            Have questions? We'd love to hear from you. Send us a message and we'll respond as soon as possible.
+          </p>
+        </div>
+        <Button variant="outline" onClick={() => navigate('/')} className="ml-4">
+          <Home className="mr-2 h-4 w-4" />
+          Home
+        </Button>
       </div>
 
       <div className="grid md:grid-cols-3 gap-6">

@@ -58,7 +58,8 @@ const templates = [
     color: 'text-blue-600',
     bgColor: 'bg-blue-100',
     features: ['SEO Optimized', 'Multiple Tones', 'Custom Length'],
-    usageCount: '2.1k uses'
+    usageCount: '2.1k uses',
+    exampleOutput: 'In today\'s digital landscape, content is king. Whether you\'re building a personal brand or scaling your business, having a consistent blog strategy is crucial. Here are five proven strategies to boost your content engagement...'
   },
   {
     id: 'social',
@@ -68,7 +69,8 @@ const templates = [
     color: 'text-purple-600',
     bgColor: 'bg-purple-100',
     features: ['Platform Specific', 'Hashtag Ready', 'Engaging CTAs'],
-    usageCount: '1.8k uses'
+    usageCount: '1.8k uses',
+    exampleOutput: '🚀 Ready to level up your content game? Here\'s what we learned from creating 1000+ posts:\n\n✨ Consistency beats perfection\n💡 Authenticity attracts your tribe\n🎯 Value first, promotion second\n\nWhat\'s your content strategy? Drop it below! 👇\n\n#ContentMarketing #SocialMediaTips #GrowthHacking'
   },
   {
     id: 'email',
@@ -78,7 +80,8 @@ const templates = [
     color: 'text-green-600',
     bgColor: 'bg-green-100',
     features: ['Subject Lines', 'Personalized', 'Call-to-Actions'],
-    usageCount: '1.5k uses'
+    usageCount: '1.5k uses',
+    exampleOutput: 'Subject: Your exclusive invitation inside 🎁\n\nHi Sarah,\n\nI hope this email finds you well. I wanted to personally reach out because we\'re launching something special, and I think you\'d be a perfect fit.\n\nWe\'re opening up early access to our new platform, and as one of our valued community members, you\'re getting first dibs...'
   },
   {
     id: 'ads',
@@ -88,7 +91,8 @@ const templates = [
     color: 'text-orange-600',
     bgColor: 'bg-orange-100',
     features: ['High Converting', 'A/B Test Ready', 'Platform Optimized'],
-    usageCount: '950 uses'
+    usageCount: '950 uses',
+    exampleOutput: '🎯 Stop Losing Customers to Slow Loading Times!\n\nDid you know 53% of users abandon sites that take over 3 seconds to load?\n\n✅ Cut load times by 70%\n✅ Boost conversions by 35%\n✅ Free 14-day trial\n\nJoin 10,000+ businesses already winning. Start your free trial today! 👉'
   },
   {
     id: 'humanize',
@@ -98,7 +102,8 @@ const templates = [
     color: 'text-cyan-600',
     bgColor: 'bg-cyan-100',
     features: ['Natural Flow', 'Authentic Voice', 'Detection Resistant'],
-    usageCount: '1.2k uses'
+    usageCount: '1.2k uses',
+    exampleOutput: 'You know what? I\'ve been thinking about this whole AI thing lately. It\'s pretty wild how technology has changed the way we write. I mean, sure, AI can pump out content faster than any of us could dream of, but there\'s something special about that human touch...'
   },
   {
     id: 'cv',
@@ -108,7 +113,8 @@ const templates = [
     color: 'text-indigo-600',
     bgColor: 'bg-indigo-100',
     features: ['ATS Optimized', 'Achievement Focus', 'Multiple Formats'],
-    usageCount: '890 uses'
+    usageCount: '890 uses',
+    exampleOutput: 'PROFESSIONAL SUMMARY\n\nResults-driven Marketing Manager with 7+ years of experience driving digital transformation and revenue growth. Proven track record of increasing brand awareness by 150% and generating $2M+ in qualified leads through data-driven campaigns...'
   },
   {
     id: 'product',
@@ -118,7 +124,8 @@ const templates = [
     color: 'text-emerald-600',
     bgColor: 'bg-emerald-100',
     features: ['SEO-Friendly', 'Benefit-Driven', 'Multiple Tones'],
-    usageCount: '1.4k uses'
+    usageCount: '1.4k uses',
+    exampleOutput: 'Experience ultimate comfort with our Premium Memory Foam Pillow. Engineered with NASA-developed technology, this pillow contours perfectly to your head and neck, providing optimal support throughout the night. Wake up refreshed and pain-free. 100-night trial included.'
   },
   {
     id: 'letter',
@@ -128,7 +135,8 @@ const templates = [
     color: 'text-rose-600',
     bgColor: 'bg-rose-100',
     features: ['Proper Format', 'Multiple Types', 'Professional Tone'],
-    usageCount: '720 uses'
+    usageCount: '720 uses',
+    exampleOutput: 'Dear Mr. Johnson,\n\nI am writing to express my sincere interest in the Senior Marketing Manager position at TechCorp. With over 8 years of experience in digital marketing and a proven track record of driving revenue growth, I am confident I would be a valuable addition to your team...'
   },
   {
     id: 'script',
@@ -138,7 +146,8 @@ const templates = [
     color: 'text-amber-600',
     bgColor: 'bg-amber-100',
     features: ['Scene Breakdown', 'Timing Cues', 'Multiple Formats'],
-    usageCount: '1.1k uses'
+    usageCount: '1.1k uses',
+    exampleOutput: '[0:00-0:05] INTRO\n[Upbeat music fades in]\nHost: "Hey everyone! Welcome back to the channel. Today, we\'re diving into something game-changing..."\n\n[0:06-0:15] HOOK\n[B-roll of product]\nHost: "What if I told you there\'s a way to cut your work time in half?"'
   },
   {
     id: 'hashtag',
@@ -148,7 +157,8 @@ const templates = [
     color: 'text-pink-600',
     bgColor: 'bg-pink-100',
     features: ['Trending Tags', 'Platform Specific', 'Niche Focused'],
-    usageCount: '980 uses'
+    usageCount: '980 uses',
+    exampleOutput: '#DigitalMarketing #MarketingTips #SocialMediaStrategy #ContentCreator #SmallBusiness #Entrepreneur #MarketingAgency #GrowthHacking #BrandBuilding #OnlineMarketing #MarketingGoals #BusinessGrowth #SocialMediaMarketing #ContentStrategy #MarketingExpert'
   },
   {
     id: 'post-ideas',
@@ -158,7 +168,8 @@ const templates = [
     color: 'text-yellow-600',
     bgColor: 'bg-yellow-100',
     features: ['Creative Ideas', 'Multiple Platforms', 'Trend-Based'],
-    usageCount: '1.3k uses'
+    usageCount: '1.3k uses',
+    exampleOutput: '1. Behind-the-scenes: Show your workspace setup\n2. Quick tip Tuesday: Share one actionable tip\n3. Transformation story: Before & after results\n4. Ask me anything: Host a Q&A session\n5. Tool showcase: Review your favorite software\n6. Myth-busting: Debunk common industry myths\n7. Challenge post: Create an engaging challenge'
   },
   {
     id: 'chatgpt-prompt',
@@ -168,7 +179,8 @@ const templates = [
     color: 'text-teal-600',
     bgColor: 'bg-teal-100',
     features: ['Optimized Structure', 'Clear Instructions', 'Professional'],
-    usageCount: '1.6k uses'
+    usageCount: '1.6k uses',
+    exampleOutput: 'You are an expert content strategist with 10+ years of experience. Analyze the following blog post and provide specific recommendations to improve SEO, readability, and engagement. Focus on:\n1. Keyword optimization\n2. Structure and headings\n3. Call-to-action effectiveness\n4. Content gaps\n\nProvide actionable advice in bullet points.'
   },
   {
     id: 'image-prompt',
@@ -178,7 +190,8 @@ const templates = [
     color: 'text-violet-600',
     bgColor: 'bg-violet-100',
     features: ['Detailed Descriptions', 'Style Guides', 'AI-Optimized'],
-    usageCount: '1.4k uses'
+    usageCount: '1.4k uses',
+    exampleOutput: 'A serene mountain landscape at golden hour, featuring snow-capped peaks reflecting in a crystal-clear alpine lake. Photorealistic style, shot with a wide-angle lens, dramatic clouds catching the sunset light, wildflowers in the foreground, ultra-detailed, 8K resolution, professional nature photography'
   },
   {
     id: 'video-prompt',
@@ -188,7 +201,8 @@ const templates = [
     color: 'text-red-600',
     bgColor: 'bg-red-100',
     features: ['Scene Details', 'Camera Movements', 'Production Ready'],
-    usageCount: '890 uses'
+    usageCount: '890 uses',
+    exampleOutput: 'Opening shot: Slow dolly-in on a modern office space, natural lighting from large windows. Medium shot of professional working at desk, focused expression. Camera pans right to reveal collaborative team meeting. Cut to close-up of hands sketching on whiteboard. Transition: Quick montage of successful project completion. Mood: Inspirational, corporate, dynamic.'
   }
 ];
 
@@ -198,6 +212,7 @@ export default function Templates() {
   const { profile } = useAuth();
   const { toast } = useToast();
   const [recentContent, setRecentContent] = useState<any[]>([]);
+  const [previewTemplate, setPreviewTemplate] = useState<typeof templates[0] | null>(null);
 
   const loadRecentContent = async (templateType: string) => {
     if (!profile) return;
@@ -418,17 +433,23 @@ export default function Templates() {
       {/* Templates Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
         {templates.map((template) => (
-          <Card key={template.id} className="group hover:shadow-elegant transition-all duration-200 cursor-pointer">
-            <CardHeader className="pb-3">
-              <div className={`w-12 h-12 ${template.bgColor} rounded-lg flex items-center justify-center mb-3`}>
+          <Card 
+            key={template.id} 
+            className="group relative overflow-hidden hover:shadow-glow hover:scale-[1.02] transition-all duration-300 cursor-pointer border-2 hover:border-primary/20"
+          >
+            {/* Hover gradient overlay */}
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            
+            <CardHeader className="pb-3 relative z-10">
+              <div className={`w-12 h-12 ${template.bgColor} rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300`}>
                 <template.icon className={`w-6 h-6 ${template.color}`} />
               </div>
-              <CardTitle className="text-lg">{template.title}</CardTitle>
+              <CardTitle className="text-lg group-hover:text-primary transition-colors">{template.title}</CardTitle>
               <CardDescription className="text-sm">
                 {template.description}
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 relative z-10">
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
                   <span className="text-muted-foreground">Usage</span>
@@ -447,16 +468,128 @@ export default function Templates() {
                 </div>
               </div>
 
-              <Button className="w-full group-hover:shadow-sm" asChild>
-                <a href={`/app/templates/${template.id}`}>
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="flex-1"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setPreviewTemplate(template);
+                  }}
+                >
                   <Sparkles className="w-4 h-4 mr-2" />
-                  Use Template
-                </a>
-              </Button>
+                  Preview
+                </Button>
+                <Button className="flex-1 group-hover:shadow-sm" asChild>
+                  <a href={`/app/templates/${template.id}`}>
+                    Use Template
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </a>
+                </Button>
+              </div>
             </CardContent>
           </Card>
         ))}
       </div>
+
+      {/* Preview Dialog */}
+      <Dialog open={!!previewTemplate} onOpenChange={() => setPreviewTemplate(null)}>
+        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-3">
+              {previewTemplate && (
+                <>
+                  <div className={`p-3 rounded-xl ${previewTemplate.bgColor}`}>
+                    <previewTemplate.icon className={`h-6 w-6 ${previewTemplate.color}`} />
+                  </div>
+                  <div>
+                    <div>{previewTemplate.title}</div>
+                    <p className="text-sm text-muted-foreground font-normal mt-1">
+                      {previewTemplate.description}
+                    </p>
+                  </div>
+                </>
+              )}
+            </DialogTitle>
+          </DialogHeader>
+          
+          {previewTemplate && (
+            <div className="space-y-6">
+              {/* Features */}
+              <div className="space-y-2">
+                <Label className="text-sm font-semibold">Key Features:</Label>
+                <div className="flex flex-wrap gap-2">
+                  {previewTemplate.features.map((feature, index) => (
+                    <Badge key={index} variant="secondary" className="text-sm">
+                      <Zap className="w-3 h-3 mr-1" />
+                      {feature}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+
+              {/* Usage Stats */}
+              <div className="flex items-center gap-4 p-4 bg-muted/30 rounded-lg">
+                <div className="flex items-center gap-2">
+                  <Users className="w-4 h-4 text-muted-foreground" />
+                  <span className="text-sm font-medium">{previewTemplate.usageCount}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <TrendingUp className="w-4 h-4 text-green-500" />
+                  <span className="text-sm text-muted-foreground">Trending</span>
+                </div>
+              </div>
+
+              {/* Example Output */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <Label className="text-sm font-semibold">Example Output:</Label>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      navigator.clipboard.writeText(previewTemplate.exampleOutput);
+                      toast({
+                        title: "Copied!",
+                        description: "Example output copied to clipboard."
+                      });
+                    }}
+                  >
+                    <Copy className="w-4 h-4 mr-2" />
+                    Copy
+                  </Button>
+                </div>
+                <div className="bg-gradient-to-br from-muted/50 to-muted/30 rounded-xl p-6 border border-border/50">
+                  <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed text-foreground">
+                    {previewTemplate.exampleOutput}
+                  </pre>
+                </div>
+              </div>
+
+              {/* CTA */}
+              <div className="flex gap-3 pt-4 border-t">
+                <Button 
+                  variant="outline" 
+                  className="flex-1"
+                  onClick={() => setPreviewTemplate(null)}
+                >
+                  Close
+                </Button>
+                <Button 
+                  className="flex-1"
+                  asChild
+                >
+                  <a href={`/app/templates/${previewTemplate.id}`}>
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Use This Template
+                  </a>
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       {/* Popular Templates Section */}
       <Card className="bg-gradient-subtle border-0">

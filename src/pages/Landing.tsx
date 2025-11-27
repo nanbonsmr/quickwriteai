@@ -8,6 +8,8 @@ import workflowIllustration from '@/assets/workflow-illustration-new.jpg';
 import abstractBg from '@/assets/abstract-bg.jpg';
 import { useAuth } from '@/contexts/AuthContext';
 import Hero3DScene from '@/components/Hero3DScene';
+import { useInView } from '@/hooks/useInView';
+import { useParallax } from '@/hooks/useParallax';
 
 const pricingPlans = [
   {
@@ -55,6 +57,13 @@ const pricingPlans = [
 
 export default function Landing() {
   const navigate = useNavigate();
+  const parallaxOffset = useParallax(0.3);
+  const { ref: aboutRef, isInView: aboutInView } = useInView();
+  const { ref: featuresRef, isInView: featuresInView } = useInView();
+  const { ref: workflowRef, isInView: workflowInView } = useInView();
+  const { ref: statsRef, isInView: statsInView } = useInView();
+  const { ref: testimonialRef, isInView: testimonialInView } = useInView();
+  const { ref: ctaRef, isInView: ctaInView } = useInView();
   const { user } = useAuth();
 
   const handleSelectPlan = () => {
@@ -102,10 +111,19 @@ export default function Landing() {
 
       {/* Hero Section with 3D Animation */}
       <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        {/* Animated Gradient Overlays */}
-        <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary-glow/10 to-accent/20 animate-gradient-shift" />
-        <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-primary/10 to-transparent animate-gradient-rotate" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,hsl(var(--primary)/0.15),transparent_60%)] animate-gradient-pulse" />
+        {/* Animated Gradient Overlays with Parallax */}
+        <div 
+          className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary-glow/10 to-accent/20 animate-gradient-shift"
+          style={{ transform: `translateY(${parallaxOffset * 0.5}px)` }}
+        />
+        <div 
+          className="absolute inset-0 bg-gradient-to-tr from-transparent via-primary/10 to-transparent animate-gradient-rotate"
+          style={{ transform: `translateY(${parallaxOffset * 0.3}px)` }}
+        />
+        <div 
+          className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,hsl(var(--primary)/0.15),transparent_60%)] animate-gradient-pulse"
+          style={{ transform: `translateY(${parallaxOffset * 0.2}px)` }}
+        />
         
         <div className="container mx-auto relative z-10">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
@@ -147,7 +165,7 @@ export default function Landing() {
       </section>
 
       {/* Stats Section */}
-      <section className="py-12 sm:py-16 bg-muted/30">
+      <section ref={statsRef} className="py-12 sm:py-16 bg-muted/30">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
             {[
@@ -156,7 +174,12 @@ export default function Landing() {
               { value: '99.9%', label: 'Uptime' },
               { value: '4.9/5', label: 'User Rating' },
             ].map((stat, idx) => (
-              <div key={idx} className="text-center">
+              <div 
+                key={idx} 
+                className={`text-center scroll-animate ${
+                  statsInView ? 'animate-fade-up' : ''
+                } animation-delay-${(idx + 1) * 100}`}
+              >
                 <div className="text-2xl sm:text-3xl lg:text-4xl font-bold text-primary mb-2">{stat.value}</div>
                 <div className="text-xs sm:text-sm text-muted-foreground">{stat.label}</div>
               </div>
@@ -166,11 +189,14 @@ export default function Landing() {
       </section>
 
       {/* About Section */}
-      <section id="about" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
+      <section ref={aboutRef} id="about" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
         <div className="container mx-auto">
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center mb-16">
-            {/* Left Column - Image */}
-            <div className="order-2 lg:order-1">
+            {/* Left Column - Image with Parallax */}
+            <div 
+              className={`order-2 lg:order-1 scroll-animate ${aboutInView ? 'animate-slide-in-left' : ''}`}
+              style={{ transform: `translateY(${parallaxOffset * -0.1}px)` }}
+            >
               <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                 <img 
                   src={featuresShowcase} 
@@ -181,7 +207,7 @@ export default function Landing() {
             </div>
 
             {/* Right Column - Text */}
-            <div className="order-1 lg:order-2 text-center lg:text-left">
+            <div className={`order-1 lg:order-2 text-center lg:text-left scroll-animate ${aboutInView ? 'animate-slide-in-right' : ''}`}>
               <h2 className="text-3xl sm:text-4xl font-bold mb-4">Why Choose QuickWrite AI?</h2>
               <p className="text-base sm:text-lg text-muted-foreground mb-8">
                 We combine cutting-edge AI technology with intuitive design to deliver 
@@ -191,61 +217,48 @@ export default function Landing() {
           </div>
 
           <div className="grid sm:grid-cols-2 gap-6 sm:gap-8 max-w-5xl mx-auto">
-            <Card className="p-6 bg-card/50 backdrop-blur border-border/50 hover:shadow-elegant transition-all duration-300 hover:scale-105">
-              <div className="w-12 h-12 rounded-lg bg-gradient-primary flex items-center justify-center mb-4">
-                <Sparkles className="h-6 w-6 text-white" />
-              </div>
-              <h3 className="text-lg sm:text-xl font-bold mb-2">Advanced AI Models</h3>
-              <p className="text-sm sm:text-base text-muted-foreground">
-                Powered by the latest language models to generate human-like, contextually relevant content.
-              </p>
-            </Card>
-
-            <Card className="p-6 bg-card/50 backdrop-blur border-border/50 hover:shadow-elegant transition-all duration-300 hover:scale-105">
-              <div className="w-12 h-12 rounded-lg bg-gradient-primary flex items-center justify-center mb-4">
-                <Zap className="h-6 w-6 text-white" />
-              </div>
-              <h3 className="text-lg sm:text-xl font-bold mb-2">Lightning Fast</h3>
-              <p className="text-sm sm:text-base text-muted-foreground">
-                Generate high-quality content in seconds, not hours. Boost your productivity instantly.
-              </p>
-            </Card>
-
-            <Card className="p-6 bg-card/50 backdrop-blur border-border/50 hover:shadow-elegant transition-all duration-300 hover:scale-105">
-              <div className="w-12 h-12 rounded-lg bg-gradient-primary flex items-center justify-center mb-4">
-                <Shield className="h-6 w-6 text-white" />
-              </div>
-              <h3 className="text-lg sm:text-xl font-bold mb-2">Secure & Private</h3>
-              <p className="text-sm sm:text-base text-muted-foreground">
-                Your data is encrypted and never shared. We take your privacy seriously.
-              </p>
-            </Card>
-
-            <Card className="p-6 bg-card/50 backdrop-blur border-border/50 hover:shadow-elegant transition-all duration-300 hover:scale-105">
-              <div className="w-12 h-12 rounded-lg bg-gradient-primary flex items-center justify-center mb-4">
-                <TrendingUp className="h-6 w-6 text-white" />
-              </div>
-              <h3 className="text-lg sm:text-xl font-bold mb-2">Continuous Improvement</h3>
-              <p className="text-sm sm:text-base text-muted-foreground">
-                Regular updates and new features to keep you ahead of the curve.
-              </p>
-            </Card>
+            {[
+              { icon: Sparkles, title: 'Advanced AI Models', desc: 'Powered by the latest language models to generate human-like, contextually relevant content.' },
+              { icon: Zap, title: 'Lightning Fast', desc: 'Generate high-quality content in seconds, not hours. Boost your productivity instantly.' },
+              { icon: Shield, title: 'Secure & Private', desc: 'Your data is encrypted and never shared. We take your privacy seriously.' },
+              { icon: TrendingUp, title: 'Continuous Improvement', desc: 'Regular updates and new features to keep you ahead of the curve.' },
+            ].map((feature, idx) => (
+              <Card 
+                key={idx} 
+                className={`p-6 bg-card/50 backdrop-blur border-border/50 hover:shadow-elegant transition-all duration-300 hover:scale-105 scroll-animate ${
+                  aboutInView ? 'animate-fade-in-scale' : ''
+                } animation-delay-${(idx + 1) * 100}`}
+              >
+                <div className="w-12 h-12 rounded-lg bg-gradient-primary flex items-center justify-center mb-4">
+                  <feature.icon className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="text-lg sm:text-xl font-bold mb-2">{feature.title}</h3>
+                <p className="text-sm sm:text-base text-muted-foreground">{feature.desc}</p>
+              </Card>
+            ))}
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section id="features" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-muted/30 relative overflow-hidden">
+      <section 
+        ref={featuresRef}
+        id="features" 
+        className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-muted/30 relative overflow-hidden"
+      >
         {/* Animated Gradient Overlays */}
         <div className="absolute inset-0 bg-gradient-to-bl from-primary/5 via-transparent to-primary-glow/5 animate-gradient-shift" />
         <div className="absolute inset-0 bg-gradient-to-tr from-accent/5 via-transparent to-primary/5 animate-gradient-rotate opacity-60" />
-        {/* Background Pattern */}
-        <div className="absolute inset-0 opacity-10">
+        {/* Background Pattern with Parallax */}
+        <div 
+          className="absolute inset-0 opacity-10"
+          style={{ transform: `translateY(${parallaxOffset * 0.4}px)` }}
+        >
           <img src={abstractBg} alt="" className="w-full h-full object-cover" />
         </div>
         
         <div className="container mx-auto relative z-10">
-          <div className="max-w-3xl mx-auto text-center mb-12 sm:mb-16">
+          <div className={`max-w-3xl mx-auto text-center mb-12 sm:mb-16 scroll-animate ${featuresInView ? 'animate-fade-up' : ''}`}>
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">Powerful Features</h2>
             <p className="text-base sm:text-lg text-muted-foreground">
               Everything you need to create amazing content, all in one place.
@@ -261,7 +274,12 @@ export default function Landing() {
               { icon: TrendingUp, title: 'Product Descriptions', desc: 'Compelling copy that sells' },
               { icon: Star, title: 'Scripts & More', desc: 'Video scripts, letters, and beyond' },
             ].map((feature, idx) => (
-              <Card key={idx} className="p-6 text-center hover:shadow-elegant transition-all duration-300 hover:scale-105 bg-card/50 backdrop-blur">
+              <Card 
+                key={idx} 
+                className={`p-6 text-center hover:shadow-elegant transition-all duration-300 hover:scale-105 bg-card/50 backdrop-blur scroll-animate ${
+                  featuresInView ? 'animate-fade-in-scale' : ''
+                } animation-delay-${(idx + 1) * 100}`}
+              >
                 <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-4">
                   <feature.icon className="h-6 w-6 text-primary" />
                 </div>
@@ -274,17 +292,20 @@ export default function Landing() {
       </section>
 
       {/* How It Works */}
-      <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
+      <section ref={workflowRef} className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
         <div className="container mx-auto">
-          <div className="max-w-3xl mx-auto text-center mb-12 sm:mb-16">
+          <div className={`max-w-3xl mx-auto text-center mb-12 sm:mb-16 scroll-animate ${workflowInView ? 'animate-fade-up' : ''}`}>
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">How It Works</h2>
             <p className="text-base sm:text-lg text-muted-foreground">
               Get started in three simple steps
             </p>
           </div>
 
-          {/* Workflow Illustration */}
-          <div className="max-w-4xl mx-auto mb-12">
+          {/* Workflow Illustration with Parallax */}
+          <div 
+            className={`max-w-4xl mx-auto mb-12 scroll-animate ${workflowInView ? 'animate-fade-in-scale' : ''}`}
+            style={{ transform: `translateY(${parallaxOffset * -0.15}px)` }}
+          >
             <img 
               src={workflowIllustration} 
               alt="QuickWrite AI workflow process" 
@@ -298,7 +319,12 @@ export default function Landing() {
               { step: '02', title: 'Enter Details', desc: 'Provide your topic and key information' },
               { step: '03', title: 'Generate & Edit', desc: 'Get AI-generated content and refine as needed' },
             ].map((item, idx) => (
-              <div key={idx} className="relative">
+              <div 
+                key={idx} 
+                className={`relative scroll-animate ${
+                  workflowInView ? 'animate-fade-up' : ''
+                } animation-delay-${(idx + 1) * 100}`}
+              >
                 <div className="text-center">
                   <div className="text-5xl sm:text-6xl font-bold text-primary/20 mb-4">{item.step}</div>
                   <h3 className="text-lg sm:text-xl font-bold mb-2">{item.title}</h3>
@@ -381,9 +407,13 @@ export default function Landing() {
       </section>
 
       {/* Testimonials */}
-      <section id="testimonials" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
+      <section 
+        ref={testimonialRef}
+        id="testimonials" 
+        className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-muted/30"
+      >
         <div className="container mx-auto">
-          <div className="max-w-3xl mx-auto text-center mb-12 sm:mb-16">
+          <div className={`max-w-3xl mx-auto text-center mb-12 sm:mb-16 scroll-animate ${testimonialInView ? 'animate-fade-up' : ''}`}>
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">Loved by Content Creators</h2>
             <p className="text-base sm:text-lg text-muted-foreground">
               See what our users have to say about QuickWrite AI
@@ -396,7 +426,12 @@ export default function Landing() {
               { name: 'Michael Chen', role: 'Blogger', text: 'The quality of AI-generated content is incredible. It feels natural and engaging every time.' },
               { name: 'Emily Rodriguez', role: 'Social Media Manager', text: 'I can manage multiple clients effortlessly now. This tool is a game-changer for my business.' },
             ].map((testimonial, idx) => (
-              <Card key={idx} className="p-6 bg-card/50 backdrop-blur hover:shadow-elegant transition-all duration-300">
+              <Card 
+                key={idx} 
+                className={`p-6 bg-card/50 backdrop-blur hover:shadow-elegant transition-all duration-300 scroll-animate ${
+                  testimonialInView ? 'animate-fade-in-scale' : ''
+                } animation-delay-${(idx + 1) * 100}`}
+              >
                 <div className="flex gap-1 mb-4">
                   {[...Array(5)].map((_, i) => (
                     <Star key={i} className="h-4 w-4 fill-primary text-primary" />
@@ -458,9 +493,11 @@ export default function Landing() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
+      <section ref={ctaRef} className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8">
         <div className="container mx-auto">
-          <Card className="max-w-4xl mx-auto p-8 sm:p-12 text-center bg-gradient-to-br from-primary/10 via-primary-glow/5 to-accent/10 border-primary/20">
+          <Card className={`max-w-4xl mx-auto p-8 sm:p-12 text-center bg-gradient-to-br from-primary/10 via-primary-glow/5 to-accent/10 border-primary/20 scroll-animate ${
+            ctaInView ? 'animate-fade-in-scale' : ''
+          }`}>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-4">Ready to Transform Your Content?</h2>
             <p className="text-base sm:text-lg text-muted-foreground mb-8">
               Join thousands of content creators who are already using QuickWrite AI

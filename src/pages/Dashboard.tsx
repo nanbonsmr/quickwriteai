@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Copy, Download, Sparkles, Zap, Crown, TrendingUp, CreditCard, FileText, BarChart3, Clock, Calendar, Hash } from "lucide-react";
+import { Copy, Download, Sparkles, Zap, Crown, TrendingUp, CreditCard, FileText, BarChart3, Clock, Calendar, Hash, Trash2 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -211,6 +211,30 @@ export default function Dashboard() {
       title: "Copied!",
       description: "Content copied to clipboard."
     });
+  };
+
+  const handleDeleteContent = async (contentId: string) => {
+    try {
+      const { error } = await supabase
+        .from('content_generations')
+        .delete()
+        .eq('id', contentId);
+
+      if (error) throw error;
+
+      setRecentContent(prev => prev.filter(item => item.id !== contentId));
+      
+      toast({
+        title: "Deleted!",
+        description: "Content deleted successfully."
+      });
+    } catch (error: any) {
+      toast({
+        title: "Delete failed",
+        description: error.message || "Failed to delete content.",
+        variant: "destructive"
+      });
+    }
   };
 
   const wordsRemaining = profile ? profile.words_limit - profile.words_used : 0;
@@ -586,17 +610,18 @@ export default function Dashboard() {
                         </div>
                       </div>
                     </div>
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          className="rounded-xl group-hover:bg-primary/10 group-hover:text-primary transition-colors"
-                          onClick={() => setSelectedContent(content)}
-                        >
-                          View
-                        </Button>
-                      </DialogTrigger>
+                    <div className="flex items-center gap-2">
+                      <Dialog>
+                        <DialogTrigger asChild>
+                          <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            className="rounded-xl group-hover:bg-primary/10 group-hover:text-primary transition-colors"
+                            onClick={() => setSelectedContent(content)}
+                          >
+                            View
+                          </Button>
+                        </DialogTrigger>
                       <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
                         <DialogHeader>
                           <DialogTitle className="flex items-center gap-2">
@@ -652,7 +677,16 @@ export default function Dashboard() {
                         </div>
                       </DialogContent>
                     </Dialog>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleDeleteContent(content.id)}
+                      className="rounded-xl text-destructive hover:bg-destructive/10 hover:text-destructive transition-colors"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
                   </div>
+                </div>
                 ))
               ) : (
                 <div className="text-center py-12">

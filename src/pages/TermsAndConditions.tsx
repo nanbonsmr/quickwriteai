@@ -388,12 +388,12 @@ export default function TermsAndConditions() {
           </p>
           <div className="bg-muted/50 p-4 rounded-lg mt-4">
             <p className="font-medium">QuickWrite AI Legal Department</p>
-            <p className="text-muted-foreground">Email: legal@quickwriteai.com</p>
-            <p className="text-muted-foreground">Address: 123 AI Street, Tech City, TC 12345</p>
-            <p className="text-muted-foreground">Phone: +1 (555) 123-4567</p>
+            <p className="text-muted-foreground">Email: nanbonkayu@gmail.com</p>
+            <p className="text-muted-foreground">Address: Addis Ababa, Ethiopia</p>
+            <p className="text-muted-foreground">Phone: +251976892311</p>
           </div>
           <p className="text-muted-foreground leading-relaxed mt-4">
-            For general support inquiries, please visit our Contact page or email support@quickwriteai.com.
+            For general support inquiries, please visit our Contact page or email nanbonkayu@gmail.com.
           </p>
         </section>
       </Card>

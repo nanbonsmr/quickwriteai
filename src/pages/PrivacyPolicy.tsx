@@ -271,12 +271,12 @@ export default function PrivacyPolicy() {
           </p>
           <div className="bg-muted/50 p-4 rounded-lg mt-4">
             <p className="font-medium">QuickWrite AI</p>
-            <p className="text-muted-foreground">Email: privacy@quickwriteai.com</p>
-            <p className="text-muted-foreground">Address: 123 AI Street, Tech City, TC 12345</p>
-            <p className="text-muted-foreground">Phone: +1 (555) 123-4567</p>
+            <p className="text-muted-foreground">Email: nanbonkayu@gmail.com</p>
+            <p className="text-muted-foreground">Address: Addis Ababa, Ethiopia</p>
+            <p className="text-muted-foreground">Phone: +251976892311</p>
           </div>
           <p className="text-muted-foreground leading-relaxed mt-4">
-            We will respond to your inquiry within 30 days. For data protection inquiries from European residents, you may also contact our Data Protection Officer at dpo@quickwriteai.com.
+            We will respond to your inquiry within 30 days. For data protection inquiries from European residents, you may also contact our Data Protection Officer at nanbonkayu@gmail.com.
           </p>
         </section>
       </Card>

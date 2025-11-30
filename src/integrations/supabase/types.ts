@@ -219,6 +219,36 @@ export type Database = {
         }
         Relationships: []
       }
+      signup_otps: {
+        Row: {
+          created_at: string
+          display_name: string | null
+          email: string
+          expires_at: string
+          id: string
+          otp_code: string
+          verified: boolean
+        }
+        Insert: {
+          created_at?: string
+          display_name?: string | null
+          email: string
+          expires_at?: string
+          id?: string
+          otp_code: string
+          verified?: boolean
+        }
+        Update: {
+          created_at?: string
+          display_name?: string | null
+          email?: string
+          expires_at?: string
+          id?: string
+          otp_code?: string
+          verified?: boolean
+        }
+        Relationships: []
+      }
       subtasks: {
         Row: {
           completed: boolean

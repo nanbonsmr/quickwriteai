@@ -22,6 +22,7 @@ import Templates from "./pages/Templates";
 import Tasks from "./pages/Tasks";
 import Admin from "./pages/Admin";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import RefundPolicy from "./pages/RefundPolicy";
 import TermsAndConditions from "./pages/TermsAndConditions";
 import Contact from "./pages/Contact";
 import FAQ from "./pages/FAQ";
@@ -40,6 +41,7 @@ function AnimatedRoutes() {
         <Route path="/" element={<PageTransition><Landing /></PageTransition>} />
         <Route path="/auth" element={<PageTransition><Auth /></PageTransition>} />
         <Route path="/privacy" element={<PageTransition><PrivacyPolicy /></PageTransition>} />
+        <Route path="/refund" element={<PageTransition><RefundPolicy /></PageTransition>} />
         <Route path="/terms" element={<PageTransition><TermsAndConditions /></PageTransition>} />
         <Route path="/contact" element={<PageTransition><Contact /></PageTransition>} />
         <Route path="/faq" element={<PageTransition><FAQ /></PageTransition>} />

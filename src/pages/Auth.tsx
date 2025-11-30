@@ -21,6 +21,8 @@ export default function Auth() {
   const [otpStep, setOtpStep] = useState(false);
   const [otp, setOtp] = useState('');
   const [signupEmail, setSignupEmail] = useState('');
+  const [signupPassword, setSignupPassword] = useState('');
+  const [signupDisplayName, setSignupDisplayName] = useState('');
   const { signIn } = useAuth();
   const navigate = useNavigate();
 
@@ -54,30 +56,36 @@ export default function Auth() {
     setLoading(true);
     setError('');
 
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        emailRedirectTo: `${window.location.origin}/`,
-        data: {
-          display_name: displayName,
-        }
-      }
-    });
-    
-    if (error) {
-      setError(error.message);
-      toast({
-        title: "Error signing up",
-        description: error.message,
-        variant: "destructive"
-      });
-    } else {
+    try {
+      // Store credentials for verification step
       setSignupEmail(email);
+      setSignupPassword(password);
+      setSignupDisplayName(displayName);
+
+      // Call edge function to send OTP
+      const { data, error } = await supabase.functions.invoke('send-signup-otp', {
+        body: { email, displayName }
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      if (data?.error) {
+        throw new Error(data.error);
+      }
+
       setOtpStep(true);
       toast({
         title: "Verification code sent!",
         description: "Please check your email for the 6-digit code."
+      });
+    } catch (err: any) {
+      setError(err.message);
+      toast({
+        title: "Error",
+        description: err.message,
+        variant: "destructive"
       });
     }
     
@@ -93,25 +101,49 @@ export default function Auth() {
     setLoading(true);
     setError('');
 
-    const { error } = await supabase.auth.verifyOtp({
-      email: signupEmail,
-      token: otp,
-      type: 'signup'
-    });
+    try {
+      // Call edge function to verify OTP and create account
+      const { data, error } = await supabase.functions.invoke('verify-signup-otp', {
+        body: { 
+          email: signupEmail, 
+          otp, 
+          password: signupPassword 
+        }
+      });
 
-    if (error) {
-      setError(error.message);
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      if (data?.error) {
+        throw new Error(data.error);
+      }
+
+      toast({
+        title: "Account created!",
+        description: "Signing you in..."
+      });
+
+      // Sign in the user
+      const { error: signInError } = await signIn(signupEmail, signupPassword);
+      
+      if (signInError) {
+        toast({
+          title: "Account created",
+          description: "Please sign in with your credentials."
+        });
+        setOtpStep(false);
+        setOtp('');
+      } else {
+        navigate('/app');
+      }
+    } catch (err: any) {
+      setError(err.message);
       toast({
         title: "Verification failed",
-        description: error.message,
+        description: err.message,
         variant: "destructive"
       });
-    } else {
-      toast({
-        title: "Email verified!",
-        description: "Your account has been created successfully."
-      });
-      navigate('/app');
     }
 
     setLoading(false);
@@ -121,21 +153,28 @@ export default function Auth() {
     setLoading(true);
     setError('');
 
-    const { error } = await supabase.auth.resend({
-      type: 'signup',
-      email: signupEmail
-    });
-
-    if (error) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive"
+    try {
+      const { data, error } = await supabase.functions.invoke('send-signup-otp', {
+        body: { email: signupEmail, displayName: signupDisplayName }
       });
-    } else {
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      if (data?.error) {
+        throw new Error(data.error);
+      }
+
       toast({
         title: "Code resent!",
         description: "Please check your email for the new verification code."
+      });
+    } catch (err: any) {
+      toast({
+        title: "Error",
+        description: err.message,
+        variant: "destructive"
       });
     }
 

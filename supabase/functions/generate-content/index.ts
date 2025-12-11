@@ -130,9 +130,13 @@ serve(async (req) => {
       });
     }
 
-    const { template_type, prompt, language, keywords }: GenerateContentRequest = await req.json();
+    const requestBody = await req.json();
+    console.log('Received request body:', JSON.stringify(requestBody));
+    
+    const { template_type, prompt, language, keywords }: GenerateContentRequest = requestBody;
 
     if (!template_type || !prompt) {
+      console.error('Missing required fields - template_type:', template_type, 'prompt:', prompt);
       return new Response(JSON.stringify({ error: 'Template type and prompt are required' }), {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

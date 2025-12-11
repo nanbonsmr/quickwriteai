@@ -8,7 +8,7 @@ import { Sparkles, Zap, Shield, TrendingUp, Users, Star, ArrowRight, CheckCircle
 import featuresShowcase from '@/assets/features-showcase-new.jpg';
 import workflowIllustration from '@/assets/workflow-illustration-new.jpg';
 import abstractBg from '@/assets/abstract-bg.jpg';
-import heroContentGeneration from '@/assets/hero-content-generation.jpg';
+import dashboardPreview from '@/assets/dashboard-preview.jpg';
 import { useAuth } from '@/contexts/AuthContext';
 import { useInView } from '@/hooks/useInView';
 import { useParallax } from '@/hooks/useParallax';
@@ -251,11 +251,11 @@ export default function Landing() {
               </div>
             </div>
 
-            {/* Right Column - Hero Image */}
+            {/* Right Column - Dashboard Preview */}
             <div className="relative animate-fade-in h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px]">
               <img 
-                src={heroContentGeneration} 
-                alt="AI Content Generation Platform - Create blog posts, social media content, and more with AI"
+                src={dashboardPreview} 
+                alt="QuickWrite AI Dashboard - Create blog posts, social media content, emails and ad copy with AI"
                 className="w-full h-full object-contain rounded-2xl shadow-elegant"
               />
             </div>

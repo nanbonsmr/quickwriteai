@@ -8,7 +8,7 @@ import { Sparkles, Zap, Shield, TrendingUp, Users, Star, ArrowRight, CheckCircle
 import featuresShowcase from '@/assets/features-showcase-new.jpg';
 import workflowIllustration from '@/assets/workflow-illustration-new.jpg';
 import abstractBg from '@/assets/abstract-bg.jpg';
-import dashboardPreview from '@/assets/dashboard-preview.jpg';
+import dashboardPreview from '@/assets/dashboard-preview.png';
 import { useAuth } from '@/contexts/AuthContext';
 import { useInView } from '@/hooks/useInView';
 import { useParallax } from '@/hooks/useParallax';
@@ -256,7 +256,7 @@ export default function Landing() {
               <img 
                 src={dashboardPreview} 
                 alt="QuickWrite AI Dashboard - Create blog posts, social media content, emails and ad copy with AI"
-                className="w-full h-full object-contain rounded-2xl shadow-elegant"
+                className="w-full h-full object-contain rounded-2xl animate-float drop-shadow-[0_20px_50px_rgba(139,92,246,0.3)]"
               />
             </div>
           </div>

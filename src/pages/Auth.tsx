@@ -30,9 +30,9 @@ export default function Auth() {
       {/* Animated background */}
       <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
         <div className="absolute inset-0 opacity-40 bg-[radial-gradient(circle_at_1px_1px,rgba(156,146,172,0.15)_1px,transparent_0)] bg-[length:40px_40px]"></div>
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-r from-violet-500/10 to-fuchsia-500/10 rounded-full blur-3xl"></div>
+        <div className="absolute top-1/4 left-1/4 w-48 h-48 sm:w-72 sm:h-72 lg:w-96 lg:h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-48 h-48 sm:w-72 sm:h-72 lg:w-96 lg:h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] sm:w-[450px] lg:w-[600px] h-[300px] sm:h-[450px] lg:h-[600px] bg-gradient-to-r from-violet-500/10 to-fuchsia-500/10 rounded-full blur-3xl"></div>
         <FloatingParticles />
       </div>
 
@@ -95,55 +95,55 @@ export default function Auth() {
       </div>
 
       {/* Right side - Auth Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-6 relative z-10">
-        <div className="w-full max-w-md">
+      <div className="w-full lg:w-1/2 flex items-center justify-center px-4 py-6 sm:p-6 relative z-10">
+        <div className="w-full max-w-[360px] sm:max-w-md">
           {/* Mobile back button */}
           <Button 
             variant="ghost" 
             onClick={() => navigate('/')} 
-            className="lg:hidden mb-6 text-white/80 hover:text-white hover:bg-white/10 -ml-2"
+            className="lg:hidden mb-4 sm:mb-6 text-white/80 hover:text-white hover:bg-white/10 -ml-2 text-sm"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
             Back
           </Button>
 
           {/* Mobile branding */}
-          <div className="lg:hidden text-center mb-8">
-            <div className="flex items-center justify-center gap-2 mb-3">
-              <div className="p-2 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-lg">
-                <PenTool className="h-5 w-5 text-white" />
+          <div className="lg:hidden text-center mb-6 sm:mb-8">
+            <div className="flex items-center justify-center gap-2 mb-2 sm:mb-3">
+              <div className="p-1.5 sm:p-2 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-lg">
+                <PenTool className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
               </div>
-              <h1 className="text-xl font-bold text-white">quickwriteapp</h1>
+              <h1 className="text-lg sm:text-xl font-bold text-white">quickwriteapp</h1>
             </div>
-            <p className="text-white/60 text-sm">AI-powered content generation</p>
+            <p className="text-white/60 text-xs sm:text-sm">AI-powered content generation</p>
           </div>
 
-          <Card className="border border-white/10 bg-gradient-to-br from-white/15 via-white/10 to-white/5 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4),0_0_80px_rgba(139,92,246,0.15),inset_0_1px_0_rgba(255,255,255,0.1)] rounded-2xl overflow-hidden">
-            <CardHeader className="text-center pb-2 relative">
+          <Card className="border border-white/10 bg-gradient-to-br from-white/15 via-white/10 to-white/5 backdrop-blur-2xl shadow-[0_8px_32px_rgba(0,0,0,0.4),0_0_80px_rgba(139,92,246,0.15),inset_0_1px_0_rgba(255,255,255,0.1)] rounded-xl sm:rounded-2xl overflow-hidden">
+            <CardHeader className="text-center pb-2 px-4 sm:px-6 pt-4 sm:pt-6 relative">
               <div className="absolute inset-0 bg-gradient-to-b from-violet-500/10 to-transparent pointer-events-none" />
-              <CardTitle className="flex items-center justify-center gap-2 text-white text-2xl relative z-10">
-                <Sparkles className="h-5 w-5 text-violet-400 drop-shadow-[0_0_8px_rgba(167,139,250,0.5)]" />
+              <CardTitle className="flex items-center justify-center gap-2 text-white text-xl sm:text-2xl relative z-10">
+                <Sparkles className="h-4 w-4 sm:h-5 sm:w-5 text-violet-400 drop-shadow-[0_0_8px_rgba(167,139,250,0.5)]" />
                 {activeTab === 'signin' ? 'Welcome Back' : 'Get Started'}
               </CardTitle>
-              <CardDescription className="text-white/70 relative z-10">
+              <CardDescription className="text-white/70 relative z-10 text-xs sm:text-sm">
                 {activeTab === 'signin' 
                   ? 'Sign in to continue creating amazing content' 
                   : 'Create your account and start writing'}
               </CardDescription>
             </CardHeader>
-            <CardContent className="pt-4 relative">
+            <CardContent className="pt-3 sm:pt-4 px-4 sm:px-6 pb-4 sm:pb-6 relative">
               <div className="absolute inset-0 bg-gradient-to-t from-fuchsia-500/5 to-transparent pointer-events-none" />
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6 relative z-10">
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-6 relative z-10">
                 <TabsList className="grid w-full grid-cols-2 bg-white/10 p-1">
                   <TabsTrigger 
                     value="signin" 
-                    className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-500 data-[state=active]:to-fuchsia-500 data-[state=active]:text-white text-white/70 transition-all duration-300"
+                    className="text-xs sm:text-sm data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-500 data-[state=active]:to-fuchsia-500 data-[state=active]:text-white text-white/70 transition-all duration-300"
                   >
                     Sign In
                   </TabsTrigger>
                   <TabsTrigger 
                     value="signup"
-                    className="data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-500 data-[state=active]:to-fuchsia-500 data-[state=active]:text-white text-white/70 transition-all duration-300"
+                    className="text-xs sm:text-sm data-[state=active]:bg-gradient-to-r data-[state=active]:from-violet-500 data-[state=active]:to-fuchsia-500 data-[state=active]:text-white text-white/70 transition-all duration-300"
                   >
                     Sign Up
                   </TabsTrigger>
@@ -156,23 +156,24 @@ export default function Auth() {
                     afterSignInUrl="/app"
                     appearance={{
                       elements: {
-                        rootBox: "w-full",
+                        rootBox: "w-full max-w-full",
                         card: "shadow-none border-0 bg-transparent p-0",
                         headerTitle: "hidden",
                         headerSubtitle: "hidden",
-                        socialButtonsBlockButton: "border border-white/20 hover:bg-white/10 text-white bg-white/5 transition-all duration-200",
-                        socialButtonsBlockButtonText: "text-white font-medium",
-                        formButtonPrimary: "bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600 text-white shadow-lg shadow-violet-500/30 transition-all duration-200",
+                        socialButtonsBlockButton: "border border-white/20 hover:bg-white/10 text-white bg-white/5 transition-all duration-200 text-sm",
+                        socialButtonsBlockButtonText: "text-white font-medium text-xs sm:text-sm",
+                        formButtonPrimary: "bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600 text-white shadow-lg shadow-violet-500/30 transition-all duration-200 text-sm",
                         footerAction: "hidden",
-                        formFieldInput: "bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-violet-400 focus:ring-violet-400/20",
-                        formFieldLabel: "text-white/80",
-                        identityPreviewText: "text-white",
-                        identityPreviewEditButton: "text-violet-400 hover:text-violet-300",
+                        formFieldInput: "bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-violet-400 focus:ring-violet-400/20 text-sm",
+                        formFieldLabel: "text-white/80 text-xs sm:text-sm",
+                        identityPreviewText: "text-white text-sm",
+                        identityPreviewEditButton: "text-violet-400 hover:text-violet-300 text-xs sm:text-sm",
                         dividerLine: "bg-white/20",
-                        dividerText: "text-white/50",
+                        dividerText: "text-white/50 text-xs",
                         formFieldInputShowPasswordButton: "text-white/60 hover:text-white",
-                        alert: "bg-red-500/20 border-red-500/30 text-red-200",
-                        alertText: "text-red-200",
+                        alert: "bg-red-500/20 border-red-500/30 text-red-200 text-xs sm:text-sm",
+                        alertText: "text-red-200 text-xs sm:text-sm",
+                        form: "gap-3 sm:gap-4",
                       }
                     }}
                   />
@@ -185,23 +186,24 @@ export default function Auth() {
                     afterSignUpUrl="/app"
                     appearance={{
                       elements: {
-                        rootBox: "w-full",
+                        rootBox: "w-full max-w-full",
                         card: "shadow-none border-0 bg-transparent p-0",
                         headerTitle: "hidden",
                         headerSubtitle: "hidden",
-                        socialButtonsBlockButton: "border border-white/20 hover:bg-white/10 text-white bg-white/5 transition-all duration-200",
-                        socialButtonsBlockButtonText: "text-white font-medium",
-                        formButtonPrimary: "bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600 text-white shadow-lg shadow-violet-500/30 transition-all duration-200",
+                        socialButtonsBlockButton: "border border-white/20 hover:bg-white/10 text-white bg-white/5 transition-all duration-200 text-sm",
+                        socialButtonsBlockButtonText: "text-white font-medium text-xs sm:text-sm",
+                        formButtonPrimary: "bg-gradient-to-r from-violet-500 to-fuchsia-500 hover:from-violet-600 hover:to-fuchsia-600 text-white shadow-lg shadow-violet-500/30 transition-all duration-200 text-sm",
                         footerAction: "hidden",
-                        formFieldInput: "bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-violet-400 focus:ring-violet-400/20",
-                        formFieldLabel: "text-white/80",
-                        identityPreviewText: "text-white",
-                        identityPreviewEditButton: "text-violet-400 hover:text-violet-300",
+                        formFieldInput: "bg-white/10 border-white/20 text-white placeholder:text-white/40 focus:border-violet-400 focus:ring-violet-400/20 text-sm",
+                        formFieldLabel: "text-white/80 text-xs sm:text-sm",
+                        identityPreviewText: "text-white text-sm",
+                        identityPreviewEditButton: "text-violet-400 hover:text-violet-300 text-xs sm:text-sm",
                         dividerLine: "bg-white/20",
-                        dividerText: "text-white/50",
+                        dividerText: "text-white/50 text-xs",
                         formFieldInputShowPasswordButton: "text-white/60 hover:text-white",
-                        alert: "bg-red-500/20 border-red-500/30 text-red-200",
-                        alertText: "text-red-200",
+                        alert: "bg-red-500/20 border-red-500/30 text-red-200 text-xs sm:text-sm",
+                        alertText: "text-red-200 text-xs sm:text-sm",
+                        form: "gap-3 sm:gap-4",
                       }
                     }}
                   />
@@ -210,7 +212,7 @@ export default function Auth() {
             </CardContent>
           </Card>
 
-          <p className="text-center text-white/40 text-xs mt-6">
+          <p className="text-center text-white/40 text-[10px] sm:text-xs mt-4 sm:mt-6 px-2">
             By continuing, you agree to our Terms of Service and Privacy Policy
           </p>
         </div>

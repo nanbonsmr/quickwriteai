@@ -251,13 +251,29 @@ export default function Landing() {
               </div>
             </div>
 
-            {/* Right Column - Dashboard Preview */}
-            <div className="relative animate-fade-in h-[300px] sm:h-[400px] md:h-[500px] lg:h-[600px]">
-              <img 
-                src={dashboardPreview} 
-                alt="QuickWrite AI Dashboard - Create blog posts, social media content, emails and ad copy with AI"
-                className="w-full h-full object-contain rounded-2xl animate-float drop-shadow-[0_20px_50px_rgba(139,92,246,0.3)]"
-              />
+            {/* Right Column - Dashboard Preview with Browser Chrome */}
+            <div className="relative animate-fade-in animate-float drop-shadow-[0_20px_50px_rgba(139,92,246,0.3)]">
+              {/* Browser Chrome Frame */}
+              <div className="bg-muted/80 backdrop-blur-sm rounded-t-xl border border-border/50 px-4 py-3 flex items-center gap-3">
+                {/* Traffic Lights */}
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-red-500/80"></div>
+                  <div className="w-3 h-3 rounded-full bg-yellow-500/80"></div>
+                  <div className="w-3 h-3 rounded-full bg-green-500/80"></div>
+                </div>
+                {/* URL Bar */}
+                <div className="flex-1 bg-background/50 rounded-md px-3 py-1.5 text-xs text-muted-foreground font-mono truncate">
+                  quickwriteai.app/dashboard
+                </div>
+              </div>
+              {/* Browser Content */}
+              <div className="bg-background/30 backdrop-blur-sm rounded-b-xl border border-t-0 border-border/50 overflow-hidden">
+                <img 
+                  src={dashboardPreview} 
+                  alt="QuickWrite AI Dashboard - Create blog posts, social media content, emails and ad copy with AI"
+                  className="w-full h-auto object-contain"
+                />
+              </div>
             </div>
           </div>
         </div>

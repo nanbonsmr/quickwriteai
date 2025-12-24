@@ -69,7 +69,7 @@ export default function Landing() {
   const { ref: ctaRef, isInView: ctaInView } = useInView();
   const { ref: newFeaturesRef, isInView: newFeaturesInView } = useInView();
   const { ref: templatesRef, isInView: templatesInView } = useInView();
-  const { user, loading } = useAuth();
+  const { user, loading, isSignedIn } = useAuth();
 
   // Handle OAuth callback and redirect authenticated users to dashboard
   useEffect(() => {
@@ -80,12 +80,17 @@ export default function Landing() {
     if (hasAccessToken) {
       // Clear the hash to clean up the URL
       window.history.replaceState(null, '', window.location.pathname);
+      // Force a small delay to let Supabase process the tokens
+      setTimeout(() => {
+        navigate('/app', { replace: true });
+      }, 100);
+      return;
     }
     
-    if (!loading && user) {
-      navigate('/app');
+    if (!loading && isSignedIn) {
+      navigate('/app', { replace: true });
     }
-  }, [user, loading, navigate]);
+  }, [user, loading, isSignedIn, navigate]);
 
   const handleSelectPlan = () => {
     if (user) {

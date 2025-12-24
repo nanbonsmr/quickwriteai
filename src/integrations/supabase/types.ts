@@ -459,6 +459,7 @@ export type Database = {
           priority: string
           recurrence_end_date: string | null
           recurrence_pattern: string | null
+          reminder_time: string | null
           status: string
           template_type: string | null
           title: string
@@ -474,6 +475,7 @@ export type Database = {
           priority?: string
           recurrence_end_date?: string | null
           recurrence_pattern?: string | null
+          reminder_time?: string | null
           status?: string
           template_type?: string | null
           title: string
@@ -489,6 +491,7 @@ export type Database = {
           priority?: string
           recurrence_end_date?: string | null
           recurrence_pattern?: string | null
+          reminder_time?: string | null
           status?: string
           template_type?: string | null
           title?: string

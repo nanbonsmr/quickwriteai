@@ -21,8 +21,9 @@ import {
 } from "@/components/ui/select";
 import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { CalendarIcon, Loader2 } from "lucide-react";
+import { CalendarIcon, Loader2, Bell } from "lucide-react";
 import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
 interface TaskDialogProps {
   open: boolean;
@@ -59,6 +60,8 @@ export function TaskDialog({ open, onOpenChange, taskId, onTaskCreated }: TaskDi
   const [dueDate, setDueDate] = useState<Date | undefined>();
   const [templateType, setTemplateType] = useState("");
   const [recurrencePattern, setRecurrencePattern] = useState("");
+  const [reminderDate, setReminderDate] = useState<Date | undefined>();
+  const [reminderTime, setReminderTime] = useState("");
 
   useEffect(() => {
     if (taskId && open) {
@@ -87,6 +90,16 @@ export function TaskDialog({ open, onOpenChange, taskId, onTaskCreated }: TaskDi
       setDueDate(data.due_date ? new Date(data.due_date) : undefined);
       setTemplateType(data.template_type || "");
       setRecurrencePattern(data.recurrence_pattern || "");
+      
+      // Parse reminder_time if exists
+      if (data.reminder_time) {
+        const reminderDateTime = new Date(data.reminder_time);
+        setReminderDate(reminderDateTime);
+        setReminderTime(format(reminderDateTime, "HH:mm"));
+      } else {
+        setReminderDate(undefined);
+        setReminderTime("");
+      }
     } catch (error: any) {
       toast({
         title: "Error loading task",
@@ -104,6 +117,18 @@ export function TaskDialog({ open, onOpenChange, taskId, onTaskCreated }: TaskDi
     setDueDate(undefined);
     setTemplateType("");
     setRecurrencePattern("");
+    setReminderDate(undefined);
+    setReminderTime("");
+  };
+
+  // Combine reminder date and time into ISO string
+  const getReminderDateTime = (): string | null => {
+    if (!reminderDate || !reminderTime) return null;
+    
+    const [hours, minutes] = reminderTime.split(":").map(Number);
+    const combined = new Date(reminderDate);
+    combined.setHours(hours, minutes, 0, 0);
+    return combined.toISOString();
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -121,6 +146,7 @@ export function TaskDialog({ open, onOpenChange, taskId, onTaskCreated }: TaskDi
         due_date: dueDate?.toISOString() || null,
         template_type: templateType || null,
         recurrence_pattern: recurrencePattern || null,
+        reminder_time: getReminderDateTime(),
       };
 
       if (taskId) {
@@ -276,6 +302,55 @@ export function TaskDialog({ open, onOpenChange, taskId, onTaskCreated }: TaskDi
                 <SelectItem value="yearly">Yearly</SelectItem>
               </SelectContent>
             </Select>
+          </div>
+
+          {/* Reminder Section */}
+          <div className="space-y-3 p-4 rounded-lg border border-border bg-muted/30">
+            <div className="flex items-center gap-2 text-sm font-medium">
+              <Bell className="h-4 w-4 text-primary" />
+              <span>Reminder Notification</span>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <Label>Reminder Date</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button variant="outline" className={cn(
+                      "w-full justify-start text-left font-normal text-sm",
+                      !reminderDate && "text-muted-foreground"
+                    )}>
+                      <CalendarIcon className="mr-2 h-4 w-4" />
+                      {reminderDate ? format(reminderDate, "PPP") : "Pick a date"}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={reminderDate}
+                      onSelect={setReminderDate}
+                      initialFocus
+                      className="pointer-events-auto"
+                      disabled={(date) => date < new Date(new Date().setHours(0, 0, 0, 0))}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+              <div>
+                <Label htmlFor="reminderTime">Reminder Time</Label>
+                <Input
+                  id="reminderTime"
+                  type="time"
+                  value={reminderTime}
+                  onChange={(e) => setReminderTime(e.target.value)}
+                  className="w-full"
+                />
+              </div>
+            </div>
+            {reminderDate && reminderTime && (
+              <p className="text-xs text-muted-foreground">
+                You'll receive a notification on {format(reminderDate, "PPP")} at {reminderTime}
+              </p>
+            )}
           </div>
 
           <div className="flex flex-col sm:flex-row justify-end gap-2 pt-4">

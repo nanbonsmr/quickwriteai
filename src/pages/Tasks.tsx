@@ -9,6 +9,7 @@ import { TaskListView } from "@/components/tasks/TaskListView";
 import { TaskCalendarView } from "@/components/tasks/TaskCalendarView";
 import { TaskAnalytics } from "@/components/tasks/TaskAnalytics";
 import { useTaskNotifications } from "@/hooks/useTaskNotifications";
+import { useTaskReminders } from "@/hooks/useTaskReminders";
 
 export default function Tasks() {
   const { user } = useAuth();
@@ -22,6 +23,9 @@ export default function Tasks() {
   }, []);
   
   useTaskNotifications(handleRealtimeUpdate);
+  
+  // Task reminder notifications
+  useTaskReminders();
 
   const handleTaskCreated = () => {
     setRefreshTrigger(prev => prev + 1);

@@ -116,12 +116,13 @@ export default function Dashboard() {
         console.log('Final plan info:', { planId, userId });
         
         let verificationSuccessful = false;
+        let verificationError = '';
         
         if (planId && userId) {
           try {
             console.log('Calling verify-payment with:', { userId, planId });
             
-            // Call verify-payment edge function to update subscription
+            // Call verify-payment edge function to verify with Dodo and update subscription
             const { data, error } = await supabase.functions.invoke('verify-payment', {
               body: { userId, planId }
             });
@@ -130,15 +131,20 @@ export default function Dashboard() {
             
             if (error) {
               console.error('Error verifying payment:', error);
-            } else if (data?.success) {
-              console.log('Subscription updated successfully:', data);
+              verificationError = error.message || 'Payment verification failed';
+            } else if (data?.success && data?.verified) {
+              console.log('Payment verified and subscription updated:', data);
               verificationSuccessful = true;
+            } else if (data?.error) {
+              verificationError = data.error;
             }
-          } catch (error) {
+          } catch (error: any) {
             console.error('Error processing payment verification:', error);
+            verificationError = error.message || 'Payment verification failed';
           }
         } else {
           console.log('Missing planId or userId for verification');
+          verificationError = 'Missing payment information';
         }
         
         // Clear pending plan data from both storages
@@ -148,16 +154,18 @@ export default function Dashboard() {
         // Refresh profile to get updated subscription status
         await refreshProfile();
         
-        // Only show success toast if verification was successful
+        // Show appropriate toast based on verification result
         if (verificationSuccessful) {
           toast({
             title: "Payment successful!",
             description: "Your subscription has been updated. Thank you for upgrading!",
           });
         } else {
+          // Payment was not verified - show error
           toast({
-            title: "Payment processing",
-            description: "Your payment is being processed. Your subscription will be updated shortly.",
+            title: "Payment not verified",
+            description: verificationError || "We couldn't verify your payment. If you completed the payment, please contact support.",
+            variant: "destructive",
           });
         }
         

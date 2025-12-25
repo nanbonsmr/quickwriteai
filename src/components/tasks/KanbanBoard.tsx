@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, TouchEvent } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { TaskCard } from "./TaskCard";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2 } from "lucide-react";
+import { Loader2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   DndContext,
   DragEndEvent,
@@ -34,10 +35,10 @@ interface KanbanBoardProps {
 }
 
 const STATUS_COLUMNS = [
-  { id: 'todo', label: 'To-Do', color: 'border-blue-500' },
-  { id: 'in_progress', label: 'In Progress', color: 'border-yellow-500' },
-  { id: 'review', label: 'Review', color: 'border-purple-500' },
-  { id: 'completed', label: 'Completed', color: 'border-green-500' },
+  { id: 'todo', label: 'To-Do', color: 'border-blue-500', bgColor: 'bg-blue-500' },
+  { id: 'in_progress', label: 'In Progress', color: 'border-yellow-500', bgColor: 'bg-yellow-500' },
+  { id: 'review', label: 'Review', color: 'border-purple-500', bgColor: 'bg-purple-500' },
+  { id: 'completed', label: 'Completed', color: 'border-green-500', bgColor: 'bg-green-500' },
 ];
 
 export function KanbanBoard({ refreshTrigger, onEditTask }: KanbanBoardProps) {
@@ -46,6 +47,12 @@ export function KanbanBoard({ refreshTrigger, onEditTask }: KanbanBoardProps) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
+  const [activeColumnIndex, setActiveColumnIndex] = useState(0);
+  
+  // Touch/swipe handling
+  const touchStartX = useRef<number>(0);
+  const touchEndX = useRef<number>(0);
+  const minSwipeDistance = 50;
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -168,6 +175,33 @@ export function KanbanBoard({ refreshTrigger, onEditTask }: KanbanBoardProps) {
     }
   };
 
+  // Swipe handlers
+  const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e: TouchEvent<HTMLDivElement>) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    const swipeDistance = touchStartX.current - touchEndX.current;
+    
+    if (Math.abs(swipeDistance) > minSwipeDistance) {
+      if (swipeDistance > 0 && activeColumnIndex < STATUS_COLUMNS.length - 1) {
+        // Swipe left - next column
+        setActiveColumnIndex(prev => prev + 1);
+      } else if (swipeDistance < 0 && activeColumnIndex > 0) {
+        // Swipe right - previous column
+        setActiveColumnIndex(prev => prev - 1);
+      }
+    }
+  };
+
+  const goToColumn = (index: number) => {
+    setActiveColumnIndex(index);
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -175,6 +209,9 @@ export function KanbanBoard({ refreshTrigger, onEditTask }: KanbanBoardProps) {
       </div>
     );
   }
+
+  const activeColumn = STATUS_COLUMNS[activeColumnIndex];
+  const activeColumnTasks = tasks.filter(task => task.status === activeColumn.id);
 
   return (
     <DndContext 
@@ -184,28 +221,73 @@ export function KanbanBoard({ refreshTrigger, onEditTask }: KanbanBoardProps) {
       autoScroll={{ enabled: false }}
     >
       <div className="w-full relative">
-        {/* Mobile: Vertical stack */}
-        <div className="sm:hidden space-y-4">
-          {STATUS_COLUMNS.map(column => {
-            const columnTasks = tasks.filter(task => task.status === column.id);
+        {/* Mobile: Swipeable single column view */}
+        <div className="sm:hidden">
+          {/* Column indicators and navigation */}
+          <div className="flex items-center justify-between mb-3">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => goToColumn(Math.max(0, activeColumnIndex - 1))}
+              disabled={activeColumnIndex === 0}
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </Button>
             
-            return (
-              <DroppableColumn key={column.id} id={column.id} isOver={false}>
-                <div className={`border-t-4 ${column.color} bg-card rounded-lg p-3`}>
-                  <div className="flex items-center justify-between mb-3">
-                    <h3 className="font-semibold text-sm">{column.label}</h3>
-                    <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
-                      {columnTasks.length}
-                    </span>
-                  </div>
-                  
+            <div className="flex items-center gap-2">
+              {STATUS_COLUMNS.map((column, index) => (
+                <button
+                  key={column.id}
+                  onClick={() => goToColumn(index)}
+                  className={`h-2 rounded-full transition-all ${
+                    index === activeColumnIndex 
+                      ? `w-6 ${column.bgColor}` 
+                      : 'w-2 bg-muted-foreground/30'
+                  }`}
+                  aria-label={`Go to ${column.label}`}
+                />
+              ))}
+            </div>
+
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => goToColumn(Math.min(STATUS_COLUMNS.length - 1, activeColumnIndex + 1))}
+              disabled={activeColumnIndex === STATUS_COLUMNS.length - 1}
+            >
+              <ChevronRight className="h-4 w-4" />
+            </Button>
+          </div>
+
+          {/* Swipeable column */}
+          <div
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+            className="touch-pan-y"
+          >
+            <DroppableColumn id={activeColumn.id} isOver={false}>
+              <div className={`border-t-4 ${activeColumn.color} bg-card rounded-lg p-3 min-h-[400px] transition-all`}>
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-semibold text-sm">{activeColumn.label}</h3>
+                  <span className="text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
+                    {activeColumnTasks.length}
+                  </span>
+                </div>
+                
+                <ScrollArea className="h-[350px] -mr-3 pr-3">
                   <div className="space-y-2">
-                    {columnTasks.length === 0 ? (
-                      <p className="text-xs text-muted-foreground text-center py-4">
-                        No tasks
-                      </p>
+                    {activeColumnTasks.length === 0 ? (
+                      <div className="flex flex-col items-center justify-center py-12 text-center">
+                        <p className="text-sm text-muted-foreground">No tasks</p>
+                        <p className="text-xs text-muted-foreground/60 mt-1">
+                          Swipe to see other columns
+                        </p>
+                      </div>
                     ) : (
-                      columnTasks.slice(0, 3).map(task => (
+                      activeColumnTasks.map(task => (
                         <TaskCard
                           key={task.id}
                           task={task}
@@ -215,16 +297,16 @@ export function KanbanBoard({ refreshTrigger, onEditTask }: KanbanBoardProps) {
                         />
                       ))
                     )}
-                    {columnTasks.length > 3 && (
-                      <p className="text-xs text-muted-foreground text-center py-2">
-                        +{columnTasks.length - 3} more tasks
-                      </p>
-                    )}
                   </div>
-                </div>
-              </DroppableColumn>
-            );
-          })}
+                </ScrollArea>
+              </div>
+            </DroppableColumn>
+          </div>
+
+          {/* Swipe hint */}
+          <p className="text-center text-xs text-muted-foreground mt-3">
+            ← Swipe to navigate columns →
+          </p>
         </div>
 
         {/* Tablet: 2-column grid */}

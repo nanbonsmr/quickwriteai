@@ -12,7 +12,7 @@ export function PublicNavbar() {
   const navLinks = [
     { href: '/', label: 'Home' },
     { href: '/features', label: 'Features' },
-    { href: '/public-pricing', label: 'Pricing' },
+    { href: '/pricing', label: 'Pricing' },
     { href: '/faq', label: 'FAQ' },
     { href: '/contact', label: 'Contact' },
   ];

@@ -68,8 +68,8 @@ serve(async (req) => {
       throw new Error(`Invalid plan ID: ${planId}`);
     }
 
-    // Use test mode URL (change to live.dodopayments.com when ready for production)
-    const baseUrl = 'https://test.dodopayments.com';
+    // Use live/production mode
+    const baseUrl = 'https://live.dodopayments.com';
 
     // Create checkout session with Dodo Payments API
     const checkoutResponse = await fetch(`${baseUrl}/checkouts`, {

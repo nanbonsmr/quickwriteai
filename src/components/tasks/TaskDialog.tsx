@@ -24,6 +24,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { CalendarIcon, Loader2, Bell } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { SubtaskList } from "./SubtaskList";
 
 interface TaskDialogProps {
   open: boolean;
@@ -352,6 +353,11 @@ export function TaskDialog({ open, onOpenChange, taskId, onTaskCreated }: TaskDi
               </p>
             )}
           </div>
+
+          {/* Subtasks Section - Only show for existing tasks */}
+          {taskId && (
+            <SubtaskList taskId={taskId} />
+          )}
 
           <div className="flex flex-col sm:flex-row justify-end gap-2 pt-4">
             <Button

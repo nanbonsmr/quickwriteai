@@ -12,6 +12,7 @@ import { Calendar, MoreVertical, Pencil, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
+import { SubtaskProgress } from "./SubtaskList";
 
 interface Task {
   id: string;
@@ -129,6 +130,9 @@ export function TaskCard({ task, onStatusChange, onEdit, onDelete }: TaskCardPro
             </Badge>
           )}
         </div>
+
+        {/* Subtask Progress */}
+        <SubtaskProgress taskId={task.id} />
 
         {task.due_date && (
           <div className={`flex items-center gap-1 text-xs ${isOverdue ? 'text-destructive' : 'text-muted-foreground'}`}>

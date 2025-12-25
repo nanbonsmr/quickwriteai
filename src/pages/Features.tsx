@@ -8,6 +8,7 @@ import {
   BarChart3, CheckCircle, ArrowRight, Users, Shield, Clock, 
   Target, Layers, Repeat, Bell, Search, Download, Globe
 } from 'lucide-react';
+import { PublicNavbar } from '@/components/PublicNavbar';
 
 const aiTemplates = [
   {
@@ -154,28 +155,7 @@ export default function Features() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Navigation */}
-      <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-lg border-b border-border/40">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate('/')}>
-              <img src="/favicon.png" alt="PeakDraft Logo" className="w-9 h-9 rounded-lg" />
-              <span className="text-lg sm:text-xl font-bold">PeakDraft</span>
-            </div>
-
-            <div className="hidden md:flex gap-6">
-              <Button variant="ghost" onClick={() => navigate('/')}>Home</Button>
-              <Button variant="ghost" onClick={() => navigate('/pricing')}>Pricing</Button>
-              <Button variant="ghost" onClick={() => navigate('/contact')}>Contact</Button>
-            </div>
-
-            <div className="flex gap-4">
-              <Button variant="ghost" onClick={() => navigate('/auth')}>Sign In</Button>
-              <Button onClick={() => navigate('/auth')}>Get Started</Button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <PublicNavbar />
 
       {/* Hero Section */}
       <section className="pt-24 sm:pt-32 pb-12 sm:pb-20 px-4 sm:px-6 lg:px-8">

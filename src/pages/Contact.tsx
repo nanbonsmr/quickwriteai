@@ -4,15 +4,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
-import { Mail, Phone, MapPin, Send, Loader2, ArrowRight, Menu, X, Sparkles } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, Loader2, ArrowRight, Sparkles } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate, Link } from 'react-router-dom';
-import { ThemeToggle } from '@/components/ThemeToggle';
-import logo from '@/assets/logo.png';
+import { PublicNavbar } from '@/components/PublicNavbar';
 
 const contactSchema = z.object({
   name: z.string().trim().min(1, { message: "Name is required" }).max(100, { message: "Name must be less than 100 characters" }),
@@ -26,7 +25,6 @@ type ContactFormData = z.infer<typeof contactSchema>;
 export default function Contact() {
   const navigate = useNavigate();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
   const {
     register,
@@ -62,96 +60,12 @@ export default function Contact() {
     }
   };
 
-  const navLinks = [
-    { href: '/', label: 'Home' },
-    { href: '/#features', label: 'Features' },
-    { href: '/#templates', label: 'Templates' },
-    { href: '/public-pricing', label: 'Pricing' },
-  ];
-
   return (
     <div className="min-h-screen bg-background">
-      {/* Navbar */}
-      <header className="sticky top-0 z-50 border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex h-16 items-center justify-between">
-            {/* Logo */}
-            <Link to="/" className="flex items-center gap-2 group">
-              <img src={logo} alt="PeakDraft" className="h-8 w-auto" />
-              <span className="text-xl font-bold bg-gradient-to-r from-primary to-primary/70 bg-clip-text text-transparent">
-                PeakDraft
-              </span>
-            </Link>
-
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center gap-8">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.label}
-                  to={link.href}
-                  className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
-                >
-                  {link.label}
-                </Link>
-              ))}
-            </div>
-
-            {/* Desktop Actions */}
-            <div className="hidden md:flex items-center gap-4">
-              <ThemeToggle />
-              <Button variant="ghost" onClick={() => navigate('/auth')}>
-                Sign In
-              </Button>
-              <Button onClick={() => navigate('/auth')} className="group">
-                Get Started
-                <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-              </Button>
-            </div>
-
-            {/* Mobile Menu Button */}
-            <div className="flex md:hidden items-center gap-2">
-              <ThemeToggle />
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              >
-                {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-              </Button>
-            </div>
-          </div>
-
-          {/* Mobile Navigation */}
-          {mobileMenuOpen && (
-            <div className="md:hidden py-4 border-t border-border/40 animate-fade-in">
-              <div className="flex flex-col gap-4">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.label}
-                    to={link.href}
-                    className="text-sm font-medium text-muted-foreground hover:text-primary transition-colors"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-                <div className="flex flex-col gap-2 pt-4 border-t border-border/40">
-                  <Button variant="ghost" onClick={() => navigate('/auth')} className="justify-start">
-                    Sign In
-                  </Button>
-                  <Button onClick={() => navigate('/auth')}>
-                    Get Started
-                    <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-            </div>
-          )}
-        </nav>
-      </header>
+      <PublicNavbar />
 
       {/* Hero Section */}
-      <section className="relative py-16 sm:py-24 px-4 overflow-hidden">
+      <section className="relative py-16 sm:py-24 px-4 overflow-hidden pt-24">
         {/* Background decoration */}
         <div className="absolute inset-0 -z-10">
           <div className="absolute top-0 left-1/4 w-96 h-96 bg-primary/10 rounded-full blur-3xl" />
@@ -176,7 +90,7 @@ export default function Contact() {
       <section className="py-8 px-4">
         <div className="container mx-auto max-w-5xl">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-            <Card 
+            <Card
               className="group p-6 text-center hover:shadow-elegant transition-all duration-300 cursor-pointer border-2 hover:border-primary/50 bg-gradient-to-br from-background to-muted/30"
               onClick={() => window.location.href = 'mailto:nanbondev@gmail.com'}
             >

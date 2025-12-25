@@ -17,17 +17,87 @@ serve(async (req) => {
       Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
     );
 
-    const { userId, planId } = await req.json();
+    const { userId, planId, paymentId } = await req.json();
 
-    console.log('Verifying payment and updating subscription:', { 
+    console.log('Verifying payment:', { 
       userId, 
       planId,
+      paymentId,
       timestamp: new Date().toISOString()
     });
 
     if (!userId || !planId) {
       throw new Error('Missing required fields: userId and planId');
     }
+
+    const dodoApiKey = Deno.env.get('DODO_PAYMENTS_API_KEY');
+    if (!dodoApiKey) {
+      throw new Error('Dodo Payments API key not configured');
+    }
+
+    // Verify payment with Dodo Payments API by checking recent payments for this user
+    const baseUrl = 'https://live.dodopayments.com';
+    
+    // Get recent payments to find one matching this user and plan
+    const paymentsResponse = await fetch(`${baseUrl}/payments?limit=10`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${dodoApiKey}`,
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (!paymentsResponse.ok) {
+      const errorText = await paymentsResponse.text();
+      console.error('Failed to fetch payments from Dodo:', errorText);
+      throw new Error('Failed to verify payment with payment provider');
+    }
+
+    const paymentsData = await paymentsResponse.json();
+    console.log('Recent payments from Dodo:', JSON.stringify(paymentsData, null, 2));
+
+    // Find a successful payment for this user and plan
+    const payments = paymentsData.items || paymentsData || [];
+    const validPayment = payments.find((payment: any) => {
+      const metadata = payment.metadata || {};
+      const isCorrectUser = metadata.user_id === userId;
+      const isCorrectPlan = metadata.plan_id === planId;
+      const isSuccessful = payment.status === 'succeeded' || payment.status === 'completed';
+      
+      // Check if payment was made within the last hour
+      const paymentDate = new Date(payment.created_at || payment.created);
+      const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+      const isRecent = paymentDate > oneHourAgo;
+
+      console.log('Checking payment:', {
+        paymentId: payment.id,
+        status: payment.status,
+        metadata,
+        isCorrectUser,
+        isCorrectPlan,
+        isSuccessful,
+        isRecent
+      });
+
+      return isCorrectUser && isCorrectPlan && isSuccessful && isRecent;
+    });
+
+    if (!validPayment) {
+      console.log('No valid payment found for user:', userId, 'plan:', planId);
+      return new Response(
+        JSON.stringify({ 
+          success: false, 
+          error: 'No valid payment found. Please complete the payment process.',
+          verified: false
+        }),
+        { 
+          status: 400,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+        }
+      );
+    }
+
+    console.log('Valid payment found:', validPayment.id);
 
     // Map plan IDs to subscription details
     const planConfig: Record<string, { words_limit: number; plan_name: string }> = {
@@ -55,7 +125,6 @@ serve(async (req) => {
 
     // Check if already on this plan (avoid duplicate updates)
     if (currentProfile?.subscription_plan === config.plan_name) {
-      // Check if subscription was updated within the last 5 minutes
       const startDate = currentProfile.subscription_start_date ? new Date(currentProfile.subscription_start_date) : null;
       const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
       
@@ -65,7 +134,8 @@ serve(async (req) => {
           JSON.stringify({ 
             success: true, 
             message: 'Subscription already active',
-            plan: config.plan_name
+            plan: config.plan_name,
+            verified: true
           }),
           { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
@@ -102,7 +172,9 @@ serve(async (req) => {
         success: true, 
         message: 'Subscription updated successfully',
         plan: config.plan_name,
-        words_limit: config.words_limit
+        words_limit: config.words_limit,
+        verified: true,
+        paymentId: validPayment.id
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
@@ -113,7 +185,8 @@ serve(async (req) => {
     return new Response(
       JSON.stringify({ 
         success: false, 
-        error: error.message || 'Failed to verify payment' 
+        error: error.message || 'Failed to verify payment',
+        verified: false
       }),
       { 
         status: 400,

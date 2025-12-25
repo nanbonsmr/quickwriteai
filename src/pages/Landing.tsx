@@ -856,28 +856,12 @@ export default function Landing() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 max-w-4xl mx-auto mb-6 sm:mb-8">
-            <Card className="p-4 sm:p-6 text-center hover:shadow-elegant transition-all cursor-pointer" onClick={() => window.location.href = 'mailto:support@peakdraft.com'}>
+            <Card className="p-4 sm:p-6 text-center hover:shadow-elegant transition-all cursor-pointer" onClick={() => window.location.href = 'mailto:nanbondev@gmail.com'}>
               <div className="w-10 sm:w-12 h-10 sm:h-12 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-3 sm:mb-4">
                 <Mail className="h-5 sm:h-6 w-5 sm:w-6 text-primary" />
               </div>
               <h3 className="text-sm sm:text-base font-bold mb-1 sm:mb-2">Email Us</h3>
-              <p className="text-xs sm:text-sm text-muted-foreground break-all">support@peakdraft.com</p>
-            </Card>
-
-            <Card className="p-4 sm:p-6 text-center hover:shadow-elegant transition-all cursor-pointer" onClick={() => window.location.href = 'tel:+15551234567'}>
-              <div className="w-10 sm:w-12 h-10 sm:h-12 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                <Phone className="h-5 sm:h-6 w-5 sm:w-6 text-primary" />
-              </div>
-              <h3 className="text-sm sm:text-base font-bold mb-1 sm:mb-2">Call Us</h3>
-              <p className="text-xs sm:text-sm text-muted-foreground">+1 (555) 123-4567</p>
-            </Card>
-
-            <Card className="p-4 sm:p-6 text-center hover:shadow-elegant transition-all">
-              <div className="w-10 sm:w-12 h-10 sm:h-12 rounded-lg bg-primary/10 flex items-center justify-center mx-auto mb-3 sm:mb-4">
-                <MapPin className="h-5 sm:h-6 w-5 sm:w-6 text-primary" />
-              </div>
-              <h3 className="text-sm sm:text-base font-bold mb-1 sm:mb-2">Visit Us</h3>
-              <p className="text-xs sm:text-sm text-muted-foreground">123 AI Street, Tech City</p>
+              <p className="text-xs sm:text-sm text-muted-foreground break-all">nanbondev@gmail.com</p>
             </Card>
           </div>
 

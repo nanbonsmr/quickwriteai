@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Sparkles, Zap, Shield, TrendingUp, Users, Star, ArrowRight, CheckCircle, PenTool, Check, X, Mail, Phone, MapPin, Menu, LayoutGrid, Calendar, BarChart3, FileText, Hash, Video, Image, MessageSquare, Briefcase } from 'lucide-react';
+import { Sparkles, Zap, Shield, TrendingUp, Users, Star, ArrowRight, CheckCircle, PenTool, Check, X, Mail, Phone, MapPin, Menu, LayoutGrid, Calendar, BarChart3, FileText, Hash, Video, Image, MessageSquare, Briefcase, RefreshCw, Columns2, Sliders } from 'lucide-react';
 import featuresShowcase from '@/assets/features-showcase-new.jpg';
 import workflowIllustration from '@/assets/workflow-illustration-new.jpg';
 import abstractBg from '@/assets/abstract-bg.jpg';
@@ -24,14 +24,6 @@ const comparisonFeatures = [
     { name: 'Response time', basic: '48 hours', pro: '24 hours', enterprise: '1 hour' },
     { name: 'Team collaboration', basic: false, pro: true, enterprise: true },
     { name: 'User seats', basic: '1', pro: '5', enterprise: 'Unlimited' },
-  ]},
-  { category: 'Advanced Features', features: [
-    { name: 'API access', basic: false, pro: true, enterprise: true },
-    { name: 'Advanced analytics', basic: false, pro: true, enterprise: true },
-    { name: 'White-label options', basic: false, pro: false, enterprise: true },
-    { name: 'Custom integrations', basic: false, pro: false, enterprise: true },
-    { name: 'Priority processing', basic: false, pro: true, enterprise: true },
-    { name: 'Dedicated account manager', basic: false, pro: false, enterprise: true },
   ]},
   { category: 'Security & Compliance', features: [
     { name: 'Data encryption', basic: true, pro: true, enterprise: true },
@@ -407,7 +399,7 @@ export default function Landing() {
             {[
               { icon: PenTool, title: 'Letters', color: 'from-emerald-500 to-green-600' },
               { icon: Star, title: 'Product Desc', color: 'from-yellow-500 to-orange-600' },
-              { icon: Sparkles, title: 'Humanize', color: 'from-fuchsia-500 to-pink-600' },
+              { icon: Sparkles, title: 'AI Humanizer', color: 'from-fuchsia-500 to-pink-600', badge: 'Advanced' },
               { icon: Image, title: 'Image Prompts', color: 'from-cyan-500 to-blue-600' },
               { icon: MessageSquare, title: 'ChatGPT', color: 'from-green-500 to-emerald-600' },
               { icon: TrendingUp, title: 'Post Ideas', color: 'from-purple-500 to-violet-600' },
@@ -415,16 +407,61 @@ export default function Landing() {
             ].map((template, idx) => (
               <Card 
                 key={idx} 
-                className={`p-4 text-center hover:shadow-elegant transition-all duration-300 hover:scale-105 bg-card/50 backdrop-blur scroll-animate ${
+                className={`p-4 text-center hover:shadow-elegant transition-all duration-300 hover:scale-105 bg-card/50 backdrop-blur scroll-animate relative ${
                   templatesInView ? 'animate-fade-in-scale' : ''
                 } animation-delay-${(idx + 1) * 50 + 350}`}
               >
+                {'badge' in template && (
+                  <Badge className="absolute -top-2 -right-2 text-[10px] bg-gradient-to-r from-fuchsia-500 to-pink-600 text-white border-0">
+                    {template.badge}
+                  </Badge>
+                )}
                 <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${template.color} flex items-center justify-center mx-auto mb-2`}>
                   <template.icon className="h-5 w-5 text-white" />
                 </div>
                 <h3 className="text-xs sm:text-sm font-semibold">{template.title}</h3>
               </Card>
             ))}
+          </div>
+
+          {/* NEW: Advanced AI Humanizer Feature Highlight */}
+          <div className={`mt-12 max-w-4xl mx-auto scroll-animate ${templatesInView ? 'animate-fade-up' : ''}`}>
+            <Card className="p-6 sm:p-8 bg-gradient-to-br from-fuchsia-500/10 via-pink-500/5 to-purple-500/10 border-fuchsia-500/20">
+              <div className="flex flex-col lg:flex-row items-center gap-6">
+                <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-fuchsia-500 to-pink-600 flex items-center justify-center flex-shrink-0">
+                  <Sparkles className="h-8 w-8 text-white" />
+                </div>
+                <div className="flex-1 text-center lg:text-left">
+                  <div className="flex items-center justify-center lg:justify-start gap-2 mb-2">
+                    <h3 className="text-xl sm:text-2xl font-bold">Advanced AI Text Humanizer</h3>
+                    <Badge className="bg-fuchsia-500 text-white border-0">New</Badge>
+                  </div>
+                  <p className="text-muted-foreground mb-4">
+                    Transform AI-generated content into natural, human-like text with our most advanced humanization engine.
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-lg bg-fuchsia-500/20 flex items-center justify-center">
+                        <Columns2 className="h-4 w-4 text-fuchsia-500" />
+                      </div>
+                      <span className="text-sm font-medium">Side-by-Side Comparison</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-lg bg-fuchsia-500/20 flex items-center justify-center">
+                        <Sliders className="h-4 w-4 text-fuchsia-500" />
+                      </div>
+                      <span className="text-sm font-medium">Adjustable Intensity</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-lg bg-fuchsia-500/20 flex items-center justify-center">
+                        <RefreshCw className="h-4 w-4 text-fuchsia-500" />
+                      </div>
+                      <span className="text-sm font-medium">Quick Regenerate</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </Card>
           </div>
         </div>
       </section>

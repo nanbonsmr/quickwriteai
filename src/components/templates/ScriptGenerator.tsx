@@ -9,7 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
-import { Video, Sparkles, Copy, CreditCard, Lightbulb } from 'lucide-react';
+import { Video, Sparkles, Copy, CreditCard, Lightbulb, RefreshCw } from 'lucide-react';
 import { useRecentContent } from '@/hooks/useRecentContent';
 import { RecentContent } from './RecentContent';
 
@@ -262,15 +262,26 @@ export default function ScriptGenerator() {
           <CardHeader>
             <CardTitle>Generated Script</CardTitle>
             {generatedContent && (
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={copyToClipboard}
-                className="w-fit"
-              >
-                <Copy className="w-4 h-4 mr-2" />
-                Copy Content
-              </Button>
+              <div className="flex flex-wrap gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={handleGenerate}
+                  disabled={isGenerating}
+                >
+                  <RefreshCw className={`w-4 h-4 mr-2 ${isGenerating ? 'animate-spin' : ''}`} />
+                  Regenerate
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={copyToClipboard}
+                  className="w-fit"
+                >
+                  <Copy className="w-4 h-4 mr-2" />
+                  Copy Content
+                </Button>
+              </div>
             )}
           </CardHeader>
           <CardContent>

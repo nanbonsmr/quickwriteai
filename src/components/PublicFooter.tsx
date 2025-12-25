@@ -58,17 +58,17 @@ const PublicFooter = () => {
             <h3 className="font-semibold text-foreground mb-4">Legal</h3>
             <ul className="space-y-2">
               <li>
-                <Link to="/privacy-policy" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                <Link to="/privacy" className="text-muted-foreground hover:text-primary transition-colors text-sm">
                   Privacy Policy
                 </Link>
               </li>
               <li>
-                <Link to="/terms-and-conditions" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                <Link to="/terms" className="text-muted-foreground hover:text-primary transition-colors text-sm">
                   Terms & Conditions
                 </Link>
               </li>
               <li>
-                <Link to="/refund-policy" className="text-muted-foreground hover:text-primary transition-colors text-sm">
+                <Link to="/refund" className="text-muted-foreground hover:text-primary transition-colors text-sm">
                   Refund Policy
                 </Link>
               </li>

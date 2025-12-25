@@ -10,7 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
-import { MessageSquare, Sparkles, Copy, CreditCard, Lightbulb, Hash } from 'lucide-react';
+import { MessageSquare, Sparkles, Copy, CreditCard, Lightbulb, Hash, RefreshCw } from 'lucide-react';
 import { ExportDropdown } from '@/components/ExportDropdown';
 import { useRecentContent } from '@/hooks/useRecentContent';
 import { RecentContent } from './RecentContent';
@@ -282,7 +282,16 @@ export default function SocialMediaGenerator() {
           <CardHeader>
             <CardTitle>Generated Post</CardTitle>
             {generatedContent && (
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={handleGenerate}
+                  disabled={isGenerating}
+                >
+                  <RefreshCw className={`w-4 h-4 mr-2 ${isGenerating ? 'animate-spin' : ''}`} />
+                  Regenerate
+                </Button>
                 <Button 
                   variant="outline" 
                   size="sm" 

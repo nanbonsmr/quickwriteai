@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2, Copy, Bot, Sparkles, Lightbulb } from 'lucide-react';
+import { Loader2, Copy, Bot, Sparkles, Lightbulb, RefreshCw } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -190,10 +190,16 @@ export default function ChatGPTPromptGenerator() {
             <CardTitle className="flex items-center justify-between">
               Generated Prompt
               {generatedContent && (
-                <Button variant="outline" size="sm" onClick={copyToClipboard}>
-                  <Copy className="h-4 w-4 mr-2" />
-                  Copy
-                </Button>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" onClick={handleGenerate} disabled={isGenerating}>
+                    <RefreshCw className={`h-4 w-4 mr-2 ${isGenerating ? 'animate-spin' : ''}`} />
+                    Regenerate
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={copyToClipboard}>
+                    <Copy className="h-4 w-4 mr-2" />
+                    Copy
+                  </Button>
+                </div>
               )}
             </CardTitle>
           </CardHeader>

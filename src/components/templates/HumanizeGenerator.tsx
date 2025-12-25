@@ -30,7 +30,8 @@ import {
   Newspaper,
   ArrowLeftRight,
   Columns2,
-  FileOutput
+  FileOutput,
+  RefreshCw
 } from 'lucide-react';
 import { useRecentContent } from '@/hooks/useRecentContent';
 import { RecentContent } from './RecentContent';
@@ -305,7 +306,16 @@ ${prompt}`;
                 Result
               </CardTitle>
               {generatedContent && (
-                <div className="flex items-center gap-2">
+                <div className="flex flex-wrap items-center gap-2">
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={handleGenerate}
+                    disabled={isGenerating}
+                  >
+                    <RefreshCw className={`w-4 h-4 mr-1 ${isGenerating ? 'animate-spin' : ''}`} />
+                    Regenerate
+                  </Button>
                   <div className="flex items-center border rounded-lg p-1">
                     <Button
                       variant={viewMode === 'result' ? 'default' : 'ghost'}

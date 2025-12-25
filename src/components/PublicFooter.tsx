@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Sparkles, Mail, Phone, MapPin } from "lucide-react";
+import { Mail, Phone, MapPin } from "lucide-react";
 
 const PublicFooter = () => {
   const currentYear = new Date().getFullYear();
@@ -11,13 +11,11 @@ const PublicFooter = () => {
           {/* Brand */}
           <div className="space-y-4">
             <Link to="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-gradient-to-br from-primary to-primary/70 rounded-lg flex items-center justify-center">
-                <Sparkles className="w-5 h-5 text-primary-foreground" />
-              </div>
-              <span className="text-xl font-bold text-foreground">ContentAI</span>
+              <img src="/favicon.png" alt="PeakDraft Logo" className="w-8 h-8 rounded-lg" />
+              <span className="text-xl font-bold text-foreground">PeakDraft</span>
             </Link>
             <p className="text-muted-foreground text-sm">
-              Transform your content creation with AI-powered tools designed for modern creators.
+              AI content generator with 14+ templates and built-in task management. Create blog posts, social media content, emails & more.
             </p>
           </div>
 
@@ -98,7 +96,7 @@ const PublicFooter = () => {
         {/* Bottom Bar */}
         <div className="mt-12 pt-8 border-t border-border flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-muted-foreground text-sm">
-            © {currentYear} ContentAI. All rights reserved.
+            © {currentYear} PeakDraft. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
             <a href="#" className="text-muted-foreground hover:text-primary transition-colors text-sm">

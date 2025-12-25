@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Check, X, Star, Zap, Home } from 'lucide-react';
+import { Check, X, Star, Zap } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
-
+import { PublicNavbar } from '@/components/PublicNavbar';
 const plans = [
   {
     id: 'basic',
@@ -102,27 +102,9 @@ export default function PublicPricing() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Navigation */}
-      <nav className="sticky top-0 w-full z-50 bg-background/80 backdrop-blur-lg border-b border-border/40">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <Button variant="ghost" onClick={() => navigate('/')}>
-              <Home className="mr-2 h-4 w-4" />
-              Back to Home
-            </Button>
-            <div className="flex gap-4">
-              <Button variant="ghost" onClick={() => navigate('/auth')}>
-                Sign In
-              </Button>
-              <Button onClick={() => navigate('/auth')}>
-                Get Started
-              </Button>
-            </div>
-          </div>
-        </div>
-      </nav>
+      <PublicNavbar />
 
-      <div className="max-w-7xl mx-auto space-y-16 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto space-y-16 py-12 pt-24 px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center space-y-4">
           <h1 className="text-4xl sm:text-5xl font-bold tracking-tight">

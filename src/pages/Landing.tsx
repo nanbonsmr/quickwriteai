@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
-import { Sparkles, Zap, Shield, TrendingUp, Users, Star, ArrowRight, CheckCircle, PenTool, Check, X, Mail, Phone, MapPin, Menu, LayoutGrid, Calendar, BarChart3, FileText, Hash, Video, Image, MessageSquare, Briefcase, RefreshCw, Columns2, Sliders } from 'lucide-react';
+import { Sparkles, Zap, Shield, TrendingUp, Users, Star, ArrowRight, CheckCircle, PenTool, Check, X, Mail, Phone, MapPin, LayoutGrid, Calendar, BarChart3, FileText, Hash, Video, Image, MessageSquare, Briefcase, RefreshCw, Columns2, Sliders } from 'lucide-react';
 import featuresShowcase from '@/assets/features-showcase-new.jpg';
 import workflowIllustration from '@/assets/workflow-illustration-new.jpg';
 import abstractBg from '@/assets/abstract-bg.jpg';
@@ -12,7 +11,7 @@ import dashboardPreview from '@/assets/dashboard-preview.png';
 import { useAuth } from '@/contexts/AuthContext';
 import { useInView } from '@/hooks/useInView';
 import { useParallax } from '@/hooks/useParallax';
-
+import { PublicNavbar } from '@/components/PublicNavbar';
 const comparisonFeatures = [
   { category: 'Content Generation', features: [
     { name: 'Words per month', basic: '10,000', pro: '50,000', enterprise: '200,000' },
@@ -79,7 +78,6 @@ const pricingPlans = [
 
 export default function Landing() {
   const navigate = useNavigate();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const parallaxOffset = useParallax(0.3);
   const { ref: aboutRef, isInView: aboutInView } = useInView();
   const { ref: featuresRef, isInView: featuresInView } = useInView();
@@ -122,110 +120,7 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Navigation */}
-      <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-lg border-b border-border/40">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            {/* Logo */}
-            <div className="flex items-center gap-2">
-              <img src="/favicon.png" alt="PeakDraft Logo" className="w-9 h-9 rounded-lg" />
-              <span className="text-lg sm:text-xl font-bold">PeakDraft</span>
-            </div>
-
-            {/* Desktop Navigation */}
-            <div className="hidden md:flex gap-6">
-              <Button variant="ghost" onClick={() => navigate('/features')}>
-                Features
-              </Button>
-              <Button variant="ghost" onClick={() => navigate('/pricing')}>
-                Pricing
-              </Button>
-              <Button variant="ghost" onClick={() => navigate('/contact')}>
-                Contact
-              </Button>
-            </div>
-
-            {/* Desktop Auth Buttons */}
-            <div className="hidden md:flex gap-4">
-              <Button variant="ghost" onClick={() => navigate('/auth')}>
-                Sign In
-              </Button>
-              <Button onClick={() => navigate('/auth')}>
-                Get Started
-              </Button>
-            </div>
-
-            {/* Mobile Menu Button */}
-            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-              <SheetTrigger asChild className="md:hidden">
-                <Button variant="ghost" size="icon">
-                  <Menu className="h-6 w-6" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="right" className="w-[300px] sm:w-[400px]">
-                <div className="flex flex-col gap-6 mt-8">
-                  {/* Mobile Navigation Links */}
-                  <div className="flex flex-col gap-4">
-                    <Button 
-                      variant="ghost" 
-                      className="justify-start text-lg"
-                      onClick={() => {
-                        navigate('/features');
-                        setMobileMenuOpen(false);
-                      }}
-                    >
-                      Features
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      className="justify-start text-lg"
-                      onClick={() => {
-                        navigate('/pricing');
-                        setMobileMenuOpen(false);
-                      }}
-                    >
-                      Pricing
-                    </Button>
-                    <Button 
-                      variant="ghost" 
-                      className="justify-start text-lg"
-                      onClick={() => {
-                        navigate('/contact');
-                        setMobileMenuOpen(false);
-                      }}
-                    >
-                      Contact
-                    </Button>
-                  </div>
-
-                  {/* Mobile Auth Buttons */}
-                  <div className="flex flex-col gap-3 pt-6 border-t">
-                    <Button 
-                      variant="outline" 
-                      className="w-full"
-                      onClick={() => {
-                        navigate('/auth');
-                        setMobileMenuOpen(false);
-                      }}
-                    >
-                      Sign In
-                    </Button>
-                    <Button 
-                      className="w-full"
-                      onClick={() => {
-                        navigate('/auth');
-                        setMobileMenuOpen(false);
-                      }}
-                    >
-                      Get Started
-                    </Button>
-                  </div>
-                </div>
-              </SheetContent>
-            </Sheet>
-          </div>
-        </div>
-      </nav>
+      <PublicNavbar />
 
       {/* Hero Section with 3D Animation */}
       <section className="relative pt-24 sm:pt-32 pb-12 sm:pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">

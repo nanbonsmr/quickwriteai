@@ -68,14 +68,15 @@ export default function ChatGPTPromptGenerator() {
       const { data, error } = await supabase.functions.invoke('generate-content', {
         body: { 
           prompt: enhancedPrompt,
-          templateType: 'chatgpt-prompt'
+          template_type: 'chatgpt-prompt',
+          language: 'en'
         }
       });
 
       if (error) throw error;
 
-      const content = data.content;
-      const wordCount = content.split(/\s+/).length;
+      const content = data.generated_content;
+      const wordCount = data.word_count || content.split(/\s+/).length;
 
       setGeneratedContent(content);
 

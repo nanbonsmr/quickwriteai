@@ -58,7 +58,7 @@ Deno.serve(async (req) => {
         subscription_plan: 'free',
         subscription_start_date: null,
         subscription_end_date: null,
-        words_limit: 500, // Reset to free plan limit
+        words_limit: 5000, // Reset to free plan limit
         updated_at: new Date().toISOString()
       })
       .in('id', expiredUserIds)

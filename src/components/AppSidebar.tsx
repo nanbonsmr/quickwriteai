@@ -1,10 +1,6 @@
 import { useState, useEffect } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
-  PenTool,
-  MessageSquare,
-  Mail,
-  Megaphone,
   BarChart3,
   CreditCard,
   Settings,
@@ -15,6 +11,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
+import { WordUsageProgress } from "@/components/WordUsageProgress";
 
 import {
   Sidebar,
@@ -25,7 +22,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
 
@@ -115,6 +111,13 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {/* Word Usage Progress */}
+        {state !== "collapsed" && (
+          <div className="mt-auto border-t border-sidebar-border">
+            <WordUsageProgress compact />
+          </div>
+        )}
 
       </SidebarContent>
     </Sidebar>

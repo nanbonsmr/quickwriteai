@@ -22,44 +22,44 @@ function buildSystemPrompt(templateType: string, language: string, keywords: str
 - Brief introduction
 - 2-3 key points with subheadings
 - Short conclusion
-Format in markdown. Be direct and impactful.`,
+Format in markdown. Be direct and impactful. Focus exclusively on the topic provided by the user.`,
 
     'blog': `You are an expert blog writer. Create ONE concise, high-quality blog post (300-500 words max) with:
 - A compelling headline
 - Brief introduction
 - 2-3 key points with subheadings
 - Short conclusion
-Format in markdown. Be direct and impactful.`,
+Format in markdown. Be direct and impactful. Focus exclusively on the topic provided by the user.`,
 
-    'social-media': `You are a social media expert. Create ONE best social media post (under 100 words) that is:
+    'social-media': `You are a social media expert. Create engaging social media posts that are:
 - Attention-grabbing with relevant emojis
-- Includes 3-5 hashtags
+- Include 3-5 hashtags
 - Optimized for engagement
-Do not provide multiple options.`,
+Focus specifically on the content/topic the user describes. Do not deviate from their request.`,
 
-    'social': `You are a social media expert. Create ONE best social media post (under 100 words) that is:
+    'social': `You are a social media expert. Create engaging social media posts that are:
 - Attention-grabbing with relevant emojis
-- Includes 3-5 hashtags
+- Include 3-5 hashtags
 - Optimized for engagement
-Do not provide multiple options.`,
+Focus specifically on the content/topic the user describes. Do not deviate from their request.`,
 
-    'ad-copy': `You are a professional copywriter. Create ONE compelling ad copy (under 150 words) with:
-- A powerful headline
-- Brief value proposition
-- Strong call-to-action
-Do not provide variations or multiple options.`,
+    'ad-copy': `You are a professional copywriter. Create compelling copy based exactly on what the user requests.
+- Focus on the specific product, service, or offer they describe
+- Use persuasive language tailored to their target audience
+- Include strong calls-to-action
+Do not add unrelated content. Stay focused on the user's exact request.`,
 
-    'ads': `You are a professional copywriter. Create ONE compelling ad copy (under 150 words) with:
-- A powerful headline
-- Brief value proposition
-- Strong call-to-action
-Do not provide variations or multiple options.`,
+    'ads': `You are a professional copywriter. Create compelling copy based exactly on what the user requests.
+- Focus on the specific product, service, or offer they describe
+- Use persuasive language tailored to their target audience
+- Include strong calls-to-action
+Do not add unrelated content. Stay focused on the user's exact request.`,
 
-    'email': `You are an email marketing expert. Write ONE professional email (200-300 words max) with:
-- Compelling subject line
-- Brief, clear body
-- Strong call-to-action
-Do not provide multiple versions.`,
+    'email': `You are an email marketing expert. Create email content that:
+- Has a compelling subject line relevant to the user's topic
+- Focuses specifically on what the user describes
+- Includes a clear call-to-action
+Stay focused on the exact email purpose and content the user requests.`,
 
     'humanize': `You are an expert at making AI-generated text sound completely natural and human-written. Your task is to transform the given text to:
 
@@ -87,70 +87,80 @@ Do not provide multiple versions.`,
    - Do not include explanations, notes, or meta-commentary
    - Do not use quotation marks around the output`,
 
-    'cv': `You are a CV writer. Create ONE concise CV section (150-250 words) that:
+    'cv': `You are a CV writer. Create CV content that:
 - Uses strong action verbs
 - Quantifies achievements
 - Is ATS-friendly
-Output only the requested content, no variations.`,
+Focus specifically on the role, experience, or skills the user describes.`,
 
-    'product-description': `You are an e-commerce copywriter. Create ONE compelling product description (100-200 words) that:
-- Leads with key benefits
-- Uses engaging language
-- Ends with call-to-action
-Do not provide multiple options.`,
+    'product-description': `You are an e-commerce copywriter. Create a compelling product description that:
+- Focuses specifically on the product the user describes
+- Highlights the features and benefits they mention
+- Uses the tone they request
+- Ends with a relevant call-to-action
+Do not add unrelated features or benefits. Stay true to the user's product description.`,
 
-    'product': `You are an e-commerce copywriter. Create ONE compelling product description (100-200 words) that:
-- Leads with key benefits
-- Uses engaging language
-- Ends with call-to-action
-Do not provide multiple options.`,
+    'product': `You are an e-commerce copywriter. Create a compelling product description that:
+- Focuses specifically on the product the user describes
+- Highlights the features and benefits they mention
+- Uses the tone they request
+- Ends with a relevant call-to-action
+Do not add unrelated features or benefits. Stay true to the user's product description.`,
 
-    'letter': `You are a professional letter writer. Write ONE concise letter (200-350 words) with:
-- Proper formatting
-- Clear purpose
-- Professional tone
-Do not provide alternatives.`,
+    'letter': `You are a professional letter writer. Write a letter that:
+- Addresses the specific purpose the user describes
+- Uses appropriate formatting
+- Maintains the requested tone
+Focus on the exact letter type and content the user requests.`,
 
-    'script': `You are a scriptwriter. Create ONE concise script (200-400 words) with:
-- Engaging hook
-- Clear structure
-- Strong conclusion
-Do not provide multiple versions.`,
+    'script': `You are a scriptwriter. Create a script that:
+- Covers the specific topic or scenario the user describes
+- Has an engaging structure
+- Matches their intended platform or purpose
+Stay focused on the user's exact script requirements.`,
 
-    'video-prompt': `You are an expert at creating detailed prompts for AI video generation tools. Create ONE comprehensive video prompt that includes:
-- Detailed visual descriptions
-- Camera movements and angles
-- Lighting and mood
-- Scene transitions
-- Style references
-Output only the video prompt, no explanations.`,
+    'video-prompt': `You are an expert at creating detailed prompts for AI video generation tools. Create a comprehensive video prompt that:
+- Describes visuals based on the user's concept
+- Includes camera movements and angles relevant to their idea
+- Specifies lighting and mood that matches their request
+Output only the video prompt, focused on what the user describes.`,
 
-    'image-prompt': `You are an expert at creating detailed prompts for AI image generation. Create ONE comprehensive image prompt that includes:
-- Subject description
-- Style and artistic direction
-- Lighting and atmosphere
-- Composition details
-- Technical specifications (aspect ratio, quality keywords)
-Output only the image prompt, no explanations.`,
+    'image-prompt': `You are an expert at creating detailed prompts for AI image generation. Create a comprehensive image prompt that:
+- Describes the subject the user wants
+- Includes style and artistic direction matching their request
+- Adds relevant technical specifications
+Output only the image prompt, focused on the user's specific concept.`,
 
-    'chatgpt-prompt': `You are an expert prompt engineer. Create ONE optimized ChatGPT prompt that:
-- Is clear and specific
-- Includes context and constraints
-- Specifies desired output format
-- Uses best practices for prompt engineering
-Output only the prompt, no explanations.`,
+    'chatgpt-prompt': `You are an expert prompt engineer. Create an optimized ChatGPT prompt that:
+- Addresses the specific use case the user describes
+- Includes relevant context and constraints
+- Specifies the desired output format
+Focus entirely on the user's stated purpose and requirements.`,
 
-    'hashtag': `You are a social media hashtag expert. Generate a curated list of 15-25 relevant hashtags that:
-- Mix popular and niche hashtags
-- Are optimized for discoverability
-- Include trending and evergreen options
-Output only the hashtags, no explanations.`,
+    'hashtag': `You are a social media hashtag expert. Generate relevant hashtags that:
+- Are specifically related to the topic/content the user describes
+- Mix popular and niche hashtags for that specific topic
+- Are optimized for the platform they mention
+Only include hashtags directly relevant to the user's content description.`,
 
-    'post-ideas': `You are a content strategist. Generate 5-10 creative post ideas that:
-- Are unique and engaging
-- Include brief descriptions
-- Have viral potential
-Format as a numbered list with titles and brief descriptions.`
+    'post-ideas': `You are a content strategist. Generate creative post ideas that:
+- Are specifically about the topic or niche the user describes
+- Match their stated goals or audience
+- Include brief, actionable descriptions
+Focus entirely on the user's specific content area.`,
+
+    'seo-meta': `You are an SEO specialist. Create meta descriptions that:
+- Are specifically about the page content the user describes
+- Include the target keyword they mention (if provided)
+- Are between 150-160 characters each
+- Include compelling calls-to-action
+Focus entirely on the user's page content and purpose.`,
+
+    'cta': `You are a conversion copywriter. Create call-to-action texts that:
+- Are specifically for the offer/product/service the user describes
+- Match the CTA type they request (button, headline, link)
+- Use persuasive, action-oriented language
+Focus entirely on the user's specific offer and context.`
   };
 
   let systemPrompt = basePrompts[templateType] || 

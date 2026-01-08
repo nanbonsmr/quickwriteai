@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Copy, Bot, Hash, Sparkles, Lightbulb, ArrowRight, FileText, MessageSquare, Mail, ChevronDown, ShoppingBag, Search, MousePointerClick } from 'lucide-react';
+import { Loader2, Copy, Bot, Hash, Sparkles, Lightbulb, ArrowRight, FileText, MessageSquare, Mail, ChevronDown, ShoppingBag, Search, MousePointerClick, Type, Megaphone } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
@@ -77,6 +77,22 @@ const tools = [
     icon: MousePointerClick,
     color: 'text-rose-500',
     bgColor: 'bg-rose-500/10',
+  },
+  {
+    id: 'headline',
+    title: 'Headline Generator',
+    description: 'Create attention-grabbing headlines that convert',
+    icon: Type,
+    color: 'text-amber-500',
+    bgColor: 'bg-amber-500/10',
+  },
+  {
+    id: 'slogan',
+    title: 'Slogan Generator',
+    description: 'Generate memorable slogans and taglines for your brand',
+    icon: Megaphone,
+    color: 'text-indigo-500',
+    bgColor: 'bg-indigo-500/10',
   },
 ];
 
@@ -173,6 +189,8 @@ export default function FreeTools() {
                               {tool.id === 'product' && <FreeProductDescriptionGenerator />}
                               {tool.id === 'seo' && <FreeSeoMetaGenerator />}
                               {tool.id === 'cta' && <FreeCTAGenerator />}
+                              {tool.id === 'headline' && <FreeHeadlineGenerator />}
+                              {tool.id === 'slogan' && <FreeSloganGenerator />}
                             </motion.div>
                           </CardContent>
                         </motion.div>
@@ -1646,6 +1664,366 @@ function FreeCTAGenerator() {
             <div className="text-center py-12 text-muted-foreground">
               <MousePointerClick className="h-12 w-12 mx-auto mb-4 opacity-20" />
               <p className="text-sm">Your generated CTAs will appear here</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+const headlineExamples = [
+  "A landing page for a productivity app that saves time",
+  "A blog post about healthy meal prep for busy professionals",
+  "An e-commerce page selling sustainable fashion",
+];
+
+function FreeHeadlineGenerator() {
+  const [prompt, setPrompt] = useState('');
+  const [headlineType, setHeadlineType] = useState('blog');
+  const [generatedContent, setGeneratedContent] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generationsUsed, setGenerationsUsed] = useState(0);
+  const { toast } = useToast();
+
+  const MAX_FREE_GENERATIONS = 3;
+
+  const handleGenerate = async () => {
+    if (!prompt.trim()) {
+      toast({
+        title: "Error",
+        description: "Please describe what the headline is for",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (generationsUsed >= MAX_FREE_GENERATIONS) {
+      toast({
+        title: "Limit Reached",
+        description: "Sign up for free to get 5,000 words/month!",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsGenerating(true);
+
+    try {
+      const enhancedPrompt = `Generate 10 compelling ${headlineType} headlines for: "${prompt}". Make them attention-grabbing, benefit-focused, and optimized for clicks. Include a mix of: how-to, listicle, question-based, and power-word headlines. Each headline should be under 70 characters.`;
+
+      const { data, error } = await supabase.functions.invoke('generate-content', {
+        body: { 
+          prompt: enhancedPrompt,
+          template_type: 'headline',
+          language: 'en'
+        }
+      });
+
+      if (error) throw error;
+
+      setGeneratedContent(data.generated_content);
+      setGenerationsUsed(prev => prev + 1);
+
+      toast({
+        title: "Success!",
+        description: `Headlines generated (${MAX_FREE_GENERATIONS - generationsUsed - 1} free generations left)`
+      });
+    } catch (error: any) {
+      console.error('Generation error:', error);
+      toast({
+        title: "Generation Failed",
+        description: error.message || "Failed to generate headlines",
+        variant: "destructive"
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(generatedContent);
+    toast({
+      title: "Copied!",
+      description: "Headlines copied to clipboard"
+    });
+  };
+
+  return (
+    <div className="grid lg:grid-cols-2 gap-6">
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">
+            {MAX_FREE_GENERATIONS - generationsUsed} free generations remaining
+          </p>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="headlineType">Headline Type</Label>
+          <select
+            id="headlineType"
+            className="w-full px-3 py-2 border border-input bg-background rounded-md"
+            value={headlineType}
+            onChange={(e) => setHeadlineType(e.target.value)}
+          >
+            <option value="blog">Blog Post</option>
+            <option value="landing-page">Landing Page</option>
+            <option value="ad">Advertisement</option>
+            <option value="email">Email</option>
+            <option value="social">Social Media</option>
+          </select>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="headlinePrompt">What's the Headline For?</Label>
+          <Textarea
+            id="headlinePrompt"
+            placeholder="Describe your content, product, or offer..."
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            rows={4}
+          />
+        </div>
+
+        <Button 
+          onClick={handleGenerate} 
+          disabled={isGenerating || generationsUsed >= MAX_FREE_GENERATIONS}
+          className="w-full"
+        >
+          {isGenerating ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Generating...
+            </>
+          ) : (
+            <>
+              <Sparkles className="mr-2 h-4 w-4" />
+              Generate Headlines
+            </>
+          )}
+        </Button>
+
+        <div className="pt-4 border-t">
+          <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
+            <Lightbulb className="w-3 h-3" /> Try these examples:
+          </p>
+          <div className="space-y-2">
+            {headlineExamples.map((example, index) => (
+              <Button
+                key={index}
+                variant="ghost"
+                size="sm"
+                className="w-full justify-start text-left h-auto py-2 text-xs"
+                onClick={() => setPrompt(example)}
+              >
+                {example}
+              </Button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <Card className="bg-muted/30">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base flex items-center justify-between">
+            Generated Headlines
+            {generatedContent && (
+              <Button variant="outline" size="sm" onClick={copyToClipboard}>
+                <Copy className="h-4 w-4 mr-2" />
+                Copy
+              </Button>
+            )}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {generatedContent ? (
+            <pre className="whitespace-pre-wrap font-sans text-sm bg-background p-4 rounded-lg border max-h-[400px] overflow-auto">
+              {generatedContent}
+            </pre>
+          ) : (
+            <div className="text-center py-12 text-muted-foreground">
+              <Type className="h-12 w-12 mx-auto mb-4 opacity-20" />
+              <p className="text-sm">Your generated headlines will appear here</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+const sloganExamples = [
+  "A sustainable coffee brand focused on fair trade",
+  "A fitness app that makes working out fun and social",
+  "An eco-friendly cleaning products company",
+];
+
+function FreeSloganGenerator() {
+  const [prompt, setPrompt] = useState('');
+  const [style, setStyle] = useState('catchy');
+  const [generatedContent, setGeneratedContent] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generationsUsed, setGenerationsUsed] = useState(0);
+  const { toast } = useToast();
+
+  const MAX_FREE_GENERATIONS = 3;
+
+  const handleGenerate = async () => {
+    if (!prompt.trim()) {
+      toast({
+        title: "Error",
+        description: "Please describe your brand or product",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (generationsUsed >= MAX_FREE_GENERATIONS) {
+      toast({
+        title: "Limit Reached",
+        description: "Sign up for free to get 5,000 words/month!",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsGenerating(true);
+
+    try {
+      const enhancedPrompt = `Generate 10 memorable ${style} slogans/taglines for: "${prompt}". Make them short (under 10 words each), memorable, and capture the brand essence. Include a mix of: emotional appeal, benefit-focused, clever wordplay, and aspirational slogans.`;
+
+      const { data, error } = await supabase.functions.invoke('generate-content', {
+        body: { 
+          prompt: enhancedPrompt,
+          template_type: 'slogan',
+          language: 'en'
+        }
+      });
+
+      if (error) throw error;
+
+      setGeneratedContent(data.generated_content);
+      setGenerationsUsed(prev => prev + 1);
+
+      toast({
+        title: "Success!",
+        description: `Slogans generated (${MAX_FREE_GENERATIONS - generationsUsed - 1} free generations left)`
+      });
+    } catch (error: any) {
+      console.error('Generation error:', error);
+      toast({
+        title: "Generation Failed",
+        description: error.message || "Failed to generate slogans",
+        variant: "destructive"
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(generatedContent);
+    toast({
+      title: "Copied!",
+      description: "Slogans copied to clipboard"
+    });
+  };
+
+  return (
+    <div className="grid lg:grid-cols-2 gap-6">
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">
+            {MAX_FREE_GENERATIONS - generationsUsed} free generations remaining
+          </p>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="sloganStyle">Slogan Style</Label>
+          <select
+            id="sloganStyle"
+            className="w-full px-3 py-2 border border-input bg-background rounded-md"
+            value={style}
+            onChange={(e) => setStyle(e.target.value)}
+          >
+            <option value="catchy">Catchy & Memorable</option>
+            <option value="professional">Professional & Trustworthy</option>
+            <option value="playful">Playful & Fun</option>
+            <option value="inspiring">Inspiring & Aspirational</option>
+            <option value="minimalist">Minimalist & Simple</option>
+          </select>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="sloganPrompt">Describe Your Brand</Label>
+          <Textarea
+            id="sloganPrompt"
+            placeholder="Describe your brand, its values, target audience, and what makes it unique..."
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            rows={4}
+          />
+        </div>
+
+        <Button 
+          onClick={handleGenerate} 
+          disabled={isGenerating || generationsUsed >= MAX_FREE_GENERATIONS}
+          className="w-full"
+        >
+          {isGenerating ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Generating...
+            </>
+          ) : (
+            <>
+              <Sparkles className="mr-2 h-4 w-4" />
+              Generate Slogans
+            </>
+          )}
+        </Button>
+
+        <div className="pt-4 border-t">
+          <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
+            <Lightbulb className="w-3 h-3" /> Try these examples:
+          </p>
+          <div className="space-y-2">
+            {sloganExamples.map((example, index) => (
+              <Button
+                key={index}
+                variant="ghost"
+                size="sm"
+                className="w-full justify-start text-left h-auto py-2 text-xs"
+                onClick={() => setPrompt(example)}
+              >
+                {example}
+              </Button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <Card className="bg-muted/30">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base flex items-center justify-between">
+            Generated Slogans
+            {generatedContent && (
+              <Button variant="outline" size="sm" onClick={copyToClipboard}>
+                <Copy className="h-4 w-4 mr-2" />
+                Copy
+              </Button>
+            )}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {generatedContent ? (
+            <pre className="whitespace-pre-wrap font-sans text-sm bg-background p-4 rounded-lg border max-h-[400px] overflow-auto">
+              {generatedContent}
+            </pre>
+          ) : (
+            <div className="text-center py-12 text-muted-foreground">
+              <Megaphone className="h-12 w-12 mx-auto mb-4 opacity-20" />
+              <p className="text-sm">Your generated slogans will appear here</p>
             </div>
           )}
         </CardContent>

@@ -29,6 +29,7 @@ import FAQ from "./pages/FAQ";
 import PublicPricing from "./pages/PublicPricing";
 import Features from "./pages/Features";
 import ResetPassword from "./pages/ResetPassword";
+import FreeTools from "./pages/FreeTools";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -49,6 +50,7 @@ function AnimatedRoutes() {
         <Route path="/faq" element={<PageTransition><FAQ /></PageTransition>} />
         <Route path="/pricing" element={<PageTransition><PublicPricing /></PageTransition>} />
         <Route path="/features" element={<PageTransition><Features /></PageTransition>} />
+        <Route path="/free-tools" element={<PageTransition><FreeTools /></PageTransition>} />
         <Route path="/app/*" element={
           <ProtectedRoute>
             <SidebarProvider>

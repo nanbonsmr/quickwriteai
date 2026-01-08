@@ -174,7 +174,15 @@ Focus entirely on the user's specific topic and purpose.`,
 - Match the style they request (catchy, professional, playful, etc.)
 - Are short, memorable, and impactful (under 10 words each)
 - Reflect the brand's values and unique selling proposition
-Focus entirely on the user's brand description and target audience.`
+Focus entirely on the user's brand description and target audience.`,
+
+    'testimonial': `You are a customer experience writer. Create authentic-sounding testimonials that:
+- Sound natural and genuine, not overly promotional
+- Include specific details about the product/service the user describes
+- Mention real problems solved or benefits gained
+- Vary in length and style to feel authentic
+- Include fictional but realistic customer names and contexts
+Focus entirely on the user's product/service and its actual benefits.`
   };
 
   let systemPrompt = basePrompts[templateType] || 

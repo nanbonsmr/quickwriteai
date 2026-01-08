@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -10,6 +11,35 @@ import {
 } from 'lucide-react';
 import { PublicNavbar } from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
+
+const siteUrl = 'https://peakdraft.app';
+
+const jsonLdFeatures = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "PeakDraft Features",
+  "description": "Complete list of AI content generation and task management features",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "AI Content Templates",
+      "description": "14+ professional AI writing templates for blogs, social media, emails, and more"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Task Management",
+      "description": "Built-in Kanban boards, calendar views, and productivity analytics"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "Multi-Format Export",
+      "description": "Export content as PDF, DOCX, TXT or copy to clipboard"
+    }
+  ]
+};
 
 const aiTemplates = [
   {
@@ -155,7 +185,35 @@ export default function Features() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-background">
+    <>
+      <Helmet>
+        <title>Features - AI Content Templates & Task Management | PeakDraft</title>
+        <meta name="description" content="Explore 14+ AI-powered content templates for blogs, social media, emails, ad copy & more. Plus built-in task management with Kanban boards, calendar views & analytics." />
+        <meta name="keywords" content="AI content templates, blog generator, social media content, email marketing, task management, Kanban board, content calendar, productivity tools" />
+        <link rel="canonical" href={`${siteUrl}/features`} />
+        
+        {/* Open Graph */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={`${siteUrl}/features`} />
+        <meta property="og:title" content="Features - AI Content Templates & Task Management | PeakDraft" />
+        <meta property="og:description" content="14+ AI templates for content creation plus powerful task management tools. Everything you need to create and organize content." />
+        <meta property="og:image" content={`${siteUrl}/og-features.png`} />
+        
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="PeakDraft Features - AI Content & Task Management" />
+        <meta name="twitter:description" content="14+ AI templates for content creation plus powerful task management tools." />
+        
+        {/* Additional SEO */}
+        <meta name="robots" content="index, follow" />
+        
+        {/* JSON-LD Structured Data */}
+        <script type="application/ld+json">
+          {JSON.stringify(jsonLdFeatures)}
+        </script>
+      </Helmet>
+      
+    <main className="min-h-screen bg-background" role="main">
       <PublicNavbar />
 
       {/* Hero Section */}
@@ -313,6 +371,7 @@ export default function Features() {
       </section>
 
       <PublicFooter />
-    </div>
+    </main>
+    </>
   );
 }

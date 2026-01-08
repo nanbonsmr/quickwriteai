@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -13,6 +14,49 @@ import { useInView } from '@/hooks/useInView';
 import { useParallax } from '@/hooks/useParallax';
 import { PublicNavbar } from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
+
+const siteUrl = 'https://peakdraft.app';
+
+const jsonLdOrganization = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "PeakDraft",
+  "url": siteUrl,
+  "logo": `${siteUrl}/logo.png`,
+  "sameAs": []
+};
+
+const jsonLdWebsite = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "PeakDraft - AI Content Generator & Task Manager",
+  "url": siteUrl,
+  "description": "Create professional blog posts, social media content, emails & ad copy with 14+ AI templates. Organize your workflow with built-in task management.",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": `${siteUrl}/search?q={search_term_string}`,
+    "query-input": "required name=search_term_string"
+  }
+};
+
+const jsonLdSoftware = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "PeakDraft",
+  "applicationCategory": "BusinessApplication",
+  "operatingSystem": "Web",
+  "offers": {
+    "@type": "AggregateOffer",
+    "lowPrice": "9.99",
+    "highPrice": "49.99",
+    "priceCurrency": "USD"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.9",
+    "ratingCount": "50000"
+  }
+};
 const comparisonFeatures = [
   { category: 'Content Generation', features: [
     { name: 'Words per month', basic: '10,000', pro: '50,000', enterprise: '200,000' },
@@ -120,7 +164,44 @@ export default function Landing() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <>
+      <Helmet>
+        <title>PeakDraft - AI Content Generator & Task Manager | Create Content Faster</title>
+        <meta name="description" content="Create professional blog posts, social media content, emails & ad copy with 14+ AI templates. Organize your workflow with built-in task management, Kanban boards & analytics." />
+        <meta name="keywords" content="AI content generator, content creation, blog writer, social media content, email marketing, task management, Kanban board, AI writing assistant, content templates" />
+        <link rel="canonical" href={siteUrl} />
+        
+        {/* Open Graph */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={siteUrl} />
+        <meta property="og:title" content="PeakDraft - AI Content Generator & Task Manager" />
+        <meta property="og:description" content="Create professional content with 14+ AI templates. Blog posts, social media, emails & more. Built-in task management included." />
+        <meta property="og:image" content={`${siteUrl}/og-image.png`} />
+        <meta property="og:site_name" content="PeakDraft" />
+        
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="PeakDraft - AI Content Generator & Task Manager" />
+        <meta name="twitter:description" content="Create professional content with 14+ AI templates. Blog posts, social media, emails & more." />
+        <meta name="twitter:image" content={`${siteUrl}/og-image.png`} />
+        
+        {/* Additional SEO */}
+        <meta name="robots" content="index, follow" />
+        <meta name="author" content="PeakDraft" />
+        
+        {/* JSON-LD Structured Data */}
+        <script type="application/ld+json">
+          {JSON.stringify(jsonLdOrganization)}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify(jsonLdWebsite)}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify(jsonLdSoftware)}
+        </script>
+      </Helmet>
+      
+    <main className="min-h-screen bg-background">
       <PublicNavbar />
 
       {/* Hero Section with 3D Animation */}
@@ -809,7 +890,8 @@ export default function Landing() {
       </section>
 
       <PublicFooter />
-    </div>
+    </main>
+    </>
   );
 }
 

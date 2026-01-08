@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Helmet } from 'react-helmet-async';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -7,6 +8,79 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
 import { PublicNavbar } from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
+
+const siteUrl = 'https://peakdraft.app';
+
+const jsonLdPricing = {
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "PeakDraft AI Content Generator",
+  "description": "AI-powered content generation and task management platform",
+  "brand": {
+    "@type": "Brand",
+    "name": "PeakDraft"
+  },
+  "offers": [
+    {
+      "@type": "Offer",
+      "name": "Basic Plan",
+      "price": "9.99",
+      "priceCurrency": "USD",
+      "priceValidUntil": "2026-12-31",
+      "availability": "https://schema.org/InStock",
+      "description": "50,000 words per month, all content templates, basic support"
+    },
+    {
+      "@type": "Offer",
+      "name": "Pro Plan",
+      "price": "19.99",
+      "priceCurrency": "USD",
+      "priceValidUntil": "2026-12-31",
+      "availability": "https://schema.org/InStock",
+      "description": "100,000 words per month, priority support, team collaboration"
+    },
+    {
+      "@type": "Offer",
+      "name": "Enterprise Plan",
+      "price": "49.99",
+      "priceCurrency": "USD",
+      "priceValidUntil": "2026-12-31",
+      "availability": "https://schema.org/InStock",
+      "description": "200,000 words per month, 24/7 dedicated support, white-label options"
+    }
+  ]
+};
+
+const jsonLdFAQ = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is there a free trial?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, all plans include a 7-day free trial. No credit card required."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I cancel anytime?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, there are no long-term contracts. Cancel your subscription at any time."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is there a money-back guarantee?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes, we offer a 30-day money-back guarantee. Not satisfied? Get a full refund, no questions asked."
+      }
+    }
+  ]
+};
 const plans = [
   {
     id: 'basic',
@@ -102,10 +176,41 @@ export default function PublicPricing() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <>
+      <Helmet>
+        <title>Pricing - Affordable AI Content Generation Plans | PeakDraft</title>
+        <meta name="description" content="Simple, transparent pricing for AI content generation. Choose from Basic ($9.99/mo), Pro ($19.99/mo), or Enterprise ($49.99/mo) plans. 7-day free trial included." />
+        <meta name="keywords" content="AI content generator pricing, content creation subscription, affordable AI writing tool, content marketing plans" />
+        <link rel="canonical" href={`${siteUrl}/pricing`} />
+        
+        {/* Open Graph */}
+        <meta property="og:type" content="website" />
+        <meta property="og:url" content={`${siteUrl}/pricing`} />
+        <meta property="og:title" content="Pricing - Affordable AI Content Generation Plans | PeakDraft" />
+        <meta property="og:description" content="Choose the perfect plan for your content needs. Starting at $9.99/month with a 7-day free trial." />
+        <meta property="og:image" content={`${siteUrl}/og-pricing.png`} />
+        
+        {/* Twitter Card */}
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="PeakDraft Pricing - AI Content Plans" />
+        <meta name="twitter:description" content="Affordable AI content generation starting at $9.99/month. 7-day free trial included." />
+        
+        {/* Additional SEO */}
+        <meta name="robots" content="index, follow" />
+        
+        {/* JSON-LD Structured Data */}
+        <script type="application/ld+json">
+          {JSON.stringify(jsonLdPricing)}
+        </script>
+        <script type="application/ld+json">
+          {JSON.stringify(jsonLdFAQ)}
+        </script>
+      </Helmet>
+      
+    <main className="min-h-screen bg-background" role="main">
       <PublicNavbar />
 
-      <div className="max-w-7xl mx-auto space-y-16 py-12 pt-24 px-4 sm:px-6 lg:px-8">
+      <article className="max-w-7xl mx-auto space-y-16 py-12 pt-24 px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center space-y-4">
           <h1 className="text-4xl sm:text-5xl font-bold tracking-tight">
@@ -275,9 +380,10 @@ export default function PublicPricing() {
             {user ? 'Choose Your Plan' : 'Start Your Free Trial'}
           </Button>
         </Card>
-      </div>
+      </article>
 
       <PublicFooter />
-    </div>
+    </main>
+    </>
   );
 }

@@ -14,7 +14,6 @@ export function PublicNavbar() {
     { href: '/features', label: 'Features' },
     { href: '/free-tools', label: 'Free Tools' },
     { href: '/pricing', label: 'Pricing' },
-    { href: '/faq', label: 'FAQ' },
     { href: '/contact', label: 'Contact' },
   ];
 

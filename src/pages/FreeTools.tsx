@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { PublicNavbar } from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,6 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
 
 const tools = [
   {
@@ -104,133 +105,200 @@ const tools = [
   },
 ];
 
+// JSON-LD structured data for free tools
+const freeToolsStructuredData = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "name": "Free AI Content Generation Tools",
+  "description": "Collection of 11 free AI-powered content generation tools including hashtag generator, headline generator, slogan generator, and more.",
+  "numberOfItems": 11,
+  "itemListElement": tools.map((tool, index) => ({
+    "@type": "ListItem",
+    "position": index + 1,
+    "item": {
+      "@type": "SoftwareApplication",
+      "name": tool.title,
+      "description": tool.description,
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+  }))
+};
+
 export default function FreeTools() {
   const [activeTool, setActiveTool] = useState<string | null>(null);
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
-      <PublicNavbar />
-      
-      <main className="flex-1 py-12 px-4 pt-24">
-        <div className="container max-w-6xl mx-auto">
-          {/* Header */}
-          <motion.div 
-            className="text-center mb-12"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <Badge variant="secondary" className="mb-4">100% Free • No Sign Up Required</Badge>
-            <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
-              Free AI Tools
-            </h1>
-            <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-              Try our powerful AI generators without signing up. Generate content instantly!
-            </p>
-          </motion.div>
+    <>
+      <Helmet>
+        <title>Free AI Tools - Hashtag, Headline, Slogan & Content Generators | PeakDraft</title>
+        <meta name="description" content="Use 11 free AI tools: Hashtag Generator, Headline Generator, Slogan Generator, Testimonial Generator, SEO Meta Description Generator, CTA Generator & more. No signup required!" />
+        <meta name="keywords" content="free AI tools, free hashtag generator, free headline generator, free slogan generator, free testimonial generator, free SEO meta generator, free CTA generator, AI content tools, free content generator, no signup AI tools" />
+        <link rel="canonical" href="https://peakdraft.com/free-tools" />
+        
+        <meta property="og:title" content="11 Free AI Content Tools - No Signup Required | PeakDraft" />
+        <meta property="og:description" content="Generate hashtags, headlines, slogans, testimonials, SEO meta descriptions & more with our free AI tools. No account needed!" />
+        <meta property="og:url" content="https://peakdraft.com/free-tools" />
+        <meta property="og:type" content="website" />
+        
+        <meta name="twitter:title" content="11 Free AI Content Tools | PeakDraft" />
+        <meta name="twitter:description" content="Free AI generators: Hashtags, Headlines, Slogans, Testimonials, SEO Meta, CTAs & more. No signup!" />
+        
+        <script type="application/ld+json">
+          {JSON.stringify(freeToolsStructuredData)}
+        </script>
+      </Helmet>
 
-          {/* Tools Grid */}
-          <div className="grid gap-6">
-            {tools.map((tool, index) => {
-              const Icon = tool.icon;
-              const isActive = activeTool === tool.id;
-              
-              return (
-                <motion.div
-                  key={tool.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: index * 0.1 }}
-                >
-                  <Card 
-                    className={`transition-all duration-300 overflow-hidden ${isActive ? 'ring-2 ring-primary shadow-lg' : 'hover:shadow-md hover:-translate-y-1'}`}
-                  >
-                    <CardHeader 
-                      className="cursor-pointer select-none"
-                      onClick={() => setActiveTool(isActive ? null : tool.id)}
+      <div className="min-h-screen bg-background flex flex-col">
+        <PublicNavbar />
+        
+        <main className="flex-1 py-12 px-4 pt-24">
+          <article className="container max-w-6xl mx-auto">
+            {/* Header */}
+            <header>
+              <motion.div 
+                className="text-center mb-12"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <Badge variant="secondary" className="mb-4">100% Free • No Sign Up Required</Badge>
+                <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
+                  Free AI Content Generation Tools
+                </h1>
+                <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+                  Access 11 powerful AI generators without signing up. Create hashtags, headlines, slogans, testimonials, SEO meta descriptions, and more instantly!
+                </p>
+              </motion.div>
+            </header>
+
+            {/* Tools Grid */}
+            <section aria-labelledby="tools-section">
+              <h2 id="tools-section" className="sr-only">Available Free AI Tools</h2>
+              <div className="grid gap-6">
+                {tools.map((tool, index) => {
+                  const Icon = tool.icon;
+                  const isActive = activeTool === tool.id;
+                  
+                  return (
+                    <motion.article
+                      key={tool.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4, delay: index * 0.1 }}
+                      aria-label={tool.title}
                     >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                          <motion.div 
-                            className={`p-3 rounded-xl ${tool.bgColor}`}
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.95 }}
-                          >
-                            <Icon className={`w-6 h-6 ${tool.color}`} />
-                          </motion.div>
-                          <div>
-                            <CardTitle className="text-xl">{tool.title}</CardTitle>
-                            <CardDescription className="mt-1">{tool.description}</CardDescription>
-                          </div>
-                        </div>
-                        <motion.div
-                          animate={{ rotate: isActive ? 180 : 0 }}
-                          transition={{ duration: 0.3, ease: "easeInOut" }}
+                      <Card 
+                        className={`transition-all duration-300 overflow-hidden ${isActive ? 'ring-2 ring-primary shadow-lg' : 'hover:shadow-md hover:-translate-y-1'}`}
+                      >
+                        <CardHeader 
+                          className="cursor-pointer select-none"
+                          onClick={() => setActiveTool(isActive ? null : tool.id)}
+                          role="button"
+                          aria-expanded={isActive}
+                          aria-controls={`tool-content-${tool.id}`}
+                          tabIndex={0}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              setActiveTool(isActive ? null : tool.id);
+                            }
+                          }}
                         >
-                          <Button variant="ghost" size="icon" className="pointer-events-none">
-                            <ChevronDown className="w-5 h-5" />
-                          </Button>
-                        </motion.div>
-                      </div>
-                    </CardHeader>
-                    
-                    <AnimatePresence initial={false}>
-                      {isActive && (
-                        <motion.div
-                          initial={{ height: 0, opacity: 0 }}
-                          animate={{ height: "auto", opacity: 1 }}
-                          exit={{ height: 0, opacity: 0 }}
-                          transition={{ duration: 0.3, ease: "easeInOut" }}
-                        >
-                          <CardContent className="pt-0 border-t">
-                            <motion.div 
-                              className="pt-6"
-                              initial={{ opacity: 0, y: -10 }}
-                              animate={{ opacity: 1, y: 0 }}
-                              transition={{ duration: 0.3, delay: 0.1 }}
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                              <motion.div 
+                                className={`p-3 rounded-xl ${tool.bgColor}`}
+                                whileHover={{ scale: 1.1 }}
+                                whileTap={{ scale: 0.95 }}
+                                aria-hidden="true"
+                              >
+                                <Icon className={`w-6 h-6 ${tool.color}`} />
+                              </motion.div>
+                              <div>
+                                <CardTitle className="text-xl">{tool.title}</CardTitle>
+                                <CardDescription className="mt-1">{tool.description}</CardDescription>
+                              </div>
+                            </div>
+                            <motion.div
+                              animate={{ rotate: isActive ? 180 : 0 }}
+                              transition={{ duration: 0.3, ease: "easeInOut" }}
+                              aria-hidden="true"
                             >
-                              {tool.id === 'chatgpt' && <FreeChatGPTPromptGenerator />}
-                              {tool.id === 'hashtag' && <FreeHashtagGenerator />}
-                              {tool.id === 'blogintro' && <FreeBlogIntroGenerator />}
-                              {tool.id === 'caption' && <FreeCaptionGenerator />}
-                              {tool.id === 'email' && <FreeEmailSubjectGenerator />}
-                              {tool.id === 'product' && <FreeProductDescriptionGenerator />}
-                              {tool.id === 'seo' && <FreeSeoMetaGenerator />}
-                              {tool.id === 'cta' && <FreeCTAGenerator />}
-                              {tool.id === 'headline' && <FreeHeadlineGenerator />}
-                              {tool.id === 'slogan' && <FreeSloganGenerator />}
-                              {tool.id === 'testimonial' && <FreeTestimonialGenerator />}
+                              <Button variant="ghost" size="icon" className="pointer-events-none" tabIndex={-1}>
+                                <ChevronDown className="w-5 h-5" />
+                              </Button>
                             </motion.div>
-                          </CardContent>
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
-                  </Card>
-                </motion.div>
-              );
-            })}
-          </div>
+                          </div>
+                        </CardHeader>
+                        
+                        <AnimatePresence initial={false}>
+                          {isActive && (
+                            <motion.div
+                              id={`tool-content-${tool.id}`}
+                              initial={{ height: 0, opacity: 0 }}
+                              animate={{ height: "auto", opacity: 1 }}
+                              exit={{ height: 0, opacity: 0 }}
+                              transition={{ duration: 0.3, ease: "easeInOut" }}
+                            >
+                              <CardContent className="pt-0 border-t">
+                                <motion.div 
+                                  className="pt-6"
+                                  initial={{ opacity: 0, y: -10 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  transition={{ duration: 0.3, delay: 0.1 }}
+                                >
+                                  {tool.id === 'chatgpt' && <FreeChatGPTPromptGenerator />}
+                                  {tool.id === 'hashtag' && <FreeHashtagGenerator />}
+                                  {tool.id === 'blogintro' && <FreeBlogIntroGenerator />}
+                                  {tool.id === 'caption' && <FreeCaptionGenerator />}
+                                  {tool.id === 'email' && <FreeEmailSubjectGenerator />}
+                                  {tool.id === 'product' && <FreeProductDescriptionGenerator />}
+                                  {tool.id === 'seo' && <FreeSeoMetaGenerator />}
+                                  {tool.id === 'cta' && <FreeCTAGenerator />}
+                                  {tool.id === 'headline' && <FreeHeadlineGenerator />}
+                                  {tool.id === 'slogan' && <FreeSloganGenerator />}
+                                  {tool.id === 'testimonial' && <FreeTestimonialGenerator />}
+                                </motion.div>
+                              </CardContent>
+                            </motion.div>
+                          )}
+                        </AnimatePresence>
+                      </Card>
+                    </motion.article>
+                  );
+                })}
+              </div>
+            </section>
 
-          {/* CTA */}
-          <Card className="mt-12 bg-gradient-to-r from-primary/10 to-purple-500/10 border-primary/20">
-            <CardContent className="py-8 text-center">
-              <h3 className="text-2xl font-bold mb-2">Want More Features?</h3>
-              <p className="text-muted-foreground mb-6">
-                Sign up for free to get 5,000 words/month and access to all 12+ AI templates!
-              </p>
-              <Button asChild size="lg">
-                <Link to="/auth">
-                  Get Started Free
-                  <ArrowRight className="ml-2 w-4 h-4" />
-                </Link>
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
-      </main>
+            {/* CTA */}
+            <aside className="mt-12">
+              <Card className="bg-gradient-to-r from-primary/10 to-purple-500/10 border-primary/20">
+                <CardContent className="py-8 text-center">
+                  <h2 className="text-2xl font-bold mb-2">Want More Features?</h2>
+                  <p className="text-muted-foreground mb-6">
+                    Sign up for free to get 5,000 words/month and access to all 14+ AI templates!
+                  </p>
+                  <Button asChild size="lg">
+                    <Link to="/auth">
+                      Get Started Free
+                      <ArrowRight className="ml-2 w-4 h-4" />
+                    </Link>
+                  </Button>
+                </CardContent>
+              </Card>
+            </aside>
+          </article>
+        </main>
 
-      <PublicFooter />
-    </div>
+        <PublicFooter />
+      </div>
+    </>
   );
 }
 

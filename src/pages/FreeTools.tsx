@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Copy, Bot, Hash, Sparkles, Lightbulb, ArrowRight, FileText, MessageSquare, Mail, ChevronDown } from 'lucide-react';
+import { Loader2, Copy, Bot, Hash, Sparkles, Lightbulb, ArrowRight, FileText, MessageSquare, Mail, ChevronDown, ShoppingBag } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
@@ -53,6 +53,14 @@ const tools = [
     icon: Mail,
     color: 'text-orange-500',
     bgColor: 'bg-orange-500/10',
+  },
+  {
+    id: 'product',
+    title: 'Product Description Generator',
+    description: 'Create persuasive product descriptions that sell',
+    icon: ShoppingBag,
+    color: 'text-purple-500',
+    bgColor: 'bg-purple-500/10',
   },
 ];
 
@@ -146,6 +154,7 @@ export default function FreeTools() {
                               {tool.id === 'blogintro' && <FreeBlogIntroGenerator />}
                               {tool.id === 'caption' && <FreeCaptionGenerator />}
                               {tool.id === 'email' && <FreeEmailSubjectGenerator />}
+                              {tool.id === 'product' && <FreeProductDescriptionGenerator />}
                             </motion.div>
                           </CardContent>
                         </motion.div>
@@ -1087,6 +1096,186 @@ function FreeEmailSubjectGenerator() {
             <div className="text-center py-12 text-muted-foreground">
               <Mail className="h-12 w-12 mx-auto mb-4 opacity-20" />
               <p className="text-sm">Your generated subject lines will appear here</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+const productExamples = [
+  "A wireless noise-cancelling headphone for music lovers",
+  "An organic skincare serum for anti-aging",
+  "A smart fitness tracker watch with heart rate monitoring",
+];
+
+function FreeProductDescriptionGenerator() {
+  const [prompt, setPrompt] = useState('');
+  const [tone, setTone] = useState('professional');
+  const [generatedContent, setGeneratedContent] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generationsUsed, setGenerationsUsed] = useState(0);
+  const { toast } = useToast();
+
+  const MAX_FREE_GENERATIONS = 3;
+
+  const handleGenerate = async () => {
+    if (!prompt.trim()) {
+      toast({
+        title: "Error",
+        description: "Please describe your product",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (generationsUsed >= MAX_FREE_GENERATIONS) {
+      toast({
+        title: "Limit Reached",
+        description: "Sign up for free to get 5,000 words/month!",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsGenerating(true);
+
+    try {
+      const enhancedPrompt = `Write a compelling product description for: "${prompt}". Tone: ${tone}. Include key features, benefits, and a persuasive call-to-action. Make it engaging and SEO-friendly. Structure it with a headline, main description, and bullet points for features.`;
+
+      const { data, error } = await supabase.functions.invoke('generate-content', {
+        body: { 
+          prompt: enhancedPrompt,
+          template_type: 'product-description',
+          language: 'en'
+        }
+      });
+
+      if (error) throw error;
+
+      setGeneratedContent(data.generated_content);
+      setGenerationsUsed(prev => prev + 1);
+
+      toast({
+        title: "Success!",
+        description: `Product description generated (${MAX_FREE_GENERATIONS - generationsUsed - 1} free generations left)`
+      });
+    } catch (error: any) {
+      console.error('Generation error:', error);
+      toast({
+        title: "Generation Failed",
+        description: error.message || "Failed to generate product description",
+        variant: "destructive"
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(generatedContent);
+    toast({
+      title: "Copied!",
+      description: "Product description copied to clipboard"
+    });
+  };
+
+  return (
+    <div className="grid lg:grid-cols-2 gap-6">
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">
+            {MAX_FREE_GENERATIONS - generationsUsed} free generations remaining
+          </p>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="productTone">Tone</Label>
+          <select
+            id="productTone"
+            className="w-full px-3 py-2 border border-input bg-background rounded-md"
+            value={tone}
+            onChange={(e) => setTone(e.target.value)}
+          >
+            <option value="professional">Professional</option>
+            <option value="luxury">Luxury & Premium</option>
+            <option value="casual">Casual & Friendly</option>
+            <option value="technical">Technical & Detailed</option>
+            <option value="playful">Playful & Fun</option>
+          </select>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="productPrompt">Describe Your Product</Label>
+          <Textarea
+            id="productPrompt"
+            placeholder="Describe your product, its features, target audience, and key benefits..."
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            rows={4}
+          />
+        </div>
+
+        <Button 
+          onClick={handleGenerate} 
+          disabled={isGenerating || generationsUsed >= MAX_FREE_GENERATIONS}
+          className="w-full"
+        >
+          {isGenerating ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Generating...
+            </>
+          ) : (
+            <>
+              <Sparkles className="mr-2 h-4 w-4" />
+              Generate Description
+            </>
+          )}
+        </Button>
+
+        <div className="pt-4 border-t">
+          <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
+            <Lightbulb className="w-3 h-3" /> Try these examples:
+          </p>
+          <div className="space-y-2">
+            {productExamples.map((example, index) => (
+              <Button
+                key={index}
+                variant="ghost"
+                size="sm"
+                className="w-full justify-start text-left h-auto py-2 text-xs"
+                onClick={() => setPrompt(example)}
+              >
+                {example}
+              </Button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <Card className="bg-muted/30">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base flex items-center justify-between">
+            Generated Description
+            {generatedContent && (
+              <Button variant="outline" size="sm" onClick={copyToClipboard}>
+                <Copy className="h-4 w-4 mr-2" />
+                Copy
+              </Button>
+            )}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {generatedContent ? (
+            <pre className="whitespace-pre-wrap font-sans text-sm bg-background p-4 rounded-lg border max-h-[400px] overflow-auto">
+              {generatedContent}
+            </pre>
+          ) : (
+            <div className="text-center py-12 text-muted-foreground">
+              <ShoppingBag className="h-12 w-12 mx-auto mb-4 opacity-20" />
+              <p className="text-sm">Your generated product description will appear here</p>
             </div>
           )}
         </CardContent>

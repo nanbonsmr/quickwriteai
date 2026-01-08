@@ -7,10 +7,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Copy, Bot, Hash, Sparkles, Lightbulb, ArrowRight, FileText, MessageSquare, Mail, ChevronDown, ChevronUp } from 'lucide-react';
+import { Loader2, Copy, Bot, Hash, Sparkles, Lightbulb, ArrowRight, FileText, MessageSquare, Mail, ChevronDown } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const tools = [
   {
@@ -65,7 +66,12 @@ export default function FreeTools() {
       <main className="flex-1 py-12 px-4 pt-24">
         <div className="container max-w-6xl mx-auto">
           {/* Header */}
-          <div className="text-center mb-12">
+          <motion.div 
+            className="text-center mb-12"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
             <Badge variant="secondary" className="mb-4">100% Free • No Sign Up Required</Badge>
             <h1 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-purple-400 bg-clip-text text-transparent">
               Free AI Tools
@@ -73,55 +79,80 @@ export default function FreeTools() {
             <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
               Try our powerful AI generators without signing up. Generate content instantly!
             </p>
-          </div>
+          </motion.div>
 
           {/* Tools Grid */}
           <div className="grid gap-6">
-            {tools.map((tool) => {
+            {tools.map((tool, index) => {
               const Icon = tool.icon;
               const isActive = activeTool === tool.id;
               
               return (
-                <Card 
-                  key={tool.id} 
-                  className={`transition-all duration-300 ${isActive ? 'ring-2 ring-primary shadow-lg' : 'hover:shadow-md'}`}
+                <motion.div
+                  key={tool.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, delay: index * 0.1 }}
                 >
-                  <CardHeader 
-                    className="cursor-pointer"
-                    onClick={() => setActiveTool(isActive ? null : tool.id)}
+                  <Card 
+                    className={`transition-all duration-300 overflow-hidden ${isActive ? 'ring-2 ring-primary shadow-lg' : 'hover:shadow-md hover:-translate-y-1'}`}
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-4">
-                        <div className={`p-3 rounded-xl ${tool.bgColor}`}>
-                          <Icon className={`w-6 h-6 ${tool.color}`} />
+                    <CardHeader 
+                      className="cursor-pointer select-none"
+                      onClick={() => setActiveTool(isActive ? null : tool.id)}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-4">
+                          <motion.div 
+                            className={`p-3 rounded-xl ${tool.bgColor}`}
+                            whileHover={{ scale: 1.1 }}
+                            whileTap={{ scale: 0.95 }}
+                          >
+                            <Icon className={`w-6 h-6 ${tool.color}`} />
+                          </motion.div>
+                          <div>
+                            <CardTitle className="text-xl">{tool.title}</CardTitle>
+                            <CardDescription className="mt-1">{tool.description}</CardDescription>
+                          </div>
                         </div>
-                        <div>
-                          <CardTitle className="text-xl">{tool.title}</CardTitle>
-                          <CardDescription className="mt-1">{tool.description}</CardDescription>
-                        </div>
+                        <motion.div
+                          animate={{ rotate: isActive ? 180 : 0 }}
+                          transition={{ duration: 0.3, ease: "easeInOut" }}
+                        >
+                          <Button variant="ghost" size="icon" className="pointer-events-none">
+                            <ChevronDown className="w-5 h-5" />
+                          </Button>
+                        </motion.div>
                       </div>
-                      <Button variant="ghost" size="icon">
-                        {isActive ? (
-                          <ChevronUp className="w-5 h-5" />
-                        ) : (
-                          <ChevronDown className="w-5 h-5" />
-                        )}
-                      </Button>
-                    </div>
-                  </CardHeader>
-                  
-                  {isActive && (
-                    <CardContent className="pt-0 border-t">
-                      <div className="pt-6">
-                        {tool.id === 'chatgpt' && <FreeChatGPTPromptGenerator />}
-                        {tool.id === 'hashtag' && <FreeHashtagGenerator />}
-                        {tool.id === 'blogintro' && <FreeBlogIntroGenerator />}
-                        {tool.id === 'caption' && <FreeCaptionGenerator />}
-                        {tool.id === 'email' && <FreeEmailSubjectGenerator />}
-                      </div>
-                    </CardContent>
-                  )}
-                </Card>
+                    </CardHeader>
+                    
+                    <AnimatePresence initial={false}>
+                      {isActive && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: "auto", opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          transition={{ duration: 0.3, ease: "easeInOut" }}
+                        >
+                          <CardContent className="pt-0 border-t">
+                            <motion.div 
+                              className="pt-6"
+                              initial={{ opacity: 0, y: -10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{ duration: 0.3, delay: 0.1 }}
+                            >
+                              {tool.id === 'chatgpt' && <FreeChatGPTPromptGenerator />}
+                              {tool.id === 'hashtag' && <FreeHashtagGenerator />}
+                              {tool.id === 'blogintro' && <FreeBlogIntroGenerator />}
+                              {tool.id === 'caption' && <FreeCaptionGenerator />}
+                              {tool.id === 'email' && <FreeEmailSubjectGenerator />}
+                            </motion.div>
+                          </CardContent>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </Card>
+                </motion.div>
               );
             })}
           </div>

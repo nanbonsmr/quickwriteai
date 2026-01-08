@@ -1,10 +1,12 @@
+import { useState, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { PublicNavbar } from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { ArrowRight, Calendar, Clock, User, Sparkles, Zap, Target, TrendingUp, FileText, Lightbulb } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { ArrowRight, Calendar, Clock, User, Sparkles, Zap, Target, TrendingUp, FileText, Lightbulb, Search, X, Mail, ShoppingBag } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const blogPosts = [
@@ -287,12 +289,31 @@ const categories = [
   { name: 'Comparison', icon: Target },
   { name: 'SEO', icon: TrendingUp },
   { name: 'Social Media', icon: Zap },
-  { name: 'Tips & Tricks', icon: Lightbulb }
+  { name: 'Email Marketing', icon: Mail },
+  { name: 'E-commerce', icon: ShoppingBag },
+  { name: 'Tips & Tricks', icon: Lightbulb },
+  { name: 'About', icon: FileText }
 ];
 
 export default function Blog() {
-  const featuredPosts = blogPosts.filter(post => post.featured);
-  const regularPosts = blogPosts.filter(post => !post.featured);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('All');
+
+  const filteredPosts = useMemo(() => {
+    return blogPosts.filter(post => {
+      const matchesSearch = searchQuery === '' || 
+        post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        post.excerpt.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        post.category.toLowerCase().includes(searchQuery.toLowerCase());
+      
+      const matchesCategory = selectedCategory === 'All' || post.category === selectedCategory;
+      
+      return matchesSearch && matchesCategory;
+    });
+  }, [searchQuery, selectedCategory]);
+
+  const featuredPosts = filteredPosts.filter(post => post.featured);
+  const regularPosts = filteredPosts.filter(post => !post.featured);
 
   const structuredData = {
     "@context": "https://schema.org",
@@ -393,31 +414,91 @@ export default function Blog() {
             </div>
           </section>
 
-          {/* Categories */}
+          {/* Search and Categories */}
           <section className="py-8 border-b border-border/50">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+              {/* Search Bar */}
+              <div className="max-w-xl mx-auto mb-6">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                  <Input
+                    type="text"
+                    placeholder="Search articles..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-10 pr-10 h-12 text-base rounded-full bg-muted/50 border-border/50 focus:border-primary"
+                  />
+                  {searchQuery && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full"
+                      onClick={() => setSearchQuery('')}
+                    >
+                      <X className="w-4 h-4" />
+                    </Button>
+                  )}
+                </div>
+              </div>
+              
+              {/* Category Filters */}
               <div className="flex flex-wrap justify-center gap-2">
                 {categories.map((category) => (
                   <Button
                     key={category.name}
-                    variant="ghost"
+                    variant={selectedCategory === category.name ? "default" : "ghost"}
                     size="sm"
                     className="rounded-full"
+                    onClick={() => setSelectedCategory(category.name)}
                   >
                     <category.icon className="w-4 h-4 mr-2" />
                     {category.name}
                   </Button>
                 ))}
               </div>
+              
+              {/* Results count */}
+              {(searchQuery || selectedCategory !== 'All') && (
+                <div className="text-center mt-4 text-sm text-muted-foreground">
+                  Found {filteredPosts.length} article{filteredPosts.length !== 1 ? 's' : ''}
+                  {searchQuery && ` for "${searchQuery}"`}
+                  {selectedCategory !== 'All' && ` in ${selectedCategory}`}
+                </div>
+              )}
             </div>
           </section>
 
+          {/* No Results */}
+          {filteredPosts.length === 0 && (
+            <section className="py-16">
+              <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <div className="max-w-md mx-auto">
+                  <Search className="w-12 h-12 mx-auto text-muted-foreground mb-4" />
+                  <h3 className="text-xl font-semibold mb-2">No articles found</h3>
+                  <p className="text-muted-foreground mb-6">
+                    Try adjusting your search or filter to find what you're looking for.
+                  </p>
+                  <Button 
+                    variant="outline" 
+                    onClick={() => {
+                      setSearchQuery('');
+                      setSelectedCategory('All');
+                    }}
+                  >
+                    Clear filters
+                  </Button>
+                </div>
+              </div>
+            </section>
+          )}
+
           {/* Featured Posts */}
-          <section className="py-16">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-              <h2 className="text-2xl sm:text-3xl font-bold mb-8">Featured Articles</h2>
-              <div className="grid md:grid-cols-2 gap-8">
-                {featuredPosts.map((post) => (
+          {featuredPosts.length > 0 && (
+            <section className="py-16">
+              <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 className="text-2xl sm:text-3xl font-bold mb-8">Featured Articles</h2>
+                <div className="grid md:grid-cols-2 gap-8">
+                  {featuredPosts.map((post) => (
                   <Link key={post.id} to={`/blog/${post.id}`} className="block">
                     <Card className="group hover:shadow-xl transition-all duration-300 border-border/50 overflow-hidden h-full cursor-pointer">
                       <CardHeader className="pb-4">
@@ -464,13 +545,15 @@ export default function Blog() {
               </div>
             </div>
           </section>
+          )}
 
           {/* All Posts */}
-          <section className="py-16 bg-muted/30">
-            <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-              <h2 className="text-2xl sm:text-3xl font-bold mb-8">Latest Articles</h2>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {regularPosts.map((post) => (
+          {regularPosts.length > 0 && (
+            <section className="py-16 bg-muted/30">
+              <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 className="text-2xl sm:text-3xl font-bold mb-8">Latest Articles</h2>
+                <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {regularPosts.map((post) => (
                   <Link key={post.id} to={`/blog/${post.id}`} className="block">
                     <Card className="h-full group hover:shadow-lg transition-all duration-300 border-border/50 cursor-pointer">
                       <CardHeader className="pb-3">
@@ -502,6 +585,7 @@ export default function Blog() {
               </div>
             </div>
           </section>
+          )}
 
           {/* CTA Section */}
           <section className="py-16 sm:py-24">

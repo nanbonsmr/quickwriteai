@@ -160,7 +160,21 @@ Focus entirely on the user's page content and purpose.`,
 - Are specifically for the offer/product/service the user describes
 - Match the CTA type they request (button, headline, link)
 - Use persuasive, action-oriented language
-Focus entirely on the user's specific offer and context.`
+Focus entirely on the user's specific offer and context.`,
+
+    'headline': `You are a headline copywriting expert. Create compelling headlines that:
+- Are specifically about the content/product/offer the user describes
+- Match the headline type they request (blog, landing page, ad, etc.)
+- Are attention-grabbing and optimized for clicks
+- Use proven headline formulas (how-to, listicle, question, power words)
+Focus entirely on the user's specific topic and purpose.`,
+
+    'slogan': `You are a brand messaging expert. Create memorable slogans and taglines that:
+- Capture the essence of the brand/product the user describes
+- Match the style they request (catchy, professional, playful, etc.)
+- Are short, memorable, and impactful (under 10 words each)
+- Reflect the brand's values and unique selling proposition
+Focus entirely on the user's brand description and target audience.`
   };
 
   let systemPrompt = basePrompts[templateType] || 

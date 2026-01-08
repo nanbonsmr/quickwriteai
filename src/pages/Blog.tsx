@@ -418,46 +418,48 @@ export default function Blog() {
               <h2 className="text-2xl sm:text-3xl font-bold mb-8">Featured Articles</h2>
               <div className="grid md:grid-cols-2 gap-8">
                 {featuredPosts.map((post) => (
-                  <Card key={post.id} className="group hover:shadow-xl transition-all duration-300 border-border/50 overflow-hidden">
-                    <CardHeader className="pb-4">
-                      <div className="flex items-center gap-2 mb-3">
-                        <Badge variant="secondary" className="text-xs">
-                          {post.category}
-                        </Badge>
-                        <Badge variant="outline" className="text-xs bg-primary/10 text-primary border-primary/20">
-                          Featured
-                        </Badge>
-                      </div>
-                      <CardTitle className="text-xl sm:text-2xl group-hover:text-primary transition-colors line-clamp-2">
-                        {post.title}
-                      </CardTitle>
-                      <CardDescription className="text-sm line-clamp-3 mt-2">
-                        {post.excerpt}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
-                        <div className="flex items-center gap-4">
+                  <Link key={post.id} to={`/blog/${post.id}`} className="block">
+                    <Card className="group hover:shadow-xl transition-all duration-300 border-border/50 overflow-hidden h-full cursor-pointer">
+                      <CardHeader className="pb-4">
+                        <div className="flex items-center gap-2 mb-3">
+                          <Badge variant="secondary" className="text-xs">
+                            {post.category}
+                          </Badge>
+                          <Badge variant="outline" className="text-xs bg-primary/10 text-primary border-primary/20">
+                            Featured
+                          </Badge>
+                        </div>
+                        <CardTitle className="text-xl sm:text-2xl group-hover:text-primary transition-colors line-clamp-2">
+                          {post.title}
+                        </CardTitle>
+                        <CardDescription className="text-sm line-clamp-3 mt-2">
+                          {post.excerpt}
+                        </CardDescription>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex items-center justify-between text-sm text-muted-foreground mb-4">
+                          <div className="flex items-center gap-4">
+                            <span className="flex items-center gap-1">
+                              <User className="w-4 h-4" />
+                              {post.author}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <Calendar className="w-4 h-4" />
+                              {new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                            </span>
+                          </div>
                           <span className="flex items-center gap-1">
-                            <User className="w-4 h-4" />
-                            {post.author}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Calendar className="w-4 h-4" />
-                            {new Date(post.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                            <Clock className="w-4 h-4" />
+                            {post.readTime}
                           </span>
                         </div>
-                        <span className="flex items-center gap-1">
-                          <Clock className="w-4 h-4" />
-                          {post.readTime}
+                        <span className="group/btn p-0 h-auto text-primary inline-flex items-center">
+                          Read More
+                          <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
                         </span>
-                      </div>
-                      <Button variant="ghost" className="group/btn p-0 h-auto text-primary">
-                        Read More
-                        <ArrowRight className="ml-2 h-4 w-4 group-hover/btn:translate-x-1 transition-transform" />
-                      </Button>
-                    </CardContent>
-                  </Card>
+                      </CardContent>
+                    </Card>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -469,8 +471,8 @@ export default function Blog() {
               <h2 className="text-2xl sm:text-3xl font-bold mb-8">Latest Articles</h2>
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {regularPosts.map((post) => (
-                  <article key={post.id}>
-                    <Card className="h-full group hover:shadow-lg transition-all duration-300 border-border/50">
+                  <Link key={post.id} to={`/blog/${post.id}`} className="block">
+                    <Card className="h-full group hover:shadow-lg transition-all duration-300 border-border/50 cursor-pointer">
                       <CardHeader className="pb-3">
                         <Badge variant="secondary" className="w-fit text-xs mb-2">
                           {post.category}
@@ -495,7 +497,7 @@ export default function Blog() {
                         </div>
                       </CardContent>
                     </Card>
-                  </article>
+                  </Link>
                 ))}
               </div>
             </div>

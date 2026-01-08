@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Copy, Bot, Hash, Sparkles, Lightbulb, ArrowRight, FileText, MessageSquare, Mail, ChevronDown, ShoppingBag, Search } from 'lucide-react';
+import { Loader2, Copy, Bot, Hash, Sparkles, Lightbulb, ArrowRight, FileText, MessageSquare, Mail, ChevronDown, ShoppingBag, Search, MousePointerClick } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
@@ -69,6 +69,14 @@ const tools = [
     icon: Search,
     color: 'text-cyan-500',
     bgColor: 'bg-cyan-500/10',
+  },
+  {
+    id: 'cta',
+    title: 'Call-to-Action Generator',
+    description: 'Create compelling CTAs that drive conversions',
+    icon: MousePointerClick,
+    color: 'text-rose-500',
+    bgColor: 'bg-rose-500/10',
   },
 ];
 
@@ -164,6 +172,7 @@ export default function FreeTools() {
                               {tool.id === 'email' && <FreeEmailSubjectGenerator />}
                               {tool.id === 'product' && <FreeProductDescriptionGenerator />}
                               {tool.id === 'seo' && <FreeSeoMetaGenerator />}
+                              {tool.id === 'cta' && <FreeCTAGenerator />}
                             </motion.div>
                           </CardContent>
                         </motion.div>
@@ -1459,6 +1468,184 @@ function FreeSeoMetaGenerator() {
             <div className="text-center py-12 text-muted-foreground">
               <Search className="h-12 w-12 mx-auto mb-4 opacity-20" />
               <p className="text-sm">Your generated meta descriptions will appear here</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+const ctaExamples = [
+  "A signup button for a free trial of a project management tool",
+  "A download button for an e-book about digital marketing",
+  "A subscribe button for a weekly newsletter about tech trends",
+];
+
+function FreeCTAGenerator() {
+  const [prompt, setPrompt] = useState('');
+  const [ctaType, setCtaType] = useState('button');
+  const [generatedContent, setGeneratedContent] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generationsUsed, setGenerationsUsed] = useState(0);
+  const { toast } = useToast();
+
+  const MAX_FREE_GENERATIONS = 3;
+
+  const handleGenerate = async () => {
+    if (!prompt.trim()) {
+      toast({
+        title: "Error",
+        description: "Please describe your CTA purpose",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (generationsUsed >= MAX_FREE_GENERATIONS) {
+      toast({
+        title: "Limit Reached",
+        description: "Sign up for free to get 5,000 words/month!",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsGenerating(true);
+
+    try {
+      const enhancedPrompt = `Generate 10 compelling call-to-action ${ctaType === 'button' ? 'button texts' : ctaType === 'headline' ? 'headlines with supporting text' : 'link texts'} for: "${prompt}". Include a mix of: urgency-based, benefit-focused, action-oriented, and curiosity-driven CTAs. For each, provide the CTA text and a brief explanation of why it works.`;
+
+      const { data, error } = await supabase.functions.invoke('generate-content', {
+        body: { 
+          prompt: enhancedPrompt,
+          template_type: 'ad-copy',
+          language: 'en'
+        }
+      });
+
+      if (error) throw error;
+
+      setGeneratedContent(data.generated_content);
+      setGenerationsUsed(prev => prev + 1);
+
+      toast({
+        title: "Success!",
+        description: `CTAs generated (${MAX_FREE_GENERATIONS - generationsUsed - 1} free generations left)`
+      });
+    } catch (error: any) {
+      console.error('Generation error:', error);
+      toast({
+        title: "Generation Failed",
+        description: error.message || "Failed to generate CTAs",
+        variant: "destructive"
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(generatedContent);
+    toast({
+      title: "Copied!",
+      description: "CTAs copied to clipboard"
+    });
+  };
+
+  return (
+    <div className="grid lg:grid-cols-2 gap-6">
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">
+            {MAX_FREE_GENERATIONS - generationsUsed} free generations remaining
+          </p>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="ctaType">CTA Type</Label>
+          <select
+            id="ctaType"
+            className="w-full px-3 py-2 border border-input bg-background rounded-md"
+            value={ctaType}
+            onChange={(e) => setCtaType(e.target.value)}
+          >
+            <option value="button">Button Text</option>
+            <option value="headline">Headline + Subtext</option>
+            <option value="link">Link Text</option>
+          </select>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="ctaPrompt">What's the CTA For?</Label>
+          <Textarea
+            id="ctaPrompt"
+            placeholder="Describe your offer, product, or action you want users to take..."
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            rows={4}
+          />
+        </div>
+
+        <Button 
+          onClick={handleGenerate} 
+          disabled={isGenerating || generationsUsed >= MAX_FREE_GENERATIONS}
+          className="w-full"
+        >
+          {isGenerating ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Generating...
+            </>
+          ) : (
+            <>
+              <Sparkles className="mr-2 h-4 w-4" />
+              Generate CTAs
+            </>
+          )}
+        </Button>
+
+        <div className="pt-4 border-t">
+          <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
+            <Lightbulb className="w-3 h-3" /> Try these examples:
+          </p>
+          <div className="space-y-2">
+            {ctaExamples.map((example, index) => (
+              <Button
+                key={index}
+                variant="ghost"
+                size="sm"
+                className="w-full justify-start text-left h-auto py-2 text-xs"
+                onClick={() => setPrompt(example)}
+              >
+                {example}
+              </Button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <Card className="bg-muted/30">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base flex items-center justify-between">
+            Generated CTAs
+            {generatedContent && (
+              <Button variant="outline" size="sm" onClick={copyToClipboard}>
+                <Copy className="h-4 w-4 mr-2" />
+                Copy
+              </Button>
+            )}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {generatedContent ? (
+            <pre className="whitespace-pre-wrap font-sans text-sm bg-background p-4 rounded-lg border max-h-[400px] overflow-auto">
+              {generatedContent}
+            </pre>
+          ) : (
+            <div className="text-center py-12 text-muted-foreground">
+              <MousePointerClick className="h-12 w-12 mx-auto mb-4 opacity-20" />
+              <p className="text-sm">Your generated CTAs will appear here</p>
             </div>
           )}
         </CardContent>

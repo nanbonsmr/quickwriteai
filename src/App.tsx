@@ -30,6 +30,7 @@ import PublicPricing from "./pages/PublicPricing";
 import Features from "./pages/Features";
 import ResetPassword from "./pages/ResetPassword";
 import FreeTools from "./pages/FreeTools";
+import Blog from "./pages/Blog";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -51,6 +52,7 @@ function AnimatedRoutes() {
         <Route path="/pricing" element={<PageTransition><PublicPricing /></PageTransition>} />
         <Route path="/features" element={<PageTransition><Features /></PageTransition>} />
         <Route path="/free-tools" element={<PageTransition><FreeTools /></PageTransition>} />
+        <Route path="/blog" element={<PageTransition><Blog /></PageTransition>} />
         <Route path="/app/*" element={
           <ProtectedRoute>
             <SidebarProvider>

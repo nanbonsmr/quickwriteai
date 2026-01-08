@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Copy, Bot, Hash, Sparkles, Lightbulb, ArrowRight, FileText, MessageSquare, Mail, ChevronDown, ShoppingBag } from 'lucide-react';
+import { Loader2, Copy, Bot, Hash, Sparkles, Lightbulb, ArrowRight, FileText, MessageSquare, Mail, ChevronDown, ShoppingBag, Search } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
@@ -61,6 +61,14 @@ const tools = [
     icon: ShoppingBag,
     color: 'text-purple-500',
     bgColor: 'bg-purple-500/10',
+  },
+  {
+    id: 'seo',
+    title: 'SEO Meta Description Generator',
+    description: 'Write optimized meta descriptions for better search rankings',
+    icon: Search,
+    color: 'text-cyan-500',
+    bgColor: 'bg-cyan-500/10',
   },
 ];
 
@@ -155,6 +163,7 @@ export default function FreeTools() {
                               {tool.id === 'caption' && <FreeCaptionGenerator />}
                               {tool.id === 'email' && <FreeEmailSubjectGenerator />}
                               {tool.id === 'product' && <FreeProductDescriptionGenerator />}
+                              {tool.id === 'seo' && <FreeSeoMetaGenerator />}
                             </motion.div>
                           </CardContent>
                         </motion.div>
@@ -1276,6 +1285,180 @@ function FreeProductDescriptionGenerator() {
             <div className="text-center py-12 text-muted-foreground">
               <ShoppingBag className="h-12 w-12 mx-auto mb-4 opacity-20" />
               <p className="text-sm">Your generated product description will appear here</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+const seoExamples = [
+  "A blog post about 10 best productivity apps for remote workers",
+  "An e-commerce page selling organic coffee beans",
+  "A landing page for a SaaS project management tool",
+];
+
+function FreeSeoMetaGenerator() {
+  const [prompt, setPrompt] = useState('');
+  const [keyword, setKeyword] = useState('');
+  const [generatedContent, setGeneratedContent] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generationsUsed, setGenerationsUsed] = useState(0);
+  const { toast } = useToast();
+
+  const MAX_FREE_GENERATIONS = 3;
+
+  const handleGenerate = async () => {
+    if (!prompt.trim()) {
+      toast({
+        title: "Error",
+        description: "Please describe your page content",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    if (generationsUsed >= MAX_FREE_GENERATIONS) {
+      toast({
+        title: "Limit Reached",
+        description: "Sign up for free to get 5,000 words/month!",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsGenerating(true);
+
+    try {
+      const enhancedPrompt = `Generate 5 SEO-optimized meta descriptions for: "${prompt}". ${keyword ? `Target keyword: ${keyword}.` : ''} Each description should be between 150-160 characters, include a call-to-action, and be compelling for search users. Format each with a character count.`;
+
+      const { data, error } = await supabase.functions.invoke('generate-content', {
+        body: { 
+          prompt: enhancedPrompt,
+          template_type: 'seo-meta',
+          language: 'en'
+        }
+      });
+
+      if (error) throw error;
+
+      setGeneratedContent(data.generated_content);
+      setGenerationsUsed(prev => prev + 1);
+
+      toast({
+        title: "Success!",
+        description: `Meta descriptions generated (${MAX_FREE_GENERATIONS - generationsUsed - 1} free generations left)`
+      });
+    } catch (error: any) {
+      console.error('Generation error:', error);
+      toast({
+        title: "Generation Failed",
+        description: error.message || "Failed to generate meta descriptions",
+        variant: "destructive"
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(generatedContent);
+    toast({
+      title: "Copied!",
+      description: "Meta descriptions copied to clipboard"
+    });
+  };
+
+  return (
+    <div className="grid lg:grid-cols-2 gap-6">
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <p className="text-sm text-muted-foreground">
+            {MAX_FREE_GENERATIONS - generationsUsed} free generations remaining
+          </p>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="seoKeyword">Target Keyword (optional)</Label>
+          <Input
+            id="seoKeyword"
+            placeholder="e.g., best productivity apps, organic coffee"
+            value={keyword}
+            onChange={(e) => setKeyword(e.target.value)}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="seoPrompt">Page Content Description</Label>
+          <Textarea
+            id="seoPrompt"
+            placeholder="Describe what your page is about, its main purpose, and target audience..."
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            rows={4}
+          />
+        </div>
+
+        <Button 
+          onClick={handleGenerate} 
+          disabled={isGenerating || generationsUsed >= MAX_FREE_GENERATIONS}
+          className="w-full"
+        >
+          {isGenerating ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Generating...
+            </>
+          ) : (
+            <>
+              <Sparkles className="mr-2 h-4 w-4" />
+              Generate Meta Descriptions
+            </>
+          )}
+        </Button>
+
+        <div className="pt-4 border-t">
+          <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
+            <Lightbulb className="w-3 h-3" /> Try these examples:
+          </p>
+          <div className="space-y-2">
+            {seoExamples.map((example, index) => (
+              <Button
+                key={index}
+                variant="ghost"
+                size="sm"
+                className="w-full justify-start text-left h-auto py-2 text-xs"
+                onClick={() => setPrompt(example)}
+              >
+                {example}
+              </Button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <Card className="bg-muted/30">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base flex items-center justify-between">
+            Generated Meta Descriptions
+            {generatedContent && (
+              <Button variant="outline" size="sm" onClick={copyToClipboard}>
+                <Copy className="h-4 w-4 mr-2" />
+                Copy
+              </Button>
+            )}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {generatedContent ? (
+            <pre className="whitespace-pre-wrap font-sans text-sm bg-background p-4 rounded-lg border max-h-[400px] overflow-auto">
+              {generatedContent}
+            </pre>
+          ) : (
+            <div className="text-center py-12 text-muted-foreground">
+              <Search className="h-12 w-12 mx-auto mb-4 opacity-20" />
+              <p className="text-sm">Your generated meta descriptions will appear here</p>
             </div>
           )}
         </CardContent>

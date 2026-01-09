@@ -442,17 +442,18 @@ export default function Blog() {
               </div>
               
               {/* Category Filters */}
-              <div className="flex flex-wrap justify-center gap-2">
+              <div className="flex flex-wrap justify-center gap-1.5 sm:gap-2">
                 {categories.map((category) => (
                   <Button
                     key={category.name}
                     variant={selectedCategory === category.name ? "default" : "ghost"}
                     size="sm"
-                    className="rounded-full"
+                    className="rounded-full text-xs sm:text-sm px-2.5 sm:px-3 h-8 sm:h-9"
                     onClick={() => setSelectedCategory(category.name)}
                   >
-                    <category.icon className="w-4 h-4 mr-2" />
-                    {category.name}
+                    <category.icon className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                    <span className="hidden xs:inline sm:inline">{category.name}</span>
+                    <span className="xs:hidden sm:hidden">{category.name.split(' ')[0]}</span>
                   </Button>
                 ))}
               </div>

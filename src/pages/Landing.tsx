@@ -822,8 +822,85 @@ export default function Landing() {
         </div>
       </section>
 
+      {/* Free Tools Section */}
+      <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8" aria-label="Free AI Tools">
+        <div className="container mx-auto">
+          <div className="max-w-3xl mx-auto text-center mb-12 sm:mb-16">
+            <Badge className="mb-4 bg-green-500/10 text-green-500 border-green-500/20">100% Free</Badge>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Free AI Tools</h2>
+            <p className="text-base sm:text-lg text-muted-foreground">
+              Try our powerful AI generators without signing up. Create hashtags, headlines, slogans, and more instantly!
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 max-w-5xl mx-auto mb-8">
+            {[
+              { icon: MessageSquare, title: 'ChatGPT Prompts', color: 'from-violet-500 to-purple-600' },
+              { icon: Hash, title: 'Hashtags', color: 'from-pink-500 to-rose-600' },
+              { icon: FileText, title: 'Blog Intros', color: 'from-blue-500 to-cyan-600' },
+              { icon: Mail, title: 'Email Subjects', color: 'from-orange-500 to-amber-600' },
+              { icon: TrendingUp, title: 'Headlines', color: 'from-emerald-500 to-green-600' },
+              { icon: Star, title: 'Slogans', color: 'from-indigo-500 to-violet-600' },
+            ].map((tool, idx) => (
+              <Card 
+                key={idx} 
+                className="p-4 text-center hover:shadow-elegant transition-all duration-300 hover:scale-105 bg-card/50 backdrop-blur"
+              >
+                <div className={`w-10 h-10 rounded-lg bg-gradient-to-br ${tool.color} flex items-center justify-center mx-auto mb-2`}>
+                  <tool.icon className="h-5 w-5 text-white" />
+                </div>
+                <h3 className="text-xs sm:text-sm font-semibold">{tool.title}</h3>
+              </Card>
+            ))}
+          </div>
+
+          <div className="text-center">
+            <Button size="lg" onClick={() => navigate('/free-tools')} className="group">
+              Try All 11 Free Tools
+              <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Blog Section */}
+      <section className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-muted/30" aria-label="Latest Blog Posts">
+        <div className="container mx-auto">
+          <div className="max-w-3xl mx-auto text-center mb-12 sm:mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Latest from Our Blog</h2>
+            <p className="text-base sm:text-lg text-muted-foreground">
+              Expert insights on AI content generation, SEO strategies, and digital marketing tips.
+            </p>
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto mb-8">
+            {[
+              { title: 'Complete Guide to AI Content Generation Templates', category: 'Templates', date: 'Jan 5, 2026' },
+              { title: 'PeakDraft vs Jasper vs Copy.ai: Ultimate Comparison', category: 'Comparison', date: 'Jan 3, 2026' },
+              { title: 'How to Write SEO-Optimized Blog Posts with AI', category: 'SEO', date: 'Dec 28, 2025' },
+            ].map((post, idx) => (
+              <Card 
+                key={idx} 
+                className="p-6 hover:shadow-elegant transition-all duration-300 hover:scale-105 bg-card/50 backdrop-blur"
+              >
+                <Badge variant="secondary" className="mb-3 text-xs">{post.category}</Badge>
+                <h3 className="text-base sm:text-lg font-bold mb-2 line-clamp-2">{post.title}</h3>
+                <p className="text-xs text-muted-foreground">{post.date}</p>
+              </Card>
+            ))}
+          </div>
+
+          <div className="text-center">
+            <Button size="lg" variant="outline" onClick={() => navigate('/blog')} className="group">
+              Read All Articles
+              <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            </Button>
+          </div>
+        </div>
+      </section>
+
       {/* Contact Section */}
-      <section id="contact" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-muted/30">
+      <section id="contact" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8" aria-label="Contact Us">
         <div className="container mx-auto">
           <div className="max-w-3xl mx-auto text-center mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">Get in Touch</h2>

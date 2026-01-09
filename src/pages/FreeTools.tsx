@@ -180,7 +180,7 @@ export default function FreeTools() {
             {/* Tools Grid */}
             <section aria-labelledby="tools-section">
               <h2 id="tools-section" className="sr-only">Available Free AI Tools</h2>
-              <div className="grid gap-6">
+              <div className="grid gap-4 sm:gap-6">
                 {tools.map((tool, index) => {
                   const Icon = tool.icon;
                   const isActive = activeTool === tool.id;
@@ -211,18 +211,18 @@ export default function FreeTools() {
                           }}
                         >
                           <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-4">
+                            <div className="flex items-center gap-3 sm:gap-4">
                               <motion.div 
-                                className={`p-3 rounded-xl ${tool.bgColor}`}
+                                className={`p-2.5 sm:p-3 rounded-xl ${tool.bgColor}`}
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.95 }}
                                 aria-hidden="true"
                               >
-                                <Icon className={`w-6 h-6 ${tool.color}`} />
+                                <Icon className={`w-5 h-5 sm:w-6 sm:h-6 ${tool.color}`} />
                               </motion.div>
-                              <div>
-                                <CardTitle className="text-xl">{tool.title}</CardTitle>
-                                <CardDescription className="mt-1">{tool.description}</CardDescription>
+                              <div className="flex-1 min-w-0">
+                                <CardTitle className="text-base sm:text-xl">{tool.title}</CardTitle>
+                                <CardDescription className="mt-0.5 sm:mt-1 text-xs sm:text-sm line-clamp-1 sm:line-clamp-none">{tool.description}</CardDescription>
                               </div>
                             </div>
                             <motion.div
@@ -341,22 +341,11 @@ function FreeChatGPTPromptGenerator() {
   const [generationsUsed, setGenerationsUsed] = useState(0);
   const { toast } = useToast();
 
-  const MAX_FREE_GENERATIONS = 3;
-
   const handleGenerate = async () => {
     if (!prompt.trim()) {
       toast({
         title: "Error",
         description: "Please describe what kind of ChatGPT prompt you need",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (generationsUsed >= MAX_FREE_GENERATIONS) {
-      toast({
-        title: "Limit Reached",
-        description: "Sign up for free to get 5,000 words/month!",
         variant: "destructive"
       });
       return;
@@ -378,11 +367,10 @@ function FreeChatGPTPromptGenerator() {
       if (error) throw error;
 
       setGeneratedContent(data.generated_content);
-      setGenerationsUsed(prev => prev + 1);
 
       toast({
         title: "Success!",
-        description: `ChatGPT prompt generated (${MAX_FREE_GENERATIONS - generationsUsed - 1} free generations left)`
+        description: "ChatGPT prompt generated successfully"
       });
     } catch (error: any) {
       console.error('Generation error:', error);
@@ -405,14 +393,8 @@ function FreeChatGPTPromptGenerator() {
   };
 
   return (
-    <div className="grid lg:grid-cols-2 gap-6">
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            {MAX_FREE_GENERATIONS - generationsUsed} free generations remaining
-          </p>
-        </div>
-        
+    <div className="grid lg:grid-cols-2 gap-4 sm:gap-6">
+      <div className="space-y-3 sm:space-y-4">
         <div className="space-y-2">
           <Label htmlFor="purpose">Purpose/Use Case</Label>
           <Input
@@ -446,7 +428,7 @@ function FreeChatGPTPromptGenerator() {
 
         <Button 
           onClick={handleGenerate} 
-          disabled={isGenerating || generationsUsed >= MAX_FREE_GENERATIONS}
+          disabled={isGenerating}
           className="w-full"
         >
           {isGenerating ? (
@@ -517,25 +499,13 @@ function FreeHashtagGenerator() {
   const [platform, setPlatform] = useState('instagram');
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generationsUsed, setGenerationsUsed] = useState(0);
   const { toast } = useToast();
-
-  const MAX_FREE_GENERATIONS = 3;
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
       toast({
         title: "Error",
         description: "Please enter a topic or description",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (generationsUsed >= MAX_FREE_GENERATIONS) {
-      toast({
-        title: "Limit Reached",
-        description: "Sign up for free to get 5,000 words/month!",
         variant: "destructive"
       });
       return;
@@ -557,11 +527,10 @@ function FreeHashtagGenerator() {
       if (error) throw error;
 
       setGeneratedContent(data.generated_content);
-      setGenerationsUsed(prev => prev + 1);
 
       toast({
         title: "Success!",
-        description: `Hashtags generated (${MAX_FREE_GENERATIONS - generationsUsed - 1} free generations left)`
+        description: "Hashtags generated successfully"
       });
     } catch (error: any) {
       console.error('Generation error:', error);
@@ -584,14 +553,8 @@ function FreeHashtagGenerator() {
   };
 
   return (
-    <div className="grid lg:grid-cols-2 gap-6">
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            {MAX_FREE_GENERATIONS - generationsUsed} free generations remaining
-          </p>
-        </div>
-
+    <div className="grid lg:grid-cols-2 gap-4 sm:gap-6">
+      <div className="space-y-3 sm:space-y-4">
         <div className="space-y-2">
           <Label htmlFor="topic">Topic/Niche</Label>
           <Input
@@ -630,7 +593,7 @@ function FreeHashtagGenerator() {
 
         <Button 
           onClick={handleGenerate} 
-          disabled={isGenerating || generationsUsed >= MAX_FREE_GENERATIONS}
+          disabled={isGenerating}
           className="w-full"
         >
           {isGenerating ? (
@@ -700,25 +663,13 @@ function FreeBlogIntroGenerator() {
   const [tone, setTone] = useState('professional');
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generationsUsed, setGenerationsUsed] = useState(0);
   const { toast } = useToast();
-
-  const MAX_FREE_GENERATIONS = 3;
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
       toast({
         title: "Error",
         description: "Please enter your blog topic",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (generationsUsed >= MAX_FREE_GENERATIONS) {
-      toast({
-        title: "Limit Reached",
-        description: "Sign up for free to get 5,000 words/month!",
         variant: "destructive"
       });
       return;
@@ -740,11 +691,10 @@ function FreeBlogIntroGenerator() {
       if (error) throw error;
 
       setGeneratedContent(data.generated_content);
-      setGenerationsUsed(prev => prev + 1);
 
       toast({
         title: "Success!",
-        description: `Blog intro generated (${MAX_FREE_GENERATIONS - generationsUsed - 1} free generations left)`
+        description: "Blog intro generated successfully"
       });
     } catch (error: any) {
       console.error('Generation error:', error);
@@ -767,14 +717,8 @@ function FreeBlogIntroGenerator() {
   };
 
   return (
-    <div className="grid lg:grid-cols-2 gap-6">
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            {MAX_FREE_GENERATIONS - generationsUsed} free generations remaining
-          </p>
-        </div>
-
+    <div className="grid lg:grid-cols-2 gap-4 sm:gap-6">
+      <div className="space-y-3 sm:space-y-4">
         <div className="space-y-2">
           <Label htmlFor="blogTone">Tone</Label>
           <select
@@ -803,7 +747,7 @@ function FreeBlogIntroGenerator() {
 
         <Button 
           onClick={handleGenerate} 
-          disabled={isGenerating || generationsUsed >= MAX_FREE_GENERATIONS}
+          disabled={isGenerating}
           className="w-full"
         >
           {isGenerating ? (
@@ -873,25 +817,13 @@ function FreeCaptionGenerator() {
   const [platform, setPlatform] = useState('instagram');
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generationsUsed, setGenerationsUsed] = useState(0);
   const { toast } = useToast();
-
-  const MAX_FREE_GENERATIONS = 3;
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
       toast({
         title: "Error",
         description: "Please describe your post",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (generationsUsed >= MAX_FREE_GENERATIONS) {
-      toast({
-        title: "Limit Reached",
-        description: "Sign up for free to get 5,000 words/month!",
         variant: "destructive"
       });
       return;
@@ -913,11 +845,10 @@ function FreeCaptionGenerator() {
       if (error) throw error;
 
       setGeneratedContent(data.generated_content);
-      setGenerationsUsed(prev => prev + 1);
 
       toast({
         title: "Success!",
-        description: `Captions generated (${MAX_FREE_GENERATIONS - generationsUsed - 1} free generations left)`
+        description: "Captions generated successfully"
       });
     } catch (error: any) {
       console.error('Generation error:', error);
@@ -940,14 +871,8 @@ function FreeCaptionGenerator() {
   };
 
   return (
-    <div className="grid lg:grid-cols-2 gap-6">
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            {MAX_FREE_GENERATIONS - generationsUsed} free generations remaining
-          </p>
-        </div>
-
+    <div className="grid lg:grid-cols-2 gap-4 sm:gap-6">
+      <div className="space-y-3 sm:space-y-4">
         <div className="space-y-2">
           <Label htmlFor="captionPlatform">Platform</Label>
           <select
@@ -977,7 +902,7 @@ function FreeCaptionGenerator() {
 
         <Button 
           onClick={handleGenerate} 
-          disabled={isGenerating || generationsUsed >= MAX_FREE_GENERATIONS}
+          disabled={isGenerating}
           className="w-full"
         >
           {isGenerating ? (
@@ -1047,25 +972,13 @@ function FreeEmailSubjectGenerator() {
   const [emailType, setEmailType] = useState('promotional');
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generationsUsed, setGenerationsUsed] = useState(0);
   const { toast } = useToast();
-
-  const MAX_FREE_GENERATIONS = 3;
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
       toast({
         title: "Error",
         description: "Please describe your email",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (generationsUsed >= MAX_FREE_GENERATIONS) {
-      toast({
-        title: "Limit Reached",
-        description: "Sign up for free to get 5,000 words/month!",
         variant: "destructive"
       });
       return;
@@ -1087,11 +1000,10 @@ function FreeEmailSubjectGenerator() {
       if (error) throw error;
 
       setGeneratedContent(data.generated_content);
-      setGenerationsUsed(prev => prev + 1);
 
       toast({
         title: "Success!",
-        description: `Subject lines generated (${MAX_FREE_GENERATIONS - generationsUsed - 1} free generations left)`
+        description: "Subject lines generated successfully"
       });
     } catch (error: any) {
       console.error('Generation error:', error);
@@ -1114,14 +1026,8 @@ function FreeEmailSubjectGenerator() {
   };
 
   return (
-    <div className="grid lg:grid-cols-2 gap-6">
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            {MAX_FREE_GENERATIONS - generationsUsed} free generations remaining
-          </p>
-        </div>
-
+    <div className="grid lg:grid-cols-2 gap-4 sm:gap-6">
+      <div className="space-y-3 sm:space-y-4">
         <div className="space-y-2">
           <Label htmlFor="emailType">Email Type</Label>
           <select
@@ -1152,7 +1058,7 @@ function FreeEmailSubjectGenerator() {
 
         <Button 
           onClick={handleGenerate} 
-          disabled={isGenerating || generationsUsed >= MAX_FREE_GENERATIONS}
+          disabled={isGenerating}
           className="w-full"
         >
           {isGenerating ? (
@@ -1228,25 +1134,13 @@ function FreeProductDescriptionGenerator() {
   const [tone, setTone] = useState('professional');
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generationsUsed, setGenerationsUsed] = useState(0);
   const { toast } = useToast();
-
-  const MAX_FREE_GENERATIONS = 3;
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
       toast({
         title: "Error",
         description: "Please describe your product",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (generationsUsed >= MAX_FREE_GENERATIONS) {
-      toast({
-        title: "Limit Reached",
-        description: "Sign up for free to get 5,000 words/month!",
         variant: "destructive"
       });
       return;
@@ -1268,11 +1162,10 @@ function FreeProductDescriptionGenerator() {
       if (error) throw error;
 
       setGeneratedContent(data.generated_content);
-      setGenerationsUsed(prev => prev + 1);
 
       toast({
         title: "Success!",
-        description: `Product description generated (${MAX_FREE_GENERATIONS - generationsUsed - 1} free generations left)`
+        description: "Product description generated successfully"
       });
     } catch (error: any) {
       console.error('Generation error:', error);
@@ -1295,14 +1188,8 @@ function FreeProductDescriptionGenerator() {
   };
 
   return (
-    <div className="grid lg:grid-cols-2 gap-6">
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            {MAX_FREE_GENERATIONS - generationsUsed} free generations remaining
-          </p>
-        </div>
-
+    <div className="grid lg:grid-cols-2 gap-4 sm:gap-6">
+      <div className="space-y-3 sm:space-y-4">
         <div className="space-y-2">
           <Label htmlFor="productTone">Tone</Label>
           <select
@@ -1332,7 +1219,7 @@ function FreeProductDescriptionGenerator() {
 
         <Button 
           onClick={handleGenerate} 
-          disabled={isGenerating || generationsUsed >= MAX_FREE_GENERATIONS}
+          disabled={isGenerating}
           className="w-full"
         >
           {isGenerating ? (
@@ -1408,25 +1295,13 @@ function FreeSeoMetaGenerator() {
   const [keyword, setKeyword] = useState('');
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generationsUsed, setGenerationsUsed] = useState(0);
   const { toast } = useToast();
-
-  const MAX_FREE_GENERATIONS = 3;
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
       toast({
         title: "Error",
         description: "Please describe your page content",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (generationsUsed >= MAX_FREE_GENERATIONS) {
-      toast({
-        title: "Limit Reached",
-        description: "Sign up for free to get 5,000 words/month!",
         variant: "destructive"
       });
       return;
@@ -1448,11 +1323,10 @@ function FreeSeoMetaGenerator() {
       if (error) throw error;
 
       setGeneratedContent(data.generated_content);
-      setGenerationsUsed(prev => prev + 1);
 
       toast({
         title: "Success!",
-        description: `Meta descriptions generated (${MAX_FREE_GENERATIONS - generationsUsed - 1} free generations left)`
+        description: "Meta descriptions generated successfully"
       });
     } catch (error: any) {
       console.error('Generation error:', error);
@@ -1475,14 +1349,8 @@ function FreeSeoMetaGenerator() {
   };
 
   return (
-    <div className="grid lg:grid-cols-2 gap-6">
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            {MAX_FREE_GENERATIONS - generationsUsed} free generations remaining
-          </p>
-        </div>
-
+    <div className="grid lg:grid-cols-2 gap-4 sm:gap-6">
+      <div className="space-y-3 sm:space-y-4">
         <div className="space-y-2">
           <Label htmlFor="seoKeyword">Target Keyword (optional)</Label>
           <Input
@@ -1506,7 +1374,7 @@ function FreeSeoMetaGenerator() {
 
         <Button 
           onClick={handleGenerate} 
-          disabled={isGenerating || generationsUsed >= MAX_FREE_GENERATIONS}
+          disabled={isGenerating}
           className="w-full"
         >
           {isGenerating ? (
@@ -1582,25 +1450,13 @@ function FreeCTAGenerator() {
   const [ctaType, setCtaType] = useState('button');
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generationsUsed, setGenerationsUsed] = useState(0);
   const { toast } = useToast();
-
-  const MAX_FREE_GENERATIONS = 3;
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
       toast({
         title: "Error",
         description: "Please describe your CTA purpose",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (generationsUsed >= MAX_FREE_GENERATIONS) {
-      toast({
-        title: "Limit Reached",
-        description: "Sign up for free to get 5,000 words/month!",
         variant: "destructive"
       });
       return;
@@ -1622,11 +1478,10 @@ function FreeCTAGenerator() {
       if (error) throw error;
 
       setGeneratedContent(data.generated_content);
-      setGenerationsUsed(prev => prev + 1);
 
       toast({
         title: "Success!",
-        description: `CTAs generated (${MAX_FREE_GENERATIONS - generationsUsed - 1} free generations left)`
+        description: "CTAs generated successfully"
       });
     } catch (error: any) {
       console.error('Generation error:', error);
@@ -1649,14 +1504,8 @@ function FreeCTAGenerator() {
   };
 
   return (
-    <div className="grid lg:grid-cols-2 gap-6">
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            {MAX_FREE_GENERATIONS - generationsUsed} free generations remaining
-          </p>
-        </div>
-
+    <div className="grid lg:grid-cols-2 gap-4 sm:gap-6">
+      <div className="space-y-3 sm:space-y-4">
         <div className="space-y-2">
           <Label htmlFor="ctaType">CTA Type</Label>
           <select
@@ -1684,7 +1533,7 @@ function FreeCTAGenerator() {
 
         <Button 
           onClick={handleGenerate} 
-          disabled={isGenerating || generationsUsed >= MAX_FREE_GENERATIONS}
+          disabled={isGenerating}
           className="w-full"
         >
           {isGenerating ? (
@@ -1760,25 +1609,13 @@ function FreeHeadlineGenerator() {
   const [headlineType, setHeadlineType] = useState('blog');
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generationsUsed, setGenerationsUsed] = useState(0);
   const { toast } = useToast();
-
-  const MAX_FREE_GENERATIONS = 3;
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
       toast({
         title: "Error",
         description: "Please describe what the headline is for",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (generationsUsed >= MAX_FREE_GENERATIONS) {
-      toast({
-        title: "Limit Reached",
-        description: "Sign up for free to get 5,000 words/month!",
         variant: "destructive"
       });
       return;
@@ -1800,11 +1637,10 @@ function FreeHeadlineGenerator() {
       if (error) throw error;
 
       setGeneratedContent(data.generated_content);
-      setGenerationsUsed(prev => prev + 1);
 
       toast({
         title: "Success!",
-        description: `Headlines generated (${MAX_FREE_GENERATIONS - generationsUsed - 1} free generations left)`
+        description: "Headlines generated successfully"
       });
     } catch (error: any) {
       console.error('Generation error:', error);
@@ -1827,14 +1663,8 @@ function FreeHeadlineGenerator() {
   };
 
   return (
-    <div className="grid lg:grid-cols-2 gap-6">
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            {MAX_FREE_GENERATIONS - generationsUsed} free generations remaining
-          </p>
-        </div>
-
+    <div className="grid lg:grid-cols-2 gap-4 sm:gap-6">
+      <div className="space-y-3 sm:space-y-4">
         <div className="space-y-2">
           <Label htmlFor="headlineType">Headline Type</Label>
           <select
@@ -1864,7 +1694,7 @@ function FreeHeadlineGenerator() {
 
         <Button 
           onClick={handleGenerate} 
-          disabled={isGenerating || generationsUsed >= MAX_FREE_GENERATIONS}
+          disabled={isGenerating}
           className="w-full"
         >
           {isGenerating ? (
@@ -1940,25 +1770,13 @@ function FreeSloganGenerator() {
   const [style, setStyle] = useState('catchy');
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generationsUsed, setGenerationsUsed] = useState(0);
   const { toast } = useToast();
-
-  const MAX_FREE_GENERATIONS = 3;
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
       toast({
         title: "Error",
         description: "Please describe your brand or product",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (generationsUsed >= MAX_FREE_GENERATIONS) {
-      toast({
-        title: "Limit Reached",
-        description: "Sign up for free to get 5,000 words/month!",
         variant: "destructive"
       });
       return;
@@ -1980,11 +1798,10 @@ function FreeSloganGenerator() {
       if (error) throw error;
 
       setGeneratedContent(data.generated_content);
-      setGenerationsUsed(prev => prev + 1);
 
       toast({
         title: "Success!",
-        description: `Slogans generated (${MAX_FREE_GENERATIONS - generationsUsed - 1} free generations left)`
+        description: "Slogans generated successfully"
       });
     } catch (error: any) {
       console.error('Generation error:', error);
@@ -2007,14 +1824,8 @@ function FreeSloganGenerator() {
   };
 
   return (
-    <div className="grid lg:grid-cols-2 gap-6">
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            {MAX_FREE_GENERATIONS - generationsUsed} free generations remaining
-          </p>
-        </div>
-
+    <div className="grid lg:grid-cols-2 gap-4 sm:gap-6">
+      <div className="space-y-3 sm:space-y-4">
         <div className="space-y-2">
           <Label htmlFor="sloganStyle">Slogan Style</Label>
           <select
@@ -2044,7 +1855,7 @@ function FreeSloganGenerator() {
 
         <Button 
           onClick={handleGenerate} 
-          disabled={isGenerating || generationsUsed >= MAX_FREE_GENERATIONS}
+          disabled={isGenerating}
           className="w-full"
         >
           {isGenerating ? (
@@ -2120,25 +1931,13 @@ function FreeTestimonialGenerator() {
   const [testimonialType, setTestimonialType] = useState('product');
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generationsUsed, setGenerationsUsed] = useState(0);
   const { toast } = useToast();
-
-  const MAX_FREE_GENERATIONS = 3;
 
   const handleGenerate = async () => {
     if (!prompt.trim()) {
       toast({
         title: "Error",
         description: "Please describe your product or service",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    if (generationsUsed >= MAX_FREE_GENERATIONS) {
-      toast({
-        title: "Limit Reached",
-        description: "Sign up for free to get 5,000 words/month!",
         variant: "destructive"
       });
       return;
@@ -2166,11 +1965,10 @@ Format each with the testimonial text, followed by "— [Name], [Role/Context]"`
       if (error) throw error;
 
       setGeneratedContent(data.generated_content);
-      setGenerationsUsed(prev => prev + 1);
 
       toast({
         title: "Success!",
-        description: `Testimonials generated (${MAX_FREE_GENERATIONS - generationsUsed - 1} free generations left)`
+        description: "Testimonials generated successfully"
       });
     } catch (error: any) {
       console.error('Generation error:', error);
@@ -2193,14 +1991,8 @@ Format each with the testimonial text, followed by "— [Name], [Role/Context]"`
   };
 
   return (
-    <div className="grid lg:grid-cols-2 gap-6">
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            {MAX_FREE_GENERATIONS - generationsUsed} free generations remaining
-          </p>
-        </div>
-
+    <div className="grid lg:grid-cols-2 gap-4 sm:gap-6">
+      <div className="space-y-3 sm:space-y-4">
         <div className="space-y-2">
           <Label htmlFor="testimonialType">Testimonial Type</Label>
           <select
@@ -2230,7 +2022,7 @@ Format each with the testimonial text, followed by "— [Name], [Role/Context]"`
 
         <Button 
           onClick={handleGenerate} 
-          disabled={isGenerating || generationsUsed >= MAX_FREE_GENERATIONS}
+          disabled={isGenerating}
           className="w-full"
         >
           {isGenerating ? (

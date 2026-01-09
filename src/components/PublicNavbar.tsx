@@ -4,22 +4,29 @@ import { Button } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Menu, ArrowRight } from 'lucide-react';
 import { ThemeToggle } from '@/components/ThemeToggle';
-
 export function PublicNavbar() {
   const navigate = useNavigate();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  const navLinks = [
-    { href: '/', label: 'Home' },
-    { href: '/features', label: 'Features' },
-    { href: '/free-tools', label: 'Free Tools' },
-    { href: '/pricing', label: 'Pricing' },
-    { href: '/blog', label: 'Blog' },
-    { href: '/contact', label: 'Contact' },
-  ];
-
-  return (
-    <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-lg border-b border-border/40">
+  const navLinks = [{
+    href: '/',
+    label: 'Home'
+  }, {
+    href: '/features',
+    label: 'Features'
+  }, {
+    href: '/free-tools',
+    label: 'Free Tools'
+  }, {
+    href: '/pricing',
+    label: 'Pricing'
+  }, {
+    href: '/blog',
+    label: 'Blog'
+  }, {
+    href: '/contact',
+    label: 'Contact'
+  }];
+  return <nav className="fixed top-0 w-full z-50 bg-background/80 backdrop-blur-lg border-b border-border/40">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -30,16 +37,9 @@ export function PublicNavbar() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex gap-1">
-            {navLinks.map((link) => (
-              <Button
-                key={link.label}
-                variant="ghost"
-                onClick={() => navigate(link.href)}
-                className="text-sm"
-              >
+            {navLinks.map(link => <Button key={link.label} variant="ghost" onClick={() => navigate(link.href)} className="text-sm">
                 {link.label}
-              </Button>
-            ))}
+              </Button>)}
           </div>
 
           {/* Desktop Auth Buttons */}
@@ -48,10 +48,7 @@ export function PublicNavbar() {
             <Button variant="ghost" onClick={() => navigate('/auth')}>
               Sign In
             </Button>
-            <Button onClick={() => navigate('/auth')} className="group">
-              Get Started
-              <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-            </Button>
+            
           </div>
 
           {/* Mobile Menu */}
@@ -65,37 +62,23 @@ export function PublicNavbar() {
               </SheetTrigger>
               <SheetContent side="right" className="w-[280px] sm:w-[320px]">
                 <div className="flex flex-col gap-4 mt-8">
-                  {navLinks.map((link) => (
-                    <Button
-                      key={link.label}
-                      variant="ghost"
-                      className="justify-start"
-                      onClick={() => {
-                        navigate(link.href);
-                        setMobileMenuOpen(false);
-                      }}
-                    >
+                  {navLinks.map(link => <Button key={link.label} variant="ghost" className="justify-start" onClick={() => {
+                  navigate(link.href);
+                  setMobileMenuOpen(false);
+                }}>
                       {link.label}
-                    </Button>
-                  ))}
+                    </Button>)}
                   <div className="border-t border-border pt-4 mt-4 space-y-2">
-                    <Button
-                      variant="outline"
-                      className="w-full"
-                      onClick={() => {
-                        navigate('/auth');
-                        setMobileMenuOpen(false);
-                      }}
-                    >
+                    <Button variant="outline" className="w-full" onClick={() => {
+                    navigate('/auth');
+                    setMobileMenuOpen(false);
+                  }}>
                       Sign In
                     </Button>
-                    <Button
-                      className="w-full"
-                      onClick={() => {
-                        navigate('/auth');
-                        setMobileMenuOpen(false);
-                      }}
-                    >
+                    <Button className="w-full" onClick={() => {
+                    navigate('/auth');
+                    setMobileMenuOpen(false);
+                  }}>
                       Get Started
                       <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
@@ -106,6 +89,5 @@ export function PublicNavbar() {
           </div>
         </div>
       </div>
-    </nav>
-  );
+    </nav>;
 }

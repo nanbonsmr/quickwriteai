@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { PublicNavbar } from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -338,7 +338,6 @@ function FreeChatGPTPromptGenerator() {
   const [context, setContext] = useState('');
   const [generatedContent, setGeneratedContent] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [generationsUsed, setGenerationsUsed] = useState(0);
   const { toast } = useToast();
 
   const handleGenerate = async () => {

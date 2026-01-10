@@ -1,117 +1,117 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://peakdraft.app/</loc>
-    <lastmod>2026-01-08</lastmod>
+    <loc>https://peakdraft.netlify.app/</loc>
+    <lastmod>2026-01-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
-    <loc>https://peakdraft.app/blog/ai-content-generation-templates-guide</loc>
+    <loc>https://peakdraft.netlify.app/features</loc>
+    <lastmod>2026-01-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://peakdraft.netlify.app/pricing</loc>
+    <lastmod>2026-01-10</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://peakdraft.netlify.app/free-tools</loc>
+    <lastmod>2026-01-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://peakdraft.netlify.app/blog</loc>
+    <lastmod>2026-01-10</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://peakdraft.netlify.app/blog/ai-content-generation-templates-guide</loc>
     <lastmod>2026-01-05</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://peakdraft.app/blog/peakdraft-vs-competitors-comparison</loc>
+    <loc>https://peakdraft.netlify.app/blog/peakdraft-vs-competitors-comparison</loc>
     <lastmod>2026-01-03</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://peakdraft.app/blog/about-peakdraft-story</loc>
+    <loc>https://peakdraft.netlify.app/blog/about-peakdraft-story</loc>
     <lastmod>2026-01-01</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://peakdraft.app/blog/how-to-write-seo-blog-posts</loc>
+    <loc>https://peakdraft.netlify.app/blog/how-to-write-seo-blog-posts</loc>
     <lastmod>2025-12-28</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://peakdraft.app/blog/social-media-content-strategy-2026</loc>
+    <loc>https://peakdraft.netlify.app/blog/social-media-content-strategy-2026</loc>
     <lastmod>2025-12-25</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://peakdraft.app/blog/email-marketing-ai-tips</loc>
+    <loc>https://peakdraft.netlify.app/blog/email-marketing-ai-tips</loc>
     <lastmod>2025-12-20</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://peakdraft.app/blog/ai-writing-best-practices</loc>
+    <loc>https://peakdraft.netlify.app/blog/ai-writing-best-practices</loc>
     <lastmod>2025-12-15</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://peakdraft.app/blog/product-description-writing-guide</loc>
+    <loc>https://peakdraft.netlify.app/blog/product-description-writing-guide</loc>
     <lastmod>2025-12-10</lastmod>
     <changefreq>monthly</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://peakdraft.app/features</loc>
-    <lastmod>2026-01-08</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://peakdraft.app/pricing</loc>
-    <lastmod>2026-01-08</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-  <url>
-    <loc>https://peakdraft.app/free-tools</loc>
-    <lastmod>2026-01-08</lastmod>
-    <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
-    <loc>https://peakdraft.app/contact</loc>
-    <lastmod>2026-01-08</lastmod>
+    <loc>https://peakdraft.netlify.app/contact</loc>
+    <lastmod>2026-01-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://peakdraft.app/faq</loc>
-    <lastmod>2026-01-08</lastmod>
+    <loc>https://peakdraft.netlify.app/faq</loc>
+    <lastmod>2026-01-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://peakdraft.app/privacy</loc>
-    <lastmod>2026-01-08</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>https://peakdraft.app/terms</loc>
-    <lastmod>2026-01-08</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>https://peakdraft.app/refund-policy</loc>
-    <lastmod>2026-01-08</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
-  </url>
-  <url>
-    <loc>https://peakdraft.app/auth</loc>
-    <lastmod>2026-01-08</lastmod>
+    <loc>https://peakdraft.netlify.app/auth</loc>
+    <lastmod>2026-01-10</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://peakdraft.app/blog</loc>
-    <lastmod>2026-01-08</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <loc>https://peakdraft.netlify.app/privacy</loc>
+    <lastmod>2026-01-10</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://peakdraft.netlify.app/terms</loc>
+    <lastmod>2026-01-10</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
+  </url>
+  <url>
+    <loc>https://peakdraft.netlify.app/refund-policy</loc>
+    <lastmod>2026-01-10</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.3</priority>
   </url>
 </urlset>

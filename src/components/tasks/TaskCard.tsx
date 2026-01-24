@@ -13,6 +13,8 @@ import { format } from "date-fns";
 import { useDraggable } from "@dnd-kit/core";
 import { CSS } from "@dnd-kit/utilities";
 import { SubtaskProgress } from "./SubtaskList";
+import { TaskLabelsDisplay } from "./TaskLabelManager";
+import { TaskTimeDisplay } from "./TaskTimeTracker";
 
 interface Task {
   id: string;
@@ -131,8 +133,14 @@ export function TaskCard({ task, onStatusChange, onEdit, onDelete }: TaskCardPro
           )}
         </div>
 
+        {/* Labels */}
+        <TaskLabelsDisplay taskId={task.id} />
+
         {/* Subtask Progress */}
         <SubtaskProgress taskId={task.id} />
+
+        {/* Time Tracking */}
+        <TaskTimeDisplay taskId={task.id} />
 
         {task.due_date && (
           <div className={`flex items-center gap-1 text-xs ${isOverdue ? 'text-destructive' : 'text-muted-foreground'}`}>

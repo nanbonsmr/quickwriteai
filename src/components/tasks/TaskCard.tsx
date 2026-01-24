@@ -31,6 +31,7 @@ interface TaskCardProps {
   onStatusChange: (taskId: string, newStatus: string) => void;
   onEdit: () => void;
   onDelete: (taskId: string) => void;
+  onView?: () => void;
 }
 
 const PRIORITY_COLORS = {
@@ -47,7 +48,7 @@ const STATUS_OPTIONS = [
   { value: 'completed', label: 'Completed' },
 ];
 
-export function TaskCard({ task, onStatusChange, onEdit, onDelete }: TaskCardProps) {
+export function TaskCard({ task, onStatusChange, onEdit, onDelete, onView }: TaskCardProps) {
   const isOverdue = task.due_date && new Date(task.due_date) < new Date() && task.status !== 'completed';
 
   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
@@ -60,11 +61,21 @@ export function TaskCard({ task, onStatusChange, onEdit, onDelete }: TaskCardPro
     opacity: isDragging ? 0.5 : 1,
   };
 
+  const handleCardClick = (e: React.MouseEvent) => {
+    // Only trigger view if not clicking on interactive elements
+    const target = e.target as HTMLElement;
+    if (target.closest('button') || target.closest('[role="menuitem"]')) {
+      return;
+    }
+    onView?.();
+  };
+
   return (
     <Card 
       ref={setNodeRef}
       style={style}
-      className={`hover:shadow-lg transition-shadow group w-full ${isDragging ? 'shadow-2xl ring-2 ring-primary cursor-grabbing' : 'cursor-grab'}`}
+      onClick={handleCardClick}
+      className={`hover:shadow-lg transition-shadow group w-full ${isDragging ? 'shadow-2xl ring-2 ring-primary cursor-grabbing' : 'cursor-pointer'}`}
     >
       <CardHeader className="p-3 sm:p-4 pb-2">
         <div className="flex items-start justify-between gap-2">

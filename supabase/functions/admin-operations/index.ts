@@ -369,6 +369,96 @@ serve(async (req) => {
         );
       }
 
+      // Pinned Templates operations
+      case 'get-pinned-templates': {
+        const { data: pinnedTemplates, error } = await supabaseAdmin
+          .from('pinned_templates')
+          .select('*')
+          .order('pinned_at', { ascending: false });
+
+        if (error) {
+          console.error('Error fetching pinned templates:', error);
+          return new Response(
+            JSON.stringify({ error: 'Failed to fetch pinned templates' }),
+            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        return new Response(
+          JSON.stringify({ pinnedTemplates }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      case 'pin-template': {
+        const { templateId } = data;
+        
+        if (!templateId) {
+          return new Response(
+            JSON.stringify({ error: 'Template ID is required' }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        const { error } = await supabaseAdmin
+          .from('pinned_templates')
+          .insert({
+            template_id: templateId,
+            pinned_by: userId
+          });
+
+        if (error) {
+          // Check if already pinned
+          if (error.code === '23505') {
+            return new Response(
+              JSON.stringify({ error: 'Template is already pinned' }),
+              { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            );
+          }
+          console.error('Error pinning template:', error);
+          return new Response(
+            JSON.stringify({ error: 'Failed to pin template' }),
+            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        console.log(`Template pinned: ${templateId}`);
+        return new Response(
+          JSON.stringify({ success: true }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      case 'unpin-template': {
+        const { templateId } = data;
+        
+        if (!templateId) {
+          return new Response(
+            JSON.stringify({ error: 'Template ID is required' }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        const { error } = await supabaseAdmin
+          .from('pinned_templates')
+          .delete()
+          .eq('template_id', templateId);
+
+        if (error) {
+          console.error('Error unpinning template:', error);
+          return new Response(
+            JSON.stringify({ error: 'Failed to unpin template' }),
+            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        console.log(`Template unpinned: ${templateId}`);
+        return new Response(
+          JSON.stringify({ success: true }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
       default:
         return new Response(
           JSON.stringify({ error: 'Unknown action' }),

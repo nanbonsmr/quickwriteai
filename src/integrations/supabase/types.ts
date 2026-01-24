@@ -177,6 +177,27 @@ export type Database = {
         }
         Relationships: []
       }
+      pinned_templates: {
+        Row: {
+          id: string
+          pinned_at: string
+          pinned_by: string
+          template_id: string
+        }
+        Insert: {
+          id?: string
+          pinned_at?: string
+          pinned_by: string
+          template_id: string
+        }
+        Update: {
+          id?: string
+          pinned_at?: string
+          pinned_by?: string
+          template_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null

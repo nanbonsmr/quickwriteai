@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Loader2, Calendar, Flag, ArrowLeft, CheckCircle2, Clock } from "lucide-react";
 import { format } from "date-fns";
+import { PublicSubtaskList } from "@/components/tasks/PublicSubtaskList";
 
 interface SharedTaskData {
   id: string;
@@ -22,6 +23,7 @@ const SharedTask = () => {
   const [task, setTask] = useState<SharedTaskData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [canEdit, setCanEdit] = useState(false);
 
   useEffect(() => {
     const fetchSharedTask = async () => {
@@ -35,7 +37,7 @@ const SharedTask = () => {
         // First, find the share record
         const { data: shareData, error: shareError } = await supabase
           .from("task_shares")
-          .select("task_id, is_public, expires_at")
+          .select("task_id, is_public, expires_at, permission")
           .eq("share_token", token)
           .single();
 
@@ -51,6 +53,9 @@ const SharedTask = () => {
           setLoading(false);
           return;
         }
+
+        // Check permission level
+        setCanEdit(shareData.permission === "edit");
 
         // Fetch the task
         const { data: taskData, error: taskError } = await supabase
@@ -193,9 +198,13 @@ const SharedTask = () => {
               </div>
             </div>
 
+            {/* Subtasks section */}
+            <PublicSubtaskList taskId={task.id} canEdit={canEdit} />
+
             <div className="pt-4 border-t">
               <p className="text-xs text-muted-foreground text-center">
                 This task was shared via PeakDraft
+                {canEdit && " • You have edit access"}
               </p>
             </div>
           </CardContent>

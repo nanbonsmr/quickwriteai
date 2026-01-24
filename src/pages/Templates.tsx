@@ -56,8 +56,11 @@ import {
   Newspaper,
   Briefcase,
   Linkedin,
-  Star
+  Star,
+  Search,
+  X
 } from 'lucide-react';
+import { Input } from '@/components/ui/input';
 
 const categories = [
   { id: 'all', label: 'All Templates', icon: Sparkles },
@@ -378,6 +381,7 @@ export default function Templates() {
   const currentTemplate = location.pathname.split('/')[3];
   const [pinnedTemplateIds, setPinnedTemplateIds] = useState<string[]>([]);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
     const loadPinnedTemplates = async () => {
@@ -398,10 +402,14 @@ export default function Templates() {
     loadPinnedTemplates();
   }, []);
 
-  // Filter by category first, then sort by pinned status
-  const filteredTemplates = templates.filter(t => 
-    selectedCategory === 'all' || t.category === selectedCategory
-  );
+  // Filter by search query and category
+  const filteredTemplates = templates.filter(t => {
+    const matchesCategory = selectedCategory === 'all' || t.category === selectedCategory;
+    const matchesSearch = searchQuery === '' || 
+      t.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      t.description.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   const sortedTemplates = [...filteredTemplates].sort((a, b) => {
     const aIsPinned = pinnedTemplateIds.includes(a.id);
@@ -454,11 +462,32 @@ export default function Templates() {
   return (
     <div className="max-w-6xl mx-auto space-y-6">
       {/* Header */}
-      <div className="space-y-0.5">
-        <h2 className="text-2xl font-bold tracking-tight">Content Templates</h2>
-        <p className="text-muted-foreground">
-          Choose from our collection of AI-powered content generation templates.
-        </p>
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div className="space-y-0.5">
+          <h2 className="text-2xl font-bold tracking-tight">Content Templates</h2>
+          <p className="text-muted-foreground">
+            Choose from our collection of AI-powered content generation templates.
+          </p>
+        </div>
+        
+        {/* Search Bar */}
+        <div className="relative w-full md:w-72">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search templates..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9 pr-9"
+          />
+          {searchQuery && (
+            <button
+              onClick={() => setSearchQuery('')}
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            >
+              <X className="h-4 w-4" />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Category Tabs */}

@@ -14,6 +14,7 @@ import { Share2, Link, Mail, Copy, Trash2, Check, Loader2, Globe, Lock, Eye } fr
 import { useTaskSharing, TaskShare } from "@/hooks/useTaskSharing";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
+import { SharedTaskPreviewModal } from "./SharedTaskPreviewModal";
 
 interface TaskSharingPanelProps {
   taskId: string | null;
@@ -27,6 +28,8 @@ export function TaskSharingPanel({ taskId }: TaskSharingPanelProps) {
   const [permission, setPermission] = useState("view");
   const [submitting, setSubmitting] = useState(false);
   const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewToken, setPreviewToken] = useState<string | null>(null);
 
   const handleCreatePublicLink = async () => {
     setSubmitting(true);
@@ -58,6 +61,13 @@ export function TaskSharingPanel({ taskId }: TaskSharingPanelProps) {
 
   const handleRevoke = async (shareId: string) => {
     await revokeShare(shareId);
+  };
+
+  const handlePreview = (share: TaskShare) => {
+    if (share.share_token) {
+      setPreviewToken(share.share_token);
+      setPreviewOpen(true);
+    }
   };
 
   if (!taskId) {
@@ -100,7 +110,7 @@ export function TaskSharingPanel({ taskId }: TaskSharingPanelProps) {
                   size="icon"
                   variant="ghost"
                   className="h-7 w-7"
-                  onClick={() => window.open(getShareUrl(share), "_blank")}
+                  onClick={() => handlePreview(share)}
                   title="Preview shared task"
                 >
                   <Eye className="h-3 w-3" />
@@ -213,6 +223,12 @@ export function TaskSharingPanel({ taskId }: TaskSharingPanelProps) {
           </ScrollArea>
         </div>
       )}
+      {/* Preview Modal */}
+      <SharedTaskPreviewModal
+        open={previewOpen}
+        onOpenChange={setPreviewOpen}
+        shareToken={previewToken}
+      />
     </div>
   );
 }

@@ -18,6 +18,11 @@ import PostIdeasGenerator from '@/components/templates/PostIdeasGenerator';
 import ChatGPTPromptGenerator from '@/components/templates/ChatGPTPromptGenerator';
 import ImagePromptGenerator from '@/components/templates/ImagePromptGenerator';
 import VideoPromptGenerator from '@/components/templates/VideoPromptGenerator';
+import ProposalGenerator from '@/components/templates/ProposalGenerator';
+import CourtReportGenerator from '@/components/templates/CourtReportGenerator';
+import AdsImagePromptGenerator from '@/components/templates/AdsImagePromptGenerator';
+import BackgroundImagePromptGenerator from '@/components/templates/BackgroundImagePromptGenerator';
+import FriendlyLetterGenerator from '@/components/templates/FriendlyLetterGenerator';
 import { 
   PenTool, 
   MessageSquare, 
@@ -35,7 +40,12 @@ import {
   Image,
   Film,
   Hash,
-  Pin
+  Pin,
+  FileCheck,
+  Scale,
+  ImagePlus,
+  Layers,
+  Heart
 } from 'lucide-react';
 
 const templates = [
@@ -192,6 +202,61 @@ const templates = [
     features: ['Scene Details', 'Camera Movements', 'Production Ready'],
     usageCount: '890 uses',
     exampleOutput: 'Opening shot: Slow dolly-in on a modern office space, natural lighting from large windows. Medium shot of professional working at desk, focused expression. Camera pans right to reveal collaborative team meeting. Cut to close-up of hands sketching on whiteboard. Transition: Quick montage of successful project completion. Mood: Inspirational, corporate, dynamic.'
+  },
+  {
+    id: 'proposal',
+    title: 'Proposal Writer',
+    description: 'Create professional business and project proposals',
+    icon: FileCheck,
+    color: 'text-teal-600',
+    bgColor: 'bg-teal-100',
+    features: ['Business Proposals', 'Project Plans', 'Persuasive'],
+    usageCount: '650 uses',
+    exampleOutput: 'EXECUTIVE SUMMARY\n\nWe propose a comprehensive digital transformation initiative designed to modernize your operations and increase efficiency by 40%. Our phased approach ensures minimal disruption while maximizing ROI...'
+  },
+  {
+    id: 'court-report',
+    title: 'Court Report Writer',
+    description: 'Generate professional legal documents and court reports',
+    icon: Scale,
+    color: 'text-slate-600',
+    bgColor: 'bg-slate-100',
+    features: ['Legal Format', 'Formal Language', 'Case Summaries'],
+    usageCount: '420 uses',
+    exampleOutput: 'IN THE MATTER OF: Case No. 2024-CV-1234\n\nLEGAL BRIEF\n\n1. STATEMENT OF FACTS\nThe plaintiff, hereinafter referred to as "Claimant," initiated proceedings on...'
+  },
+  {
+    id: 'ads-image-prompt',
+    title: 'AI Ads Image Prompt',
+    description: 'Generate prompts for AI advertisement images',
+    icon: ImagePlus,
+    color: 'text-orange-600',
+    bgColor: 'bg-orange-100',
+    features: ['Platform Specific', 'Brand Colors', 'Commercial Quality'],
+    usageCount: '780 uses',
+    exampleOutput: 'Professional product photography of wireless earbuds on a minimalist white surface, soft gradient lighting from above, subtle reflection, brand colors (navy blue accents), clean modern aesthetic, 8K commercial quality...'
+  },
+  {
+    id: 'background-image-prompt',
+    title: 'AI Background Image',
+    description: 'Create prompts for stunning background images',
+    icon: Layers,
+    color: 'text-sky-600',
+    bgColor: 'bg-sky-100',
+    features: ['Multiple Styles', 'Seamless', 'High Resolution'],
+    usageCount: '920 uses',
+    exampleOutput: 'Abstract gradient background, flowing waves of deep purple transitioning to soft coral pink, subtle geometric shapes floating in space, soft bokeh effect, 8K seamless wallpaper, perfect for text overlay...'
+  },
+  {
+    id: 'friendly-letter',
+    title: 'AI Friendly Letter',
+    description: 'Write warm, heartfelt letters for friends and family',
+    icon: Heart,
+    color: 'text-pink-600',
+    bgColor: 'bg-pink-100',
+    features: ['Personal Touch', 'Multiple Tones', 'Heartfelt'],
+    usageCount: '560 uses',
+    exampleOutput: 'Dear Sarah,\n\nI hope this letter finds you well. I\'ve been thinking about you lately and wanted to reach out to say how much your friendship means to me...'
   }
 ];
 
@@ -248,6 +313,11 @@ export default function Templates() {
         {currentTemplate === 'chatgpt-prompt' && <ChatGPTPromptGenerator />}
         {currentTemplate === 'image-prompt' && <ImagePromptGenerator />}
         {currentTemplate === 'video-prompt' && <VideoPromptGenerator />}
+        {currentTemplate === 'proposal' && <ProposalGenerator />}
+        {currentTemplate === 'court-report' && <CourtReportGenerator />}
+        {currentTemplate === 'ads-image-prompt' && <AdsImagePromptGenerator />}
+        {currentTemplate === 'background-image-prompt' && <BackgroundImagePromptGenerator />}
+        {currentTemplate === 'friendly-letter' && <FriendlyLetterGenerator />}
       </div>
     );
   }

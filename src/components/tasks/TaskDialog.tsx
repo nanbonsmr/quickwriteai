@@ -26,6 +26,7 @@ import { CalendarIcon, Loader2, Bell, FileText, MessageSquare, Clock, History, S
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { SubtaskList } from "./SubtaskList";
+import { PendingSubtaskList } from "./PendingSubtaskList";
 import { TaskLabelManager } from "./TaskLabelManager";
 import { TaskComments } from "./TaskComments";
 import { TaskTimeTracker } from "./TaskTimeTracker";
@@ -75,6 +76,7 @@ export function TaskDialog({ open, onOpenChange, taskId, onTaskCreated }: TaskDi
   const [reminderTime, setReminderTime] = useState("");
   const [selectedLabelIds, setSelectedLabelIds] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState("details");
+  const [pendingSubtasks, setPendingSubtasks] = useState<string[]>([]);
 
   // Store original values for activity logging
   const [originalValues, setOriginalValues] = useState<Record<string, any>>({});
@@ -147,6 +149,7 @@ export function TaskDialog({ open, onOpenChange, taskId, onTaskCreated }: TaskDi
     setSelectedLabelIds([]);
     setOriginalValues({});
     setActiveTab("details");
+    setPendingSubtasks([]);
   };
 
   const getReminderDateTime = (): string | null => {
@@ -232,6 +235,17 @@ export function TaskDialog({ open, onOpenChange, taskId, onTaskCreated }: TaskDi
             label_id: labelId,
           }));
           await supabase.from("task_label_assignments").insert(labelAssignments);
+        }
+
+        // Create pending subtasks for the new task
+        if (pendingSubtasks.length > 0 && newTask) {
+          const subtasksToInsert = pendingSubtasks.map((subtaskTitle, index) => ({
+            task_id: newTask.id,
+            title: subtaskTitle,
+            position: index,
+            completed: false,
+          }));
+          await supabase.from("subtasks").insert(subtasksToInsert);
         }
 
         toast({
@@ -454,9 +468,14 @@ export function TaskDialog({ open, onOpenChange, taskId, onTaskCreated }: TaskDi
                   )}
                 </div>
 
-                {/* Subtasks Section - Only show for existing tasks */}
-                {taskId && (
+                {/* Subtasks Section */}
+                {taskId ? (
                   <SubtaskList taskId={taskId} />
+                ) : (
+                  <PendingSubtaskList
+                    subtasks={pendingSubtasks}
+                    onSubtasksChange={setPendingSubtasks}
+                  />
                 )}
 
                 <div className="flex flex-col sm:flex-row justify-end gap-2 pt-4 border-t">

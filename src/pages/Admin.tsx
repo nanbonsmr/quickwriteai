@@ -203,7 +203,7 @@ export default function Admin() {
     if (!user?.id || !user?.email) return;
 
     try {
-      const { error } = await supabase.functions.invoke('admin-operations', {
+      const { data, error } = await supabase.functions.invoke('admin-operations', {
         body: {
           action: 'pin-template',
           userId: user.id,
@@ -213,17 +213,18 @@ export default function Admin() {
       });
 
       if (error) throw error;
+      if (data?.error) throw new Error(data.error);
 
       toast({
         title: "Success",
         description: "Template pinned successfully",
       });
       await loadPinnedTemplates();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error pinning template:', error);
       toast({
         title: "Error",
-        description: "Failed to pin template",
+        description: error?.message || "Failed to pin template",
         variant: "destructive",
       });
     }
@@ -233,7 +234,7 @@ export default function Admin() {
     if (!user?.id || !user?.email) return;
 
     try {
-      const { error } = await supabase.functions.invoke('admin-operations', {
+      const { data, error } = await supabase.functions.invoke('admin-operations', {
         body: {
           action: 'unpin-template',
           userId: user.id,
@@ -243,17 +244,18 @@ export default function Admin() {
       });
 
       if (error) throw error;
+      if (data?.error) throw new Error(data.error);
 
       toast({
         title: "Success",
         description: "Template unpinned successfully",
       });
       await loadPinnedTemplates();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error unpinning template:', error);
       toast({
         title: "Error",
-        description: "Failed to unpin template",
+        description: error?.message || "Failed to unpin template",
         variant: "destructive",
       });
     }

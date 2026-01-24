@@ -32,6 +32,7 @@ import ResetPassword from "./pages/ResetPassword";
 import FreeTools from "./pages/FreeTools";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
+import SharedTask from "./pages/SharedTask";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -55,6 +56,7 @@ function AnimatedRoutes() {
         <Route path="/free-tools" element={<PageTransition><FreeTools /></PageTransition>} />
         <Route path="/blog" element={<PageTransition><Blog /></PageTransition>} />
         <Route path="/blog/:slug" element={<PageTransition><BlogPost /></PageTransition>} />
+        <Route path="/shared/task/:token" element={<PageTransition><SharedTask /></PageTransition>} />
         <Route path="/app/*" element={
           <ProtectedRoute>
             <SidebarProvider>

@@ -23,6 +23,9 @@ import CourtReportGenerator from '@/components/templates/CourtReportGenerator';
 import AdsImagePromptGenerator from '@/components/templates/AdsImagePromptGenerator';
 import BackgroundImagePromptGenerator from '@/components/templates/BackgroundImagePromptGenerator';
 import FriendlyLetterGenerator from '@/components/templates/FriendlyLetterGenerator';
+import CoverLetterGenerator from '@/components/templates/CoverLetterGenerator';
+import PressReleaseGenerator from '@/components/templates/PressReleaseGenerator';
+import BusinessPlanGenerator from '@/components/templates/BusinessPlanGenerator';
 import { 
   PenTool, 
   MessageSquare, 
@@ -45,7 +48,10 @@ import {
   Scale,
   ImagePlus,
   Layers,
-  Heart
+  Heart,
+  FileUser,
+  Newspaper,
+  Briefcase
 } from 'lucide-react';
 
 const templates = [
@@ -257,6 +263,39 @@ const templates = [
     features: ['Personal Touch', 'Multiple Tones', 'Heartfelt'],
     usageCount: '560 uses',
     exampleOutput: 'Dear Sarah,\n\nI hope this letter finds you well. I\'ve been thinking about you lately and wanted to reach out to say how much your friendship means to me...'
+  },
+  {
+    id: 'cover-letter',
+    title: 'Cover Letter Writer',
+    description: 'Create compelling cover letters that get you hired',
+    icon: FileUser,
+    color: 'text-emerald-600',
+    bgColor: 'bg-emerald-100',
+    features: ['ATS-Friendly', 'Job-Specific', 'Professional'],
+    usageCount: '1.1k uses',
+    exampleOutput: 'Dear Hiring Manager,\n\nI am excited to apply for the Software Engineer position at your company. With 5 years of experience in full-stack development and a passion for building scalable solutions...'
+  },
+  {
+    id: 'press-release',
+    title: 'Press Release Generator',
+    description: 'Generate professional press releases for media coverage',
+    icon: Newspaper,
+    color: 'text-blue-600',
+    bgColor: 'bg-blue-100',
+    features: ['Media-Ready', 'AP Style', 'Newsworthy'],
+    usageCount: '680 uses',
+    exampleOutput: 'FOR IMMEDIATE RELEASE\n\nTechCorp Announces Revolutionary AI Platform\n\nSAN FRANCISCO, CA - TechCorp, a leader in artificial intelligence solutions, today announced the launch of...'
+  },
+  {
+    id: 'business-plan',
+    title: 'Business Plan Writer',
+    description: 'Create comprehensive business plans for investors',
+    icon: Briefcase,
+    color: 'text-amber-600',
+    bgColor: 'bg-amber-100',
+    features: ['Investor-Ready', 'Financial Projections', 'Market Analysis'],
+    usageCount: '540 uses',
+    exampleOutput: 'EXECUTIVE SUMMARY\n\nCompany Overview: TechStart Inc. is an innovative SaaS platform designed to revolutionize project management for remote teams...'
   }
 ];
 
@@ -318,6 +357,9 @@ export default function Templates() {
         {currentTemplate === 'ads-image-prompt' && <AdsImagePromptGenerator />}
         {currentTemplate === 'background-image-prompt' && <BackgroundImagePromptGenerator />}
         {currentTemplate === 'friendly-letter' && <FriendlyLetterGenerator />}
+        {currentTemplate === 'cover-letter' && <CoverLetterGenerator />}
+        {currentTemplate === 'press-release' && <PressReleaseGenerator />}
+        {currentTemplate === 'business-plan' && <BusinessPlanGenerator />}
       </div>
     );
   }

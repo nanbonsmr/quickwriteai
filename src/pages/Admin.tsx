@@ -74,7 +74,7 @@ interface PinnedTemplate {
   pinned_by: string;
 }
 
-// Template list for admin display
+// Template list for admin display - synced with Templates page
 const availableTemplates = [
   { id: 'blog', title: 'Blog Posts', description: 'Create engaging blog content' },
   { id: 'social', title: 'Social Media', description: 'Generate captivating social posts' },
@@ -90,6 +90,17 @@ const availableTemplates = [
   { id: 'chatgpt-prompt', title: 'ChatGPT Prompt Generator', description: 'Create effective prompts' },
   { id: 'image-prompt', title: 'Image Prompt Generator', description: 'Generate image prompts' },
   { id: 'video-prompt', title: 'Video Prompt Generator', description: 'Create video prompts' },
+  { id: 'proposal', title: 'Proposal Writer', description: 'Create business proposals' },
+  { id: 'court-report', title: 'Court Report Writer', description: 'Generate legal documents' },
+  { id: 'ads-image-prompt', title: 'AI Ads Image Prompt', description: 'Generate ad image prompts' },
+  { id: 'background-image-prompt', title: 'AI Background Image', description: 'Create background prompts' },
+  { id: 'friendly-letter', title: 'AI Friendly Letter', description: 'Write heartfelt letters' },
+  { id: 'cover-letter', title: 'Cover Letter Writer', description: 'Create cover letters' },
+  { id: 'press-release', title: 'Press Release Generator', description: 'Generate press releases' },
+  { id: 'business-plan', title: 'Business Plan Writer', description: 'Create business plans' },
+  { id: 'linkedin-post', title: 'LinkedIn Post Generator', description: 'Create LinkedIn posts' },
+  { id: 'newsletter', title: 'Newsletter Generator', description: 'Create newsletters' },
+  { id: 'product-review', title: 'Product Review Generator', description: 'Write product reviews' },
 ];
 
 export default function Admin() {

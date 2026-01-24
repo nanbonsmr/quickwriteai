@@ -1,20 +1,19 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { 
   Plus, 
   Trash2, 
   Calendar, 
   ChevronLeft, 
   ChevronRight,
-  CheckCircle2,
+  ChevronDown,
   Circle,
   Loader2,
   ListTodo
@@ -39,6 +38,7 @@ export function DailyTodos() {
   const [adding, setAdding] = useState(false);
   const [newTodoTitle, setNewTodoTitle] = useState("");
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [isOpen, setIsOpen] = useState(true);
 
   useEffect(() => {
     if (user) {
@@ -108,7 +108,6 @@ export function DailyTodos() {
   };
 
   const handleToggleTodo = async (todoId: string, completed: boolean) => {
-    // Optimistic update
     setTodos((prev) =>
       prev.map((todo) =>
         todo.id === todoId
@@ -128,22 +127,15 @@ export function DailyTodos() {
 
       if (error) throw error;
     } catch (error: any) {
-      // Revert on error
       setTodos((prev) =>
         prev.map((todo) =>
           todo.id === todoId ? { ...todo, completed: !completed } : todo
         )
       );
-      toast({
-        title: "Error updating todo",
-        description: error.message,
-        variant: "destructive",
-      });
     }
   };
 
   const handleDeleteTodo = async (todoId: string) => {
-    // Optimistic update
     setTodos((prev) => prev.filter((todo) => todo.id !== todoId));
 
     try {
@@ -154,50 +146,7 @@ export function DailyTodos() {
 
       if (error) throw error;
     } catch (error: any) {
-      fetchTodos(); // Refetch on error
-      toast({
-        title: "Error deleting todo",
-        description: error.message,
-        variant: "destructive",
-      });
-    }
-  };
-
-  const handleCarryOverIncomplete = async () => {
-    const incompleteTodos = todos.filter((todo) => !todo.completed);
-    if (incompleteTodos.length === 0) {
-      toast({
-        title: "No incomplete todos",
-        description: "All todos are already completed!",
-      });
-      return;
-    }
-
-    const tomorrow = addDays(selectedDate, 1);
-    const tomorrowStr = format(tomorrow, "yyyy-MM-dd");
-
-    try {
-      const newTodos = incompleteTodos.map((todo, idx) => ({
-        user_id: user!.id,
-        title: todo.title,
-        date: tomorrowStr,
-        position: idx,
-      }));
-
-      const { error } = await supabase.from("daily_todos").insert(newTodos);
-
-      if (error) throw error;
-
-      toast({
-        title: "Todos carried over",
-        description: `${incompleteTodos.length} incomplete todo(s) moved to tomorrow`,
-      });
-    } catch (error: any) {
-      toast({
-        title: "Error carrying over todos",
-        description: error.message,
-        variant: "destructive",
-      });
+      fetchTodos();
     }
   };
 
@@ -217,140 +166,143 @@ export function DailyTodos() {
   const progressPercent = totalCount > 0 ? (completedCount / totalCount) * 100 : 0;
 
   return (
-    <Card className="h-full flex flex-col">
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center gap-2">
-            <ListTodo className="h-5 w-5 text-primary" />
-            <CardTitle className="text-lg">Daily Todos</CardTitle>
+    <Collapsible open={isOpen} onOpenChange={setIsOpen}>
+      <div className="rounded-lg border bg-card p-3 sm:p-4">
+        {/* Header - Always visible */}
+        <CollapsibleTrigger asChild>
+          <div className="flex items-center justify-between cursor-pointer">
+            <div className="flex items-center gap-2">
+              <ListTodo className="h-4 w-4 text-primary" />
+              <span className="font-medium text-sm">Daily Todos</span>
+              {totalCount > 0 && (
+                <Badge variant="secondary" className="text-xs h-5">
+                  {completedCount}/{totalCount}
+                </Badge>
+              )}
+            </div>
+            <div className="flex items-center gap-2">
+              {/* Date Navigation - Inline */}
+              <div className="flex items-center gap-1">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-6 w-6" 
+                  onClick={(e) => { e.stopPropagation(); goToPreviousDay(); }}
+                >
+                  <ChevronLeft className="h-3 w-3" />
+                </Button>
+                <div className="flex items-center gap-1 min-w-[80px] justify-center">
+                  <Calendar className="h-3 w-3 text-muted-foreground" />
+                  <span className="text-xs font-medium">{getDateLabel()}</span>
+                </div>
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  className="h-6 w-6" 
+                  onClick={(e) => { e.stopPropagation(); goToNextDay(); }}
+                >
+                  <ChevronRight className="h-3 w-3" />
+                </Button>
+              </div>
+              <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+            </div>
           </div>
-          {totalCount > 0 && (
-            <Badge variant="secondary" className="text-xs">
-              {completedCount}/{totalCount}
-            </Badge>
-          )}
-        </div>
+        </CollapsibleTrigger>
 
-        {/* Date Navigation */}
-        <div className="flex items-center justify-between mt-3">
-          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={goToPreviousDay}>
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
+        {/* Progress Bar - Always visible when there are todos */}
+        {totalCount > 0 && (
+          <div className="mt-2 h-1.5 bg-muted rounded-full overflow-hidden">
+            <div
+              className="h-full bg-gradient-to-r from-green-500 to-emerald-500 transition-all duration-300"
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
+        )}
 
-          <div className="flex items-center gap-2">
-            <Calendar className="h-4 w-4 text-muted-foreground" />
-            <span className="text-sm font-medium">{getDateLabel()}</span>
+        {/* Collapsible Content */}
+        <CollapsibleContent>
+          <div className="mt-3 space-y-3">
+            {/* Add Todo Input */}
+            <div className="flex items-center gap-2">
+              <Input
+                value={newTodoTitle}
+                onChange={(e) => setNewTodoTitle(e.target.value)}
+                onKeyDown={handleKeyDown}
+                placeholder="Add a quick todo..."
+                className="h-8 text-sm"
+                disabled={adding}
+              />
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                className="h-8 px-2 shrink-0"
+                disabled={!newTodoTitle.trim() || adding}
+                onClick={handleAddTodo}
+              >
+                {adding ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Plus className="h-3.5 w-3.5" />}
+              </Button>
+            </div>
+
+            {/* Todo List */}
+            {loading ? (
+              <div className="flex items-center justify-center py-4">
+                <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
+              </div>
+            ) : todos.length === 0 ? (
+              <div className="flex items-center justify-center gap-2 py-4 text-muted-foreground">
+                <Circle className="h-4 w-4" />
+                <span className="text-xs">No todos for {getDateLabel().toLowerCase()}</span>
+              </div>
+            ) : (
+              <div className="space-y-1.5 max-h-[200px] overflow-y-auto">
+                {todos.map((todo) => (
+                  <div
+                    key={todo.id}
+                    className={`group flex items-center gap-2 p-2 rounded-md transition-colors ${
+                      todo.completed ? "bg-muted/50" : "hover:bg-muted/30"
+                    }`}
+                  >
+                    <Checkbox
+                      checked={todo.completed}
+                      onCheckedChange={(checked) => handleToggleTodo(todo.id, checked as boolean)}
+                      className="h-4 w-4 data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
+                    />
+                    <span
+                      className={`flex-1 text-sm truncate ${
+                        todo.completed ? "line-through text-muted-foreground" : ""
+                      }`}
+                    >
+                      {todo.title}
+                    </span>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className="h-6 w-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={() => handleDeleteTodo(todo.id)}
+                    >
+                      <Trash2 className="h-3 w-3 text-muted-foreground hover:text-destructive" />
+                    </Button>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Go to Today link */}
             {!isToday(selectedDate) && (
-              <Button variant="link" size="sm" className="h-auto p-0 text-xs" onClick={goToToday}>
+              <Button 
+                variant="link" 
+                size="sm" 
+                className="h-auto p-0 text-xs w-full justify-center" 
+                onClick={goToToday}
+              >
                 Go to today
               </Button>
             )}
           </div>
-
-          <Button variant="ghost" size="icon" className="h-8 w-8" onClick={goToNextDay}>
-            <ChevronRight className="h-4 w-4" />
-          </Button>
-        </div>
-
-        {/* Progress Bar */}
-        {totalCount > 0 && (
-          <div className="mt-3">
-            <div className="h-2 bg-muted rounded-full overflow-hidden">
-              <div
-                className="h-full bg-gradient-to-r from-green-500 to-emerald-500 transition-all duration-300"
-                style={{ width: `${progressPercent}%` }}
-              />
-            </div>
-          </div>
-        )}
-      </CardHeader>
-
-      <CardContent className="flex-1 flex flex-col pt-0">
-        {/* Add Todo Input */}
-        <div className="flex items-center gap-2 mb-4">
-          <Input
-            value={newTodoTitle}
-            onChange={(e) => setNewTodoTitle(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Add a todo for today..."
-            className="h-9 text-sm"
-            disabled={adding}
-          />
-          <Button
-            type="button"
-            size="sm"
-            variant="outline"
-            className="h-9 px-3 shrink-0"
-            disabled={!newTodoTitle.trim() || adding}
-            onClick={handleAddTodo}
-          >
-            {adding ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4" />}
-          </Button>
-        </div>
-
-        {/* Todo List */}
-        <ScrollArea className="flex-1 -mx-6 px-6">
-          {loading ? (
-            <div className="flex items-center justify-center py-8">
-              <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-            </div>
-          ) : todos.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-8 text-center">
-              <Circle className="h-10 w-10 text-muted-foreground/30 mb-3" />
-              <p className="text-sm text-muted-foreground">No todos for {getDateLabel().toLowerCase()}</p>
-              <p className="text-xs text-muted-foreground/60 mt-1">Add your first todo above</p>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {todos.map((todo) => (
-                <div
-                  key={todo.id}
-                  className={`group flex items-center gap-3 p-2.5 rounded-lg transition-colors ${
-                    todo.completed ? "bg-muted/50" : "hover:bg-muted/30"
-                  }`}
-                >
-                  <Checkbox
-                    checked={todo.completed}
-                    onCheckedChange={(checked) => handleToggleTodo(todo.id, checked as boolean)}
-                    className="data-[state=checked]:bg-green-500 data-[state=checked]:border-green-500"
-                  />
-                  <span
-                    className={`flex-1 text-sm transition-all ${
-                      todo.completed ? "line-through text-muted-foreground" : ""
-                    }`}
-                  >
-                    {todo.title}
-                  </span>
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
-                    onClick={() => handleDeleteTodo(todo.id)}
-                  >
-                    <Trash2 className="h-3.5 w-3.5 text-muted-foreground hover:text-destructive" />
-                  </Button>
-                </div>
-              ))}
-            </div>
-          )}
-        </ScrollArea>
-
-        {/* Carry Over Button */}
-        {todos.some((t) => !t.completed) && isToday(selectedDate) && (
-          <div className="pt-4 mt-auto border-t">
-            <Button
-              variant="outline"
-              size="sm"
-              className="w-full text-xs"
-              onClick={handleCarryOverIncomplete}
-            >
-              <ChevronRight className="h-3.5 w-3.5 mr-1" />
-              Carry incomplete to tomorrow
-            </Button>
-          </div>
-        )}
-      </CardContent>
-    </Card>
+        </CollapsibleContent>
+      </div>
+    </Collapsible>
   );
 }

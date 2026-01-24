@@ -10,7 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Share2, Link, Mail, Copy, Trash2, Check, Loader2, Globe, Lock } from "lucide-react";
+import { Share2, Link, Mail, Copy, Trash2, Check, Loader2, Globe, Lock, Eye } from "lucide-react";
 import { useTaskSharing, TaskShare } from "@/hooks/useTaskSharing";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
@@ -96,6 +96,15 @@ export function TaskSharingPanel({ taskId }: TaskSharingPanelProps) {
                 <span className="flex-1 truncate text-xs">
                   {getShareUrl(share).slice(0, 40)}...
                 </span>
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  className="h-7 w-7"
+                  onClick={() => window.open(getShareUrl(share), "_blank")}
+                  title="Preview shared task"
+                >
+                  <Eye className="h-3 w-3" />
+                </Button>
                 <Button
                   size="icon"
                   variant="ghost"

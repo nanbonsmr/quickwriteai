@@ -26,6 +26,9 @@ import FriendlyLetterGenerator from '@/components/templates/FriendlyLetterGenera
 import CoverLetterGenerator from '@/components/templates/CoverLetterGenerator';
 import PressReleaseGenerator from '@/components/templates/PressReleaseGenerator';
 import BusinessPlanGenerator from '@/components/templates/BusinessPlanGenerator';
+import { LinkedInPostGenerator } from '@/components/templates/LinkedInPostGenerator';
+import { NewsletterGenerator } from '@/components/templates/NewsletterGenerator';
+import { ProductReviewGenerator } from '@/components/templates/ProductReviewGenerator';
 import { 
   PenTool, 
   MessageSquare, 
@@ -51,7 +54,9 @@ import {
   Heart,
   FileUser,
   Newspaper,
-  Briefcase
+  Briefcase,
+  Linkedin,
+  Star
 } from 'lucide-react';
 
 const templates = [
@@ -296,6 +301,39 @@ const templates = [
     features: ['Investor-Ready', 'Financial Projections', 'Market Analysis'],
     usageCount: '540 uses',
     exampleOutput: 'EXECUTIVE SUMMARY\n\nCompany Overview: TechStart Inc. is an innovative SaaS platform designed to revolutionize project management for remote teams...'
+  },
+  {
+    id: 'linkedin-post',
+    title: 'LinkedIn Post Generator',
+    description: 'Create engaging LinkedIn posts that boost your professional presence',
+    icon: Linkedin,
+    color: 'text-blue-700',
+    bgColor: 'bg-blue-100',
+    features: ['Thought Leadership', 'Career Updates', 'Engagement Focused'],
+    usageCount: '1.2k uses',
+    exampleOutput: '🚀 3 lessons I learned after failing my first startup...\n\n1. Speed matters more than perfection\n2. Your network is your net worth\n3. Embrace failure as feedback\n\nWhat would you add? 👇'
+  },
+  {
+    id: 'newsletter',
+    title: 'Newsletter Generator',
+    description: 'Create engaging newsletters that keep your audience coming back',
+    icon: Newspaper,
+    color: 'text-green-600',
+    bgColor: 'bg-green-100',
+    features: ['Curated Content', 'Educational', 'Engaging CTAs'],
+    usageCount: '890 uses',
+    exampleOutput: 'Subject: 🎯 This week\'s top insights\n\nHey friend,\n\nHope you\'re having a great week! Here are the 3 things you need to know this week...'
+  },
+  {
+    id: 'product-review',
+    title: 'Product Review Generator',
+    description: 'Create authentic and helpful product reviews that readers trust',
+    icon: Star,
+    color: 'text-yellow-600',
+    bgColor: 'bg-yellow-100',
+    features: ['Detailed Analysis', 'Pros & Cons', 'Rating System'],
+    usageCount: '760 uses',
+    exampleOutput: '⭐⭐⭐⭐⭐ EXCELLENT\n\nAfter 3 months of daily use, I can confidently say this is the best investment I\'ve made this year. Here\'s why...'
   }
 ];
 
@@ -360,6 +398,9 @@ export default function Templates() {
         {currentTemplate === 'cover-letter' && <CoverLetterGenerator />}
         {currentTemplate === 'press-release' && <PressReleaseGenerator />}
         {currentTemplate === 'business-plan' && <BusinessPlanGenerator />}
+        {currentTemplate === 'linkedin-post' && <LinkedInPostGenerator />}
+        {currentTemplate === 'newsletter' && <NewsletterGenerator />}
+        {currentTemplate === 'product-review' && <ProductReviewGenerator />}
       </div>
     );
   }

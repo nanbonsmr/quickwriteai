@@ -11,12 +11,18 @@ interface PendingSubtaskListProps {
 export function PendingSubtaskList({ subtasks, onSubtasksChange }: PendingSubtaskListProps) {
   const [newSubtaskTitle, setNewSubtaskTitle] = useState("");
 
-  const handleAdd = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleAdd = () => {
     if (!newSubtaskTitle.trim()) return;
 
     onSubtasksChange([...subtasks, newSubtaskTitle.trim()]);
     setNewSubtaskTitle("");
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleAdd();
+    }
   };
 
   const handleRemove = (index: number) => {
@@ -60,24 +66,26 @@ export function PendingSubtaskList({ subtasks, onSubtasksChange }: PendingSubtas
         </div>
       )}
 
-      {/* Add subtask form */}
-      <form onSubmit={handleAdd} className="flex items-center gap-2">
+      {/* Add subtask input */}
+      <div className="flex items-center gap-2">
         <Input
           value={newSubtaskTitle}
           onChange={(e) => setNewSubtaskTitle(e.target.value)}
+          onKeyDown={handleKeyDown}
           placeholder="Add a subtask..."
           className="h-8 text-sm"
         />
         <Button
-          type="submit"
+          type="button"
           size="sm"
           variant="outline"
           className="h-8 px-2 shrink-0"
           disabled={!newSubtaskTitle.trim()}
+          onClick={handleAdd}
         >
           <Plus className="h-3.5 w-3.5" />
         </Button>
-      </form>
+      </div>
     </div>
   );
 }

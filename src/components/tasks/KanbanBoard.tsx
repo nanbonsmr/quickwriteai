@@ -2,6 +2,7 @@ import { useEffect, useState, useRef, TouchEvent } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { TaskCard } from "./TaskCard";
+import { TaskViewDialog } from "./TaskViewDialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, ChevronLeft, ChevronRight } from "lucide-react";
@@ -48,6 +49,8 @@ export function KanbanBoard({ refreshTrigger, onEditTask }: KanbanBoardProps) {
   const [loading, setLoading] = useState(true);
   const [activeTask, setActiveTask] = useState<Task | null>(null);
   const [activeColumnIndex, setActiveColumnIndex] = useState(0);
+  const [viewingTask, setViewingTask] = useState<Task | null>(null);
+  const [isViewDialogOpen, setIsViewDialogOpen] = useState(false);
   
   // Touch/swipe handling
   const touchStartX = useRef<number>(0);
@@ -202,6 +205,17 @@ export function KanbanBoard({ refreshTrigger, onEditTask }: KanbanBoardProps) {
     setActiveColumnIndex(index);
   };
 
+  const handleViewTask = (task: Task) => {
+    setViewingTask(task);
+    setIsViewDialogOpen(true);
+  };
+
+  const handleEditFromView = () => {
+    if (viewingTask) {
+      onEditTask(viewingTask.id);
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-96">
@@ -294,6 +308,7 @@ export function KanbanBoard({ refreshTrigger, onEditTask }: KanbanBoardProps) {
                           onStatusChange={handleStatusChange}
                           onEdit={() => onEditTask(task.id)}
                           onDelete={handleDeleteTask}
+                          onView={() => handleViewTask(task)}
                         />
                       ))
                     )}
@@ -338,6 +353,7 @@ export function KanbanBoard({ refreshTrigger, onEditTask }: KanbanBoardProps) {
                             onStatusChange={handleStatusChange}
                             onEdit={() => onEditTask(task.id)}
                             onDelete={handleDeleteTask}
+                            onView={() => handleViewTask(task)}
                           />
                         ))
                       )}
@@ -381,6 +397,7 @@ export function KanbanBoard({ refreshTrigger, onEditTask }: KanbanBoardProps) {
                             onStatusChange={handleStatusChange}
                             onEdit={() => onEditTask(task.id)}
                             onDelete={handleDeleteTask}
+                            onView={() => handleViewTask(task)}
                           />
                         ))
                       )}
@@ -405,6 +422,13 @@ export function KanbanBoard({ refreshTrigger, onEditTask }: KanbanBoardProps) {
           </div>
         ) : null}
       </DragOverlay>
+
+      <TaskViewDialog
+        open={isViewDialogOpen}
+        onOpenChange={setIsViewDialogOpen}
+        task={viewingTask}
+        onEdit={handleEditFromView}
+      />
     </DndContext>
   );
 }

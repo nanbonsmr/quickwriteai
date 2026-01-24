@@ -7,7 +7,8 @@ import {
   PenTool, Sparkles, Zap, Mail, Briefcase, Hash, Video, Image, 
   MessageSquare, TrendingUp, FileText, Star, LayoutGrid, Calendar, 
   BarChart3, CheckCircle, ArrowRight, Users, Shield, Clock, 
-  Target, Layers, Repeat, Bell, Search, Download, Globe
+  Target, Layers, Repeat, Bell, Search, Download, Globe, 
+  Eye, Tag, Timer, Share2, ListChecks
 } from 'lucide-react';
 import { PublicNavbar } from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
@@ -146,38 +147,72 @@ const taskFeatures = [
   {
     icon: LayoutGrid,
     title: 'Kanban Board',
-    description: 'Visual task management with drag-and-drop functionality. Organize tasks into customizable columns for different workflow stages.',
-    benefits: ['Drag-and-drop interface', 'Custom column creation', 'Task prioritization', 'Progress visualization', 'Team-friendly layout']
+    description: 'Visual task management with drag-and-drop functionality. Click any task card to instantly view details, subtasks, and progress in a quick-view popup.',
+    benefits: ['Drag-and-drop interface', 'Quick task view popup', 'Real-time status updates', 'Progress visualization', 'Mobile-friendly swipe navigation'],
+    useCase: 'Perfect for managing content pipelines - move blog posts from "Draft" to "Review" to "Published" with a simple drag.'
+  },
+  {
+    icon: Eye,
+    title: 'Quick Task View',
+    description: 'Click any task to instantly view all details in a popup. See description, subtasks, labels, time tracked, and due dates without leaving your board.',
+    benefits: ['One-click task preview', 'Subtask toggle directly in view', 'Edit button for quick access', 'Labels & time display', 'Due date visibility'],
+    useCase: 'Quickly review task details during standup meetings or when prioritizing your day without switching contexts.'
+  },
+  {
+    icon: ListChecks,
+    title: 'Subtasks & Progress',
+    description: 'Break down complex content projects into manageable subtasks. Track completion with visual progress bars and toggle subtasks directly from the view popup.',
+    benefits: ['Nested task structure', 'Visual progress tracking', 'Quick-add during creation', 'Toggle from quick view', 'Completion percentages'],
+    useCase: 'Turn "Write Q4 Blog Series" into actionable steps: research, outline, draft, edit, publish - each trackable individually.'
   },
   {
     icon: Calendar,
     title: 'Calendar View',
     description: 'Schedule content creation and track deadlines with an intuitive calendar interface. Never miss a publishing date again.',
-    benefits: ['Deadline tracking', 'Content scheduling', 'Month/week/day views', 'Due date reminders', 'Visual timeline']
+    benefits: ['Deadline tracking', 'Content scheduling', 'Month/week/day views', 'Due date reminders', 'Visual timeline'],
+    useCase: 'Plan your content calendar for the month - see all blog posts, social media campaigns, and newsletter sends at a glance.'
   },
   {
     icon: BarChart3,
     title: 'Task Analytics',
     description: 'Track your productivity with detailed charts and metrics. Understand your work patterns and optimize your workflow.',
-    benefits: ['Completion rate tracking', 'Productivity trends', 'Time analysis', 'Performance insights', 'Custom reports']
+    benefits: ['Completion rate tracking', 'Productivity trends', 'Time analysis', 'Performance insights', 'Custom date ranges'],
+    useCase: 'Identify your most productive days, spot bottlenecks in your workflow, and set data-driven goals for improvement.'
   },
   {
-    icon: CheckCircle,
-    title: 'Subtasks & Checklists',
-    description: 'Break down complex projects into manageable subtasks. Track progress with detailed checklists.',
-    benefits: ['Nested task structure', 'Progress tracking', 'Checklist templates', 'Bulk actions', 'Dependency management']
+    icon: Tag,
+    title: 'Custom Labels',
+    description: 'Organize tasks with color-coded labels. Create custom tags for content types, clients, campaigns, or any categorization you need.',
+    benefits: ['Color-coded organization', 'Custom label creation', 'Multi-label support', 'Filter by labels', 'Visual task grouping'],
+    useCase: 'Tag tasks by client (Acme Corp, Beta Inc), content type (Blog, Social, Email), or campaign (Q4 Launch, Holiday Promo).'
+  },
+  {
+    icon: Timer,
+    title: 'Time Tracking',
+    description: 'Track time spent on each task with start/stop timer. Review time logs and understand where your hours go.',
+    benefits: ['One-click time tracking', 'Time entry history', 'Duration display on cards', 'Session descriptions', 'Productivity insights'],
+    useCase: 'Know exactly how long blog posts take vs social media content - use data to price services or improve efficiency.'
   },
   {
     icon: Target,
     title: 'Priority Management',
-    description: 'Set priority levels to focus on what matters most. Filter and sort tasks by urgency and importance.',
-    benefits: ['Priority levels', 'Smart filtering', 'Focus mode', 'Deadline alerts', 'Critical path view']
+    description: 'Set priority levels (low, medium, high, urgent) to focus on what matters most. Filter and sort tasks by urgency.',
+    benefits: ['Four priority levels', 'Color-coded badges', 'Smart filtering', 'Priority sorting', 'Visual urgency indicators'],
+    useCase: 'Mark client deadline content as "Urgent" while keeping internal projects at "Medium" - always know what to tackle first.'
+  },
+  {
+    icon: Share2,
+    title: 'Task Sharing',
+    description: 'Share tasks with clients or team members via public links or email. Set view-only or edit permissions.',
+    benefits: ['Public share links', 'Email sharing', 'Permission controls', 'Expiring links', 'Preview before sharing'],
+    useCase: 'Share a task checklist with a client for approval, or collaborate with a freelancer on specific deliverables.'
   },
   {
     icon: Repeat,
     title: 'Recurring Tasks',
     description: 'Automate repetitive content tasks with recurring schedules. Set it once and never forget again.',
-    benefits: ['Custom recurrence', 'Flexible scheduling', 'Auto-generation', 'Pattern templates', 'Skip options']
+    benefits: ['Daily/weekly/monthly', 'Custom recurrence', 'Auto-generation', 'End date options', 'Flexible scheduling'],
+    useCase: 'Set up weekly "Social Media Planning" tasks or monthly "Newsletter Review" tasks that auto-create on schedule.'
   }
 ];
 
@@ -290,22 +325,30 @@ export default function Features() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-6 max-w-6xl mx-auto">
             {taskFeatures.map((feature, idx) => (
               <Card key={idx} className="p-6 hover:shadow-elegant transition-all duration-300 hover:scale-[1.02] bg-card/50 backdrop-blur">
-                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center mb-4">
-                  <feature.icon className="h-6 w-6 text-white" />
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center flex-shrink-0">
+                    <feature.icon className="h-6 w-6 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
+                    <p className="text-muted-foreground mb-4">{feature.description}</p>
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {feature.benefits.slice(0, 4).map((benefit, bIdx) => (
+                        <Badge key={bIdx} variant="secondary" className="text-xs">
+                          {benefit}
+                        </Badge>
+                      ))}
+                    </div>
+                    <div className="p-3 rounded-lg bg-muted/50 border border-border/50">
+                      <p className="text-sm text-muted-foreground">
+                        <span className="font-medium text-foreground">Use case:</span> {feature.useCase}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
-                <p className="text-muted-foreground mb-4">{feature.description}</p>
-                <ul className="space-y-2">
-                  {feature.benefits.map((benefit, bIdx) => (
-                    <li key={bIdx} className="flex items-center gap-2 text-sm">
-                      <CheckCircle className="h-4 w-4 text-green-500 flex-shrink-0" />
-                      <span>{benefit}</span>
-                    </li>
-                  ))}
-                </ul>
               </Card>
             ))}
           </div>

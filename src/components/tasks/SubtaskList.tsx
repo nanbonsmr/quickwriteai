@@ -47,8 +47,7 @@ export function SubtaskList({ taskId, onSubtaskChange }: SubtaskListProps) {
     }
   };
 
-  const handleAddSubtask = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleAddSubtask = async () => {
     if (!newSubtaskTitle.trim()) return;
 
     setAdding(true);
@@ -83,6 +82,13 @@ export function SubtaskList({ taskId, onSubtaskChange }: SubtaskListProps) {
       });
     } finally {
       setAdding(false);
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleAddSubtask();
     }
   };
 
@@ -216,21 +222,23 @@ export function SubtaskList({ taskId, onSubtaskChange }: SubtaskListProps) {
         ))}
       </div>
 
-      {/* Add subtask form */}
-      <form onSubmit={handleAddSubtask} className="flex items-center gap-2">
+      {/* Add subtask input */}
+      <div className="flex items-center gap-2">
         <Input
           value={newSubtaskTitle}
           onChange={(e) => setNewSubtaskTitle(e.target.value)}
+          onKeyDown={handleKeyDown}
           placeholder="Add a subtask..."
           className="h-8 text-sm"
           disabled={adding}
         />
         <Button
-          type="submit"
+          type="button"
           size="sm"
           variant="outline"
           className="h-8 px-2 shrink-0"
           disabled={!newSubtaskTitle.trim() || adding}
+          onClick={handleAddSubtask}
         >
           {adding ? (
             <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -238,7 +246,7 @@ export function SubtaskList({ taskId, onSubtaskChange }: SubtaskListProps) {
             <Plus className="h-3.5 w-3.5" />
           )}
         </Button>
-      </form>
+      </div>
     </div>
   );
 }

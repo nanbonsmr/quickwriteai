@@ -310,16 +310,15 @@ export default function Landing() {
             <Badge className="mb-4 bg-primary/10 text-primary border-primary/20">New Feature</Badge>
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">Built-in Task Management</h2>
             <p className="text-base sm:text-lg text-muted-foreground">
-              Organize your content workflow with powerful task management tools. Kanban boards, calendar views, and detailed analytics to boost your productivity.
+              Organize your content workflow with powerful task management tools. Kanban boards, calendar views, subtasks, and detailed analytics to boost your productivity.
             </p>
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 max-w-6xl mx-auto">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto mb-8">
             {[
-              { icon: LayoutGrid, title: 'Kanban Board', desc: 'Drag-and-drop task organization with customizable columns for your workflow' },
+              { icon: LayoutGrid, title: 'Kanban Board', desc: 'Drag-and-drop task organization with customizable columns. Click any task to view details instantly.' },
               { icon: Calendar, title: 'Calendar View', desc: 'Schedule content and deadlines with an intuitive calendar interface' },
               { icon: BarChart3, title: 'Task Analytics', desc: 'Track productivity metrics and completion rates with detailed charts' },
-              { icon: CheckCircle, title: 'Subtasks & Priorities', desc: 'Break down tasks into subtasks and set priority levels for better focus' },
             ].map((feature, idx) => (
               <Card 
                 key={idx} 
@@ -328,6 +327,27 @@ export default function Landing() {
                 } animation-delay-${(idx + 1) * 100}`}
               >
                 <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center mx-auto mb-4">
+                  <feature.icon className="h-6 w-6 text-white" />
+                </div>
+                <h3 className="text-base sm:text-lg font-bold mb-2">{feature.title}</h3>
+                <p className="text-sm text-muted-foreground">{feature.desc}</p>
+              </Card>
+            ))}
+          </div>
+
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 max-w-5xl mx-auto">
+            {[
+              { icon: CheckCircle, title: 'Subtasks', desc: 'Break down complex tasks into manageable subtasks with progress tracking' },
+              { icon: Columns2, title: 'Quick Task View', desc: 'Click any task to instantly view details, subtasks, and toggle completion' },
+              { icon: Sliders, title: 'Priorities & Labels', desc: 'Set priority levels and custom labels for better task organization' },
+            ].map((feature, idx) => (
+              <Card 
+                key={idx} 
+                className={`p-6 text-center hover:shadow-elegant transition-all duration-300 hover:scale-105 bg-card/50 backdrop-blur scroll-animate ${
+                  newFeaturesInView ? 'animate-fade-in-scale' : ''
+                } animation-delay-${(idx + 4) * 100}`}
+              >
+                <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center mx-auto mb-4">
                   <feature.icon className="h-6 w-6 text-white" />
                 </div>
                 <h3 className="text-base sm:text-lg font-bold mb-2">{feature.title}</h3>

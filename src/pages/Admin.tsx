@@ -26,7 +26,10 @@ import {
   Shield,
   Loader2,
   Search,
-  RotateCcw
+  RotateCcw,
+  Pin,
+  PinOff,
+  Layout
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -64,6 +67,31 @@ interface UserStats {
   totalWordsUsed: number;
 }
 
+interface PinnedTemplate {
+  id: string;
+  template_id: string;
+  pinned_at: string;
+  pinned_by: string;
+}
+
+// Template list for admin display
+const availableTemplates = [
+  { id: 'blog', title: 'Blog Posts', description: 'Create engaging blog content' },
+  { id: 'social', title: 'Social Media', description: 'Generate captivating social posts' },
+  { id: 'email', title: 'Email Writer', description: 'Craft professional emails' },
+  { id: 'ads', title: 'Ad Copy', description: 'Create compelling ads' },
+  { id: 'humanize', title: 'AI Text Humanizer', description: 'Transform AI text' },
+  { id: 'cv', title: 'CV Writer', description: 'Create professional CVs' },
+  { id: 'product', title: 'Product Description', description: 'Generate product descriptions' },
+  { id: 'letter', title: 'Letter Writer', description: 'Write professional letters' },
+  { id: 'script', title: 'Script Writer', description: 'Create video/audio scripts' },
+  { id: 'hashtag', title: 'Hashtag Generator', description: 'Generate trending hashtags' },
+  { id: 'post-ideas', title: 'Post Ideas Generator', description: 'Get creative content ideas' },
+  { id: 'chatgpt-prompt', title: 'ChatGPT Prompt Generator', description: 'Create effective prompts' },
+  { id: 'image-prompt', title: 'Image Prompt Generator', description: 'Generate image prompts' },
+  { id: 'video-prompt', title: 'Video Prompt Generator', description: 'Create video prompts' },
+];
+
 export default function Admin() {
   const { user, isAdmin } = useAuth();
   const { toast } = useToast();
@@ -72,6 +100,7 @@ export default function Admin() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [userStats, setUserStats] = useState<UserStats | null>(null);
+  const [pinnedTemplates, setPinnedTemplates] = useState<PinnedTemplate[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   
   // Plan change confirmation dialog
@@ -124,7 +153,8 @@ export default function Admin() {
           await Promise.all([
             loadNotifications(),
             loadUsers(),
-            loadUserStats()
+            loadUserStats(),
+            loadPinnedTemplates()
           ]);
         }
       }
@@ -139,10 +169,98 @@ export default function Admin() {
     await Promise.all([
       loadNotifications(),
       loadUsers(),
-      loadUserStats()
+      loadUserStats(),
+      loadPinnedTemplates()
     ]);
     setRefreshing(false);
     toast({ title: "Data refreshed" });
+  };
+
+  const loadPinnedTemplates = async () => {
+    if (!user?.id || !user?.email) return;
+
+    try {
+      const { data, error } = await supabase.functions.invoke('admin-operations', {
+        body: {
+          action: 'get-pinned-templates',
+          userId: user.id,
+          userEmail: user.email
+        }
+      });
+
+      if (error) {
+        console.error('Error loading pinned templates:', error);
+        return;
+      }
+
+      setPinnedTemplates(data?.pinnedTemplates || []);
+    } catch (error) {
+      console.error('Error loading pinned templates:', error);
+    }
+  };
+
+  const pinTemplate = async (templateId: string) => {
+    if (!user?.id || !user?.email) return;
+
+    try {
+      const { error } = await supabase.functions.invoke('admin-operations', {
+        body: {
+          action: 'pin-template',
+          userId: user.id,
+          userEmail: user.email,
+          data: { templateId }
+        }
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Template pinned successfully",
+      });
+      await loadPinnedTemplates();
+    } catch (error) {
+      console.error('Error pinning template:', error);
+      toast({
+        title: "Error",
+        description: "Failed to pin template",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const unpinTemplate = async (templateId: string) => {
+    if (!user?.id || !user?.email) return;
+
+    try {
+      const { error } = await supabase.functions.invoke('admin-operations', {
+        body: {
+          action: 'unpin-template',
+          userId: user.id,
+          userEmail: user.email,
+          data: { templateId }
+        }
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Success",
+        description: "Template unpinned successfully",
+      });
+      await loadPinnedTemplates();
+    } catch (error) {
+      console.error('Error unpinning template:', error);
+      toast({
+        title: "Error",
+        description: "Failed to unpin template",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const isTemplatePinned = (templateId: string) => {
+    return pinnedTemplates.some(pt => pt.template_id === templateId);
   };
 
   const loadNotifications = async () => {
@@ -473,7 +591,7 @@ export default function Admin() {
 
       {/* Main Tabs */}
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full max-w-md grid-cols-3">
+        <TabsList className="grid w-full max-w-lg grid-cols-4">
           <TabsTrigger value="overview" className="flex items-center gap-2">
             <LayoutDashboard className="h-4 w-4" />
             <span className="hidden sm:inline">Overview</span>
@@ -481,6 +599,10 @@ export default function Admin() {
           <TabsTrigger value="users" className="flex items-center gap-2">
             <Users className="h-4 w-4" />
             <span className="hidden sm:inline">Users</span>
+          </TabsTrigger>
+          <TabsTrigger value="templates" className="flex items-center gap-2">
+            <Layout className="h-4 w-4" />
+            <span className="hidden sm:inline">Templates</span>
           </TabsTrigger>
           <TabsTrigger value="notifications" className="flex items-center gap-2">
             <Bell className="h-4 w-4" />
@@ -704,6 +826,84 @@ export default function Admin() {
                 </TableBody>
               </Table>
             </ScrollArea>
+          </Card>
+        </TabsContent>
+
+        {/* Templates Tab */}
+        <TabsContent value="templates" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Pin className="h-5 w-5" />
+                Pinned Templates
+              </CardTitle>
+              <CardDescription>
+                Pin templates to highlight them for users. Pinned templates appear first in the templates list.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              {pinnedTemplates.length > 0 ? (
+                <div className="space-y-2">
+                  {pinnedTemplates.map((pt) => {
+                    const template = availableTemplates.find(t => t.id === pt.template_id);
+                    return (
+                      <div key={pt.id} className="flex items-center justify-between p-3 border rounded-lg bg-primary/5">
+                        <div>
+                          <h4 className="font-medium">{template?.title || pt.template_id}</h4>
+                          <p className="text-sm text-muted-foreground">{template?.description}</p>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => unpinTemplate(pt.template_id)}
+                          className="text-destructive hover:text-destructive"
+                        >
+                          <PinOff className="h-4 w-4 mr-2" />
+                          Unpin
+                        </Button>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <p className="text-center text-muted-foreground py-4">No pinned templates</p>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>All Templates</CardTitle>
+              <CardDescription>Click to pin or unpin templates</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {availableTemplates.map((template) => {
+                  const isPinned = isTemplatePinned(template.id);
+                  return (
+                    <div
+                      key={template.id}
+                      className={`flex items-center justify-between p-3 border rounded-lg transition-colors ${
+                        isPinned ? 'bg-primary/10 border-primary/30' : 'hover:bg-muted/50'
+                      }`}
+                    >
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-medium text-sm truncate">{template.title}</h4>
+                        <p className="text-xs text-muted-foreground truncate">{template.description}</p>
+                      </div>
+                      <Button
+                        variant={isPinned ? "default" : "outline"}
+                        size="icon"
+                        className="h-8 w-8 shrink-0 ml-2"
+                        onClick={() => isPinned ? unpinTemplate(template.id) : pinTemplate(template.id)}
+                      >
+                        {isPinned ? <PinOff className="h-4 w-4" /> : <Pin className="h-4 w-4" />}
+                      </Button>
+                    </div>
+                  );
+                })}
+              </div>
+            </CardContent>
           </Card>
         </TabsContent>
 

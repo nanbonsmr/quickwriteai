@@ -1,7 +1,9 @@
 import { useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { supabase } from '@/integrations/supabase/client';
 import BlogGenerator from '@/components/templates/BlogGenerator';
 import SocialMediaGenerator from '@/components/templates/SocialMediaGenerator';
 import EmailGenerator from '@/components/templates/EmailGenerator';
@@ -32,7 +34,8 @@ import {
   Lightbulb,
   Image,
   Film,
-  Hash
+  Hash,
+  Pin
 } from 'lucide-react';
 
 const templates = [
@@ -195,6 +198,36 @@ const templates = [
 export default function Templates() {
   const location = useLocation();
   const currentTemplate = location.pathname.split('/')[3];
+  const [pinnedTemplateIds, setPinnedTemplateIds] = useState<string[]>([]);
+
+  useEffect(() => {
+    const loadPinnedTemplates = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('pinned_templates')
+          .select('template_id')
+          .order('pinned_at', { ascending: false });
+
+        if (!error && data) {
+          setPinnedTemplateIds(data.map(pt => pt.template_id));
+        }
+      } catch (error) {
+        console.error('Error loading pinned templates:', error);
+      }
+    };
+
+    loadPinnedTemplates();
+  }, []);
+
+  // Sort templates: pinned first, then rest in original order
+  const sortedTemplates = [...templates].sort((a, b) => {
+    const aIsPinned = pinnedTemplateIds.includes(a.id);
+    const bIsPinned = pinnedTemplateIds.includes(b.id);
+    if (aIsPinned && !bIsPinned) return -1;
+    if (!aIsPinned && bIsPinned) return 1;
+    // Keep original order for templates with same pinned status
+    return templates.indexOf(a) - templates.indexOf(b);
+  });
 
   if (currentTemplate && currentTemplate !== 'templates') {
     const template = templates.find(t => t.id === currentTemplate);
@@ -231,52 +264,67 @@ export default function Templates() {
 
       {/* Templates Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 md:gap-6">
-        {templates.map((template) => (
-          <Card 
-            key={template.id} 
-            className="group relative overflow-hidden hover:shadow-glow hover:scale-[1.02] transition-all duration-300 cursor-pointer border-2 hover:border-primary/20"
-          >
-            {/* Hover gradient overlay */}
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-            
-            <CardHeader className="pb-3 relative z-10">
-              <div className={`w-12 h-12 ${template.bgColor} rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300`}>
-                <template.icon className={`w-6 h-6 ${template.color}`} />
-              </div>
-              <CardTitle className="text-lg group-hover:text-primary transition-colors">{template.title}</CardTitle>
-              <CardDescription className="text-sm">
-                {template.description}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4 relative z-10">
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-muted-foreground">Usage</span>
-                  <div className="flex items-center gap-1">
-                    <Users className="w-3 h-3" />
-                    <span className="font-medium">{template.usageCount}</span>
+        {sortedTemplates.map((template) => {
+          const isPinned = pinnedTemplateIds.includes(template.id);
+          return (
+            <Card 
+              key={template.id} 
+              className={`group relative overflow-hidden hover:shadow-glow hover:scale-[1.02] transition-all duration-300 cursor-pointer border-2 hover:border-primary/20 ${
+                isPinned ? 'ring-2 ring-primary/20 border-primary/30' : ''
+              }`}
+            >
+              {/* Pinned badge */}
+              {isPinned && (
+                <div className="absolute top-2 right-2 z-20">
+                  <Badge variant="default" className="flex items-center gap-1 text-xs">
+                    <Pin className="w-3 h-3" />
+                    Featured
+                  </Badge>
+                </div>
+              )}
+              
+              {/* Hover gradient overlay */}
+              <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              
+              <CardHeader className="pb-3 relative z-10">
+                <div className={`w-12 h-12 ${template.bgColor} rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform duration-300`}>
+                  <template.icon className={`w-6 h-6 ${template.color}`} />
+                </div>
+                <CardTitle className="text-lg group-hover:text-primary transition-colors">{template.title}</CardTitle>
+                <CardDescription className="text-sm">
+                  {template.description}
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4 relative z-10">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Usage</span>
+                    <div className="flex items-center gap-1">
+                      <Users className="w-3 h-3" />
+                      <span className="font-medium">{template.usageCount}</span>
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-wrap gap-1">
+                    {template.features.map((feature, index) => (
+                      <Badge key={index} variant="secondary" className="text-xs">
+                        {feature}
+                      </Badge>
+                    ))}
                   </div>
                 </div>
-                
-                <div className="flex flex-wrap gap-1">
-                  {template.features.map((feature, index) => (
-                    <Badge key={index} variant="secondary" className="text-xs">
-                      {feature}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
 
-              <Button className="w-full group-hover:shadow-sm" asChild>
-                <a href={`/app/templates/${template.id}`}>
-                  <Sparkles className="w-4 h-4 mr-2" />
-                  Use Template
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </a>
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
+                <Button className="w-full group-hover:shadow-sm" asChild>
+                  <a href={`/app/templates/${template.id}`}>
+                    <Sparkles className="w-4 h-4 mr-2" />
+                    Use Template
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
+          );
+        })}
       </div>
 
       {/* Popular Templates Section */}

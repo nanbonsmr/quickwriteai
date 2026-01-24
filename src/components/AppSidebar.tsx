@@ -80,7 +80,7 @@ export function AppSidebar() {
         {/* Logo */}
         <div className="p-4 border-b border-sidebar-border">
           <div className="flex items-center gap-2">
-            <img src="/favicon.png" alt="PeakDraft Logo" className="w-8 h-8 rounded-lg" />
+            <img src="/favicon.png" alt="PeakDraft Logo" className="w-8 h-8 rounded-lg drop-shadow-md" />
             {state !== "collapsed" && (
               <div>
                 <h1 className="font-bold text-lg text-sidebar-foreground">

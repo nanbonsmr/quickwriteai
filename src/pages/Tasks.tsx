@@ -60,69 +60,55 @@ export default function Tasks() {
           </Button>
         </div>
 
-        {/* Main Content Grid */}
-        <div className="grid lg:grid-cols-[1fr_320px] gap-6">
-          {/* Left: Task Views */}
-          <div>
-            <Tabs defaultValue="kanban" className="w-full">
-              <TabsList className="grid w-full grid-cols-4 h-auto p-1">
-                <TabsTrigger value="kanban" className="flex flex-col xs:flex-row items-center gap-1 xs:gap-1.5 py-2 px-1 sm:px-3 text-xs sm:text-sm">
-                  <LayoutGrid className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
-                  <span className="hidden xs:inline">Kanban</span>
-                </TabsTrigger>
-                <TabsTrigger value="list" className="flex flex-col xs:flex-row items-center gap-1 xs:gap-1.5 py-2 px-1 sm:px-3 text-xs sm:text-sm">
-                  <List className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
-                  <span className="hidden xs:inline">List</span>
-                </TabsTrigger>
-                <TabsTrigger value="calendar" className="flex flex-col xs:flex-row items-center gap-1 xs:gap-1.5 py-2 px-1 sm:px-3 text-xs sm:text-sm">
-                  <Calendar className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
-                  <span className="hidden xs:inline">Calendar</span>
-                </TabsTrigger>
-                <TabsTrigger value="analytics" className="flex flex-col xs:flex-row items-center gap-1 xs:gap-1.5 py-2 px-1 sm:px-3 text-xs sm:text-sm">
-                  <BarChart3 className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
-                  <span className="hidden xs:inline">Analytics</span>
-                </TabsTrigger>
-              </TabsList>
+        {/* Daily Todos - Compact top section */}
+        <DailyTodos />
 
-              <TabsContent value="kanban" className="mt-4 sm:mt-6">
-                <KanbanBoard
-                  refreshTrigger={refreshTrigger} 
-                  onEditTask={handleEditTask}
-                />
-              </TabsContent>
+        {/* Views */}
+        <Tabs defaultValue="kanban" className="w-full">
+          <TabsList className="grid w-full grid-cols-4 h-auto p-1">
+            <TabsTrigger value="kanban" className="flex flex-col xs:flex-row items-center gap-1 xs:gap-1.5 py-2 px-1 sm:px-3 text-xs sm:text-sm">
+              <LayoutGrid className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
+              <span className="hidden xs:inline">Kanban</span>
+            </TabsTrigger>
+            <TabsTrigger value="list" className="flex flex-col xs:flex-row items-center gap-1 xs:gap-1.5 py-2 px-1 sm:px-3 text-xs sm:text-sm">
+              <List className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
+              <span className="hidden xs:inline">List</span>
+            </TabsTrigger>
+            <TabsTrigger value="calendar" className="flex flex-col xs:flex-row items-center gap-1 xs:gap-1.5 py-2 px-1 sm:px-3 text-xs sm:text-sm">
+              <Calendar className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
+              <span className="hidden xs:inline">Calendar</span>
+            </TabsTrigger>
+            <TabsTrigger value="analytics" className="flex flex-col xs:flex-row items-center gap-1 xs:gap-1.5 py-2 px-1 sm:px-3 text-xs sm:text-sm">
+              <BarChart3 className="h-3.5 w-3.5 sm:h-4 sm:w-4 shrink-0" />
+              <span className="hidden xs:inline">Analytics</span>
+            </TabsTrigger>
+          </TabsList>
 
-              <TabsContent value="list" className="mt-6">
-                <TaskListView 
-                  refreshTrigger={refreshTrigger}
-                  onEditTask={handleEditTask}
-                />
-              </TabsContent>
+          <TabsContent value="kanban" className="mt-4 sm:mt-6">
+            <KanbanBoard
+              refreshTrigger={refreshTrigger} 
+              onEditTask={handleEditTask}
+            />
+          </TabsContent>
 
-              <TabsContent value="calendar" className="mt-6">
-                <TaskCalendarView 
-                  refreshTrigger={refreshTrigger}
-                  onEditTask={handleEditTask}
-                />
-              </TabsContent>
+          <TabsContent value="list" className="mt-6">
+            <TaskListView 
+              refreshTrigger={refreshTrigger}
+              onEditTask={handleEditTask}
+            />
+          </TabsContent>
 
-              <TabsContent value="analytics" className="mt-6">
-                <TaskAnalytics refreshTrigger={refreshTrigger} />
-              </TabsContent>
-            </Tabs>
-          </div>
+          <TabsContent value="calendar" className="mt-6">
+            <TaskCalendarView 
+              refreshTrigger={refreshTrigger}
+              onEditTask={handleEditTask}
+            />
+          </TabsContent>
 
-          {/* Right: Daily Todos Sidebar */}
-          <div className="lg:block hidden">
-            <div className="sticky top-6">
-              <DailyTodos />
-            </div>
-          </div>
-        </div>
-
-        {/* Mobile Daily Todos */}
-        <div className="lg:hidden">
-          <DailyTodos />
-        </div>
+          <TabsContent value="analytics" className="mt-6">
+            <TaskAnalytics refreshTrigger={refreshTrigger} />
+          </TabsContent>
+        </Tabs>
       </div>
 
       <TaskDialog

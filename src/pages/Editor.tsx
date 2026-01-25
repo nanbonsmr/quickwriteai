@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, RotateCcw, FileText } from 'lucide-react';
+import { ArrowLeft, Save, RotateCcw, FileText, Cloud, CloudOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -15,6 +15,16 @@ interface EditorState {
   templateType?: string;
 }
 
+interface SavedDraft {
+  content: string;
+  title: string;
+  templateType?: string;
+  savedAt: number;
+}
+
+const DRAFT_STORAGE_KEY = 'editor_draft';
+const AUTO_SAVE_DELAY = 2000; // 2 seconds debounce
+
 export default function Editor() {
   const location = useLocation();
   const navigate = useNavigate();
@@ -22,15 +32,90 @@ export default function Editor() {
   
   const initialState = location.state as EditorState | null;
   
-  const [content, setContent] = useState(initialState?.content || '');
+  // Check for saved draft on mount
+  const getSavedDraft = useCallback((): SavedDraft | null => {
+    try {
+      const saved = localStorage.getItem(DRAFT_STORAGE_KEY);
+      if (saved) {
+        return JSON.parse(saved);
+      }
+    } catch (error) {
+      console.error('Error loading draft:', error);
+    }
+    return null;
+  }, []);
+
+  const savedDraft = getSavedDraft();
+  const hasSavedDraft = savedDraft && !initialState?.content;
+  
+  const [content, setContent] = useState(
+    initialState?.content || savedDraft?.content || ''
+  );
   const [originalContent] = useState(initialState?.content || '');
-  const [title, setTitle] = useState(initialState?.title || 'Untitled Document');
+  const [title, setTitle] = useState(
+    initialState?.title || savedDraft?.title || 'Untitled Document'
+  );
   const [wordCount, setWordCount] = useState(0);
   const [charCount, setCharCount] = useState(0);
   const [hasChanges, setHasChanges] = useState(false);
+  const [isSaved, setIsSaved] = useState(true);
+  const [lastSaved, setLastSaved] = useState<Date | null>(
+    savedDraft ? new Date(savedDraft.savedAt) : null
+  );
+  
+  const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const templateType = initialState?.templateType || savedDraft?.templateType;
+
+  // Auto-save to localStorage
+  const saveDraft = useCallback(() => {
+    try {
+      const draft: SavedDraft = {
+        content,
+        title,
+        templateType,
+        savedAt: Date.now(),
+      };
+      localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(draft));
+      setIsSaved(true);
+      setLastSaved(new Date());
+    } catch (error) {
+      console.error('Error saving draft:', error);
+    }
+  }, [content, title, templateType]);
+
+  // Debounced auto-save
+  useEffect(() => {
+    if (content) {
+      setIsSaved(false);
+      
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+      
+      saveTimeoutRef.current = setTimeout(() => {
+        saveDraft();
+      }, AUTO_SAVE_DELAY);
+    }
+    
+    return () => {
+      if (saveTimeoutRef.current) {
+        clearTimeout(saveTimeoutRef.current);
+      }
+    };
+  }, [content, title, saveDraft]);
+
+  // Show toast if recovering from saved draft
+  useEffect(() => {
+    if (hasSavedDraft && savedDraft) {
+      toast({
+        title: "Draft recovered",
+        description: `Your previous work from ${new Date(savedDraft.savedAt).toLocaleString()} has been restored.`,
+      });
+    }
+  }, []); // Only run once on mount
 
   useEffect(() => {
-    if (!initialState?.content) {
+    if (!initialState?.content && !savedDraft?.content) {
       toast({
         title: "No content to edit",
         description: "Please generate content first before using the editor.",
@@ -38,7 +123,7 @@ export default function Editor() {
       });
       navigate('/app/templates');
     }
-  }, [initialState, navigate, toast]);
+  }, [initialState, savedDraft, navigate, toast]);
 
   useEffect(() => {
     const words = content.trim() ? content.trim().split(/\s+/).length : 0;
@@ -47,6 +132,14 @@ export default function Editor() {
     setCharCount(chars);
     setHasChanges(content !== originalContent);
   }, [content, originalContent]);
+
+  const clearDraft = useCallback(() => {
+    try {
+      localStorage.removeItem(DRAFT_STORAGE_KEY);
+    } catch (error) {
+      console.error('Error clearing draft:', error);
+    }
+  }, []);
 
   const handleReset = () => {
     setContent(originalContent);
@@ -72,8 +165,23 @@ export default function Editor() {
     }
   };
 
+  const handleExportComplete = () => {
+    clearDraft();
+  };
+
   const getFilename = () => {
     return title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '') || 'document';
+  };
+
+  const formatLastSaved = () => {
+    if (!lastSaved) return '';
+    const now = new Date();
+    const diffMs = now.getTime() - lastSaved.getTime();
+    const diffSec = Math.floor(diffMs / 1000);
+    
+    if (diffSec < 60) return 'just now';
+    if (diffSec < 3600) return `${Math.floor(diffSec / 60)}m ago`;
+    return lastSaved.toLocaleTimeString();
   };
 
   return (
@@ -150,10 +258,24 @@ export default function Editor() {
             <span>{wordCount} words</span>
             <span>•</span>
             <span>{charCount} characters</span>
+            <span>•</span>
+            <span className="flex items-center gap-1">
+              {isSaved ? (
+                <>
+                  <Cloud className="w-3.5 h-3.5 text-green-500" />
+                  <span className="text-green-500">Saved {formatLastSaved()}</span>
+                </>
+              ) : (
+                <>
+                  <CloudOff className="w-3.5 h-3.5 text-amber-500" />
+                  <span className="text-amber-500">Saving...</span>
+                </>
+              )}
+            </span>
             {hasChanges && (
               <>
                 <span>•</span>
-                <span className="text-amber-500">Unsaved changes</span>
+                <span className="text-muted-foreground/70">Modified from original</span>
               </>
             )}
           </div>

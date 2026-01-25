@@ -34,6 +34,7 @@ import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import SharedTask from "./pages/SharedTask";
 import NotFound from "./pages/NotFound";
+import Editor from "./pages/Editor";
 
 const queryClient = new QueryClient();
 
@@ -75,6 +76,7 @@ function AnimatedRoutes() {
                         <Route path="tasks" element={<PageTransition><Tasks /></PageTransition>} />
                         <Route path="pricing" element={<PageTransition><Pricing /></PageTransition>} />
                         <Route path="admin" element={<PageTransition><Admin /></PageTransition>} />
+                        <Route path="editor" element={<PageTransition><Editor /></PageTransition>} />
                       </Routes>
                     </AnimatePresence>
                   </main>

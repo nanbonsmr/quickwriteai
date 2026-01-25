@@ -26,6 +26,7 @@ import FriendlyLetterGenerator from '@/components/templates/FriendlyLetterGenera
 import CoverLetterGenerator from '@/components/templates/CoverLetterGenerator';
 import PressReleaseGenerator from '@/components/templates/PressReleaseGenerator';
 import BusinessPlanGenerator from '@/components/templates/BusinessPlanGenerator';
+import ExcelGenerator from '@/components/templates/ExcelGenerator';
 import { LinkedInPostGenerator } from '@/components/templates/LinkedInPostGenerator';
 import { NewsletterGenerator } from '@/components/templates/NewsletterGenerator';
 import { ProductReviewGenerator } from '@/components/templates/ProductReviewGenerator';
@@ -58,7 +59,8 @@ import {
   Linkedin,
   Star,
   Search,
-  X
+  X,
+  FileSpreadsheet
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 
@@ -69,6 +71,7 @@ const categories = [
   { id: 'marketing', label: 'Marketing', icon: Megaphone },
   { id: 'business', label: 'Business', icon: Briefcase },
   { id: 'ai-prompts', label: 'AI Prompts', icon: Bot },
+  { id: 'productivity', label: 'Productivity', icon: FileSpreadsheet },
   { id: 'legal', label: 'Legal', icon: Scale },
   { id: 'personal', label: 'Personal', icon: Heart },
 ];
@@ -373,6 +376,18 @@ const templates = [
     features: ['Detailed Analysis', 'Pros & Cons', 'Rating System'],
     usageCount: '760 uses',
     exampleOutput: '⭐⭐⭐⭐⭐ EXCELLENT\n\nAfter 3 months of daily use, I can confidently say this is the best investment I\'ve made this year. Here\'s why...'
+  },
+  {
+    id: 'excel',
+    title: 'Excel Generator',
+    description: 'Create professional Excel spreadsheets with charts, formatting, and formulas',
+    icon: FileSpreadsheet,
+    color: 'text-emerald-600',
+    bgColor: 'bg-emerald-100',
+    category: 'productivity',
+    features: ['Charts & Graphs', 'Auto-Formatting', 'Todo Lists', 'Reports'],
+    usageCount: '1.5k uses',
+    exampleOutput: 'Professional Excel with bar charts, pie charts, conditional formatting, auto-calculated totals, and styled headers...'
   }
 ];
 
@@ -455,6 +470,7 @@ export default function Templates() {
         {currentTemplate === 'linkedin-post' && <LinkedInPostGenerator />}
         {currentTemplate === 'newsletter' && <NewsletterGenerator />}
         {currentTemplate === 'product-review' && <ProductReviewGenerator />}
+        {currentTemplate === 'excel' && <ExcelGenerator />}
       </div>
     );
   }

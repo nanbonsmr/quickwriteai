@@ -57,9 +57,24 @@ export function RecentContent({
                   </div>
                 </div>
                 <div className="flex items-center gap-1 flex-shrink-0 self-end sm:self-auto">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => navigate('/app/editor', { 
+                      state: { 
+                        content: content.generated_content, 
+                        title: content.prompt.slice(0, 50),
+                        templateType: content.template_type 
+                      } 
+                    })}
+                    className="rounded-xl group-hover:bg-primary/10 group-hover:text-primary transition-colors"
+                    title="Edit content"
+                  >
+                    <Pencil className="w-4 h-4" />
+                  </Button>
                   <Dialog>
                     <DialogTrigger asChild>
-                      <Button variant="ghost" size="sm" className="rounded-xl group-hover:bg-primary/10 group-hover:text-primary transition-colors">
+                      <Button variant="ghost" size="sm" className="rounded-xl group-hover:bg-primary/10 group-hover:text-primary transition-colors" title="View content">
                         <Clock className="w-4 h-4" />
                       </Button>
                     </DialogTrigger>

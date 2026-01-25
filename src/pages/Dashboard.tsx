@@ -7,7 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Copy, Download, Sparkles, Zap, Crown, TrendingUp, CreditCard, FileText, BarChart3, Clock, Calendar, Hash, Trash2 } from "lucide-react";
+import { Copy, Download, Sparkles, Zap, Crown, TrendingUp, CreditCard, FileText, BarChart3, Clock, Calendar, Hash, Trash2, Pencil } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -545,6 +545,21 @@ export default function Dashboard() {
                       </div>
                     </div>
                     <div className="flex items-center gap-1">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="opacity-0 group-hover:opacity-100 transition-opacity"
+                        onClick={() => navigate('/app/editor', { 
+                          state: { 
+                            content: content.generated_content, 
+                            title: content.prompt.slice(0, 50),
+                            templateType: content.template_type 
+                          } 
+                        })}
+                        title="Edit content"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </Button>
                       <Dialog>
                         <DialogTrigger asChild>
                           <Button 
@@ -594,6 +609,20 @@ export default function Dashboard() {
                               <div className="flex items-center justify-between">
                                 <Label className="font-semibold">Generated Content</Label>
                                 <div className="flex gap-2">
+                                  <Button 
+                                    variant="outline" 
+                                    size="sm" 
+                                    onClick={() => navigate('/app/editor', { 
+                                      state: { 
+                                        content: content.generated_content, 
+                                        title: content.prompt.slice(0, 50),
+                                        templateType: content.template_type 
+                                      } 
+                                    })}
+                                  >
+                                    <Pencil className="w-4 h-4 mr-1.5" />
+                                    Edit
+                                  </Button>
                                   <Button 
                                     variant="outline" 
                                     size="sm" 

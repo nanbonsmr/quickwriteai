@@ -8,7 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
-import { Loader2, Copy, RefreshCw, Newspaper, Lightbulb } from 'lucide-react';
+import { Loader2, Copy, RefreshCw, Newspaper, Lightbulb, Pencil } from 'lucide-react';
 import { RecentContent } from './RecentContent';
 import { useRecentContent } from '@/hooks/useRecentContent';
 import { ExportDropdown } from '@/components/ExportDropdown';
@@ -277,7 +277,20 @@ Guidelines:
                   <Copy className="w-4 h-4 mr-2" />
                   Copy
                 </Button>
-                <ExportDropdown content={generatedContent} filename="press-release" />
+                <Button 
+                  variant="default" 
+                  size="sm" 
+                  onClick={() => navigate('/app/editor', { 
+                    state: { 
+                      content: generatedContent, 
+                      title: prompt.slice(0, 50),
+                      templateType: 'press_release' 
+                    } 
+                  })}
+                >
+                  <Pencil className="w-4 h-4 mr-2" />
+                  Edit & Export
+                </Button>
               </div>
             </div>
           </CardHeader>

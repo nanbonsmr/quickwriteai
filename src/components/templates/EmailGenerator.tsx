@@ -9,7 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
-import { Mail, Sparkles, Copy, CreditCard, Lightbulb, Send, RefreshCw } from 'lucide-react';
+import { Mail, Sparkles, Copy, CreditCard, Lightbulb, Send, RefreshCw, Pencil } from 'lucide-react';
 import { ExportDropdown } from '@/components/ExportDropdown';
 import { useRecentContent } from '@/hooks/useRecentContent';
 import { RecentContent } from './RecentContent';
@@ -304,10 +304,21 @@ export default function EmailGenerator() {
                   <Copy className="w-4 h-4 mr-2" />
                   Copy
                 </Button>
-                <ExportDropdown
-                  content={generatedContent}
-                  filename={`email-${Date.now()}`}
-                />
+                <Button 
+                  variant="default" 
+                  size="sm" 
+                  onClick={() => navigate('/app/editor', { 
+                    state: { 
+                      content: generatedContent, 
+                      title: prompt.slice(0, 50),
+                      templateType: 'email' 
+                    } 
+                  })}
+                  className="w-fit"
+                >
+                  <Pencil className="w-4 h-4 mr-2" />
+                  Edit & Export
+                </Button>
               </div>
             )}
           </CardHeader>

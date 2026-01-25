@@ -1,8 +1,9 @@
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { TrendingUp, Clock, Hash, Calendar, Copy, Trash2 } from 'lucide-react';
+import { TrendingUp, Clock, Hash, Calendar, Copy, Trash2, Pencil } from 'lucide-react';
 import { ExportDropdown } from '@/components/ExportDropdown';
 
 interface RecentContentProps {
@@ -24,6 +25,7 @@ export function RecentContent({
   onCopyContent,
   onDeleteContent
 }: RecentContentProps) {
+  const navigate = useNavigate();
   return (
     <Card className="border-0 shadow-xl rounded-3xl overflow-hidden">
       <CardHeader className="bg-gradient-to-r from-violet-500/10 via-violet-500/5 to-transparent">
@@ -92,24 +94,39 @@ export function RecentContent({
 
                         {/* Generated Content */}
                         <div className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <Label className="font-semibold">Generated Content:</Label>
-                            <div className="flex gap-2">
-                              <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={() => onCopyContent(content.generated_content)}
-                                className="flex items-center gap-2"
-                              >
-                                <Copy className="w-4 h-4" />
-                                Copy
-                              </Button>
-                              <ExportDropdown
-                                content={content.generated_content}
-                                filename={`${content.template_type}-${Date.now()}`}
-                              />
-                            </div>
+                        <div className="flex items-center justify-between">
+                          <Label className="font-semibold">Generated Content:</Label>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => navigate('/app/editor', { 
+                                state: { 
+                                  content: content.generated_content, 
+                                  title: content.prompt.slice(0, 50),
+                                  templateType: content.template_type 
+                                } 
+                              })}
+                              className="flex items-center gap-2"
+                            >
+                              <Pencil className="w-4 h-4" />
+                              Edit
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => onCopyContent(content.generated_content)}
+                              className="flex items-center gap-2"
+                            >
+                              <Copy className="w-4 h-4" />
+                              Copy
+                            </Button>
+                            <ExportDropdown
+                              content={content.generated_content}
+                              filename={`${content.template_type}-${Date.now()}`}
+                            />
                           </div>
+                        </div>
                           <div className="bg-muted/50 rounded-lg p-4 max-h-96 overflow-y-auto">
                             <pre className="whitespace-pre-wrap font-sans text-sm leading-relaxed">
                               {content.generated_content}

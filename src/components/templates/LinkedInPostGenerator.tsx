@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Loader2, Copy, RefreshCw, Linkedin, Sparkles } from 'lucide-react';
+import { Loader2, Copy, RefreshCw, Linkedin, Sparkles, Pencil } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
@@ -244,7 +244,20 @@ Requirements:
                   <Copy className="h-4 w-4 mr-1" />
                   Copy
                 </Button>
-                <ExportDropdown content={generatedContent} filename="linkedin-post" />
+                <Button 
+                  variant="default" 
+                  size="sm" 
+                  onClick={() => navigate('/app/editor', { 
+                    state: { 
+                      content: generatedContent, 
+                      title: prompt.slice(0, 50),
+                      templateType: 'linkedin_post' 
+                    } 
+                  })}
+                >
+                  <Pencil className="h-4 w-4 mr-1" />
+                  Edit & Export
+                </Button>
               </div>
             </CardTitle>
           </CardHeader>

@@ -10,7 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
-import { MessageSquare, Sparkles, Copy, CreditCard, Lightbulb, Hash, RefreshCw } from 'lucide-react';
+import { MessageSquare, Sparkles, Copy, CreditCard, Lightbulb, Hash, RefreshCw, Pencil } from 'lucide-react';
 import { ExportDropdown } from '@/components/ExportDropdown';
 import { useRecentContent } from '@/hooks/useRecentContent';
 import { RecentContent } from './RecentContent';
@@ -300,10 +300,20 @@ export default function SocialMediaGenerator() {
                   <Copy className="w-4 h-4 mr-2" />
                   Copy
                 </Button>
-                <ExportDropdown
-                  content={generatedContent}
-                  filename={`social-post-${Date.now()}`}
-                />
+                <Button 
+                  variant="default" 
+                  size="sm" 
+                  onClick={() => navigate('/app/editor', { 
+                    state: { 
+                      content: generatedContent, 
+                      title: prompt.slice(0, 50),
+                      templateType: 'social' 
+                    } 
+                  })}
+                >
+                  <Pencil className="w-4 h-4 mr-2" />
+                  Edit & Export
+                </Button>
               </div>
             )}
           </CardHeader>

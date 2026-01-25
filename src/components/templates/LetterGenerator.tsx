@@ -9,7 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useNavigate } from 'react-router-dom';
-import { FileEdit, Sparkles, Copy, CreditCard, Lightbulb, RefreshCw } from 'lucide-react';
+import { FileEdit, Sparkles, Copy, CreditCard, Lightbulb, RefreshCw, Pencil } from 'lucide-react';
 import { useRecentContent } from '@/hooks/useRecentContent';
 import { RecentContent } from './RecentContent';
 
@@ -252,6 +252,21 @@ export default function LetterGenerator() {
                 >
                   <Copy className="w-4 h-4 mr-2" />
                   Copy Content
+                </Button>
+                <Button 
+                  variant="default" 
+                  size="sm" 
+                  onClick={() => navigate('/app/editor', { 
+                    state: { 
+                      content: generatedContent, 
+                      title: prompt.slice(0, 50),
+                      templateType: 'letter' 
+                    } 
+                  })}
+                  className="w-fit"
+                >
+                  <Pencil className="w-4 h-4 mr-2" />
+                  Edit & Export
                 </Button>
               </div>
             )}

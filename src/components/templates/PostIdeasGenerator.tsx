@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2, Copy, Lightbulb, Sparkles, RefreshCw } from 'lucide-react';
+import { Loader2, Copy, Lightbulb, Sparkles, RefreshCw, Pencil } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/hooks/use-toast';
@@ -199,6 +199,20 @@ export default function PostIdeasGenerator() {
                   <Button variant="outline" size="sm" onClick={copyToClipboard}>
                     <Copy className="h-4 w-4 mr-2" />
                     Copy
+                  </Button>
+                  <Button 
+                    variant="default" 
+                    size="sm" 
+                    onClick={() => navigate('/app/editor', { 
+                      state: { 
+                        content: generatedContent, 
+                        title: prompt.slice(0, 50),
+                        templateType: 'post-ideas' 
+                      } 
+                    })}
+                  >
+                    <Pencil className="h-4 w-4 mr-2" />
+                    Edit & Export
                   </Button>
                 </div>
               )}

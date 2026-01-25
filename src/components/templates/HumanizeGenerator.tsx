@@ -31,7 +31,8 @@ import {
   ArrowLeftRight,
   Columns2,
   FileOutput,
-  RefreshCw
+  RefreshCw,
+  Pencil
 } from 'lucide-react';
 import { useRecentContent } from '@/hooks/useRecentContent';
 import { RecentContent } from './RecentContent';
@@ -343,6 +344,20 @@ ${prompt}`;
                   >
                     <Copy className="w-4 h-4 mr-1" />
                     Copy
+                  </Button>
+                  <Button 
+                    variant="default" 
+                    size="sm" 
+                    onClick={() => navigate('/app/editor', { 
+                      state: { 
+                        content: generatedContent, 
+                        title: prompt.slice(0, 50),
+                        templateType: 'humanize' 
+                      } 
+                    })}
+                  >
+                    <Pencil className="w-4 h-4 mr-1" />
+                    Edit & Export
                   </Button>
                 </div>
               )}

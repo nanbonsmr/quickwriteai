@@ -2,11 +2,11 @@ import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Save, RotateCcw, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { ExportDropdown } from '@/components/ExportDropdown';
+import { RichTextEditor } from '@/components/RichTextEditor';
 import { useToast } from '@/hooks/use-toast';
 
 interface EditorState {
@@ -95,7 +95,7 @@ export default function Editor() {
               Content Editor
             </h1>
             <p className="text-sm text-muted-foreground">
-              Edit your generated content before exporting
+              Edit and format your content before exporting
             </p>
           </div>
         </div>
@@ -160,19 +160,17 @@ export default function Editor() {
         </CardContent>
       </Card>
 
-      {/* Editor */}
+      {/* Rich Text Editor */}
       <Card className="border-border/50">
         <CardHeader className="pb-3">
           <CardTitle className="text-sm font-medium text-muted-foreground">
-            Content
+            Content Editor
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <Textarea
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="Start editing your content..."
-            className="min-h-[500px] resize-y font-mono text-sm leading-relaxed"
+          <RichTextEditor
+            content={content}
+            onChange={setContent}
           />
         </CardContent>
       </Card>

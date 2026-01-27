@@ -42,6 +42,7 @@ import AdminUsers from "./pages/admin/AdminUsers";
 import AdminTemplates from "./pages/admin/AdminTemplates";
 import AdminPromotions from "./pages/admin/AdminPromotions";
 import AdminNotifications from "./pages/admin/AdminNotifications";
+import AdminSettings from "./pages/admin/AdminSettings";
 
 const queryClient = new QueryClient();
 
@@ -106,7 +107,7 @@ function AnimatedRoutes() {
                   <Route path="promotions" element={<PageTransition><AdminPromotions /></PageTransition>} />
                   <Route path="notifications" element={<PageTransition><AdminNotifications /></PageTransition>} />
                   <Route path="discounts" element={<PageTransition><AdminOverview /></PageTransition>} />
-                  <Route path="settings" element={<PageTransition><AdminOverview /></PageTransition>} />
+                  <Route path="settings" element={<PageTransition><AdminSettings /></PageTransition>} />
                 </Routes>
               </AnimatePresence>
             </AdminLayout>

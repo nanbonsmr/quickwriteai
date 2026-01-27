@@ -19,7 +19,11 @@ import {
   Hash,
   ArrowRightLeft,
   AlignLeft,
-  Type
+  Type,
+  Link2,
+  Globe,
+  Mail,
+  Target
 } from 'lucide-react';
 
 // Tool Components
@@ -450,7 +454,355 @@ const LoremGenerator = () => {
   );
 };
 
+// Marketing Tools
+const UTMBuilder = () => {
+  const [baseUrl, setBaseUrl] = useState('');
+  const [source, setSource] = useState('');
+  const [medium, setMedium] = useState('');
+  const [campaign, setCampaign] = useState('');
+  const [term, setTerm] = useState('');
+  const [content, setContent] = useState('');
+  const { toast } = useToast();
+
+  const generatedUrl = () => {
+    if (!baseUrl) return '';
+    try {
+      const url = new URL(baseUrl.startsWith('http') ? baseUrl : `https://${baseUrl}`);
+      if (source) url.searchParams.set('utm_source', source);
+      if (medium) url.searchParams.set('utm_medium', medium);
+      if (campaign) url.searchParams.set('utm_campaign', campaign);
+      if (term) url.searchParams.set('utm_term', term);
+      if (content) url.searchParams.set('utm_content', content);
+      return url.toString();
+    } catch {
+      return 'Invalid URL';
+    }
+  };
+
+  const copyUrl = () => {
+    const url = generatedUrl();
+    if (url && url !== 'Invalid URL') {
+      navigator.clipboard.writeText(url);
+      toast({ title: "Copied!", description: "UTM link copied to clipboard" });
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="space-y-2">
+        <Label>Website URL *</Label>
+        <Input value={baseUrl} onChange={(e) => setBaseUrl(e.target.value)} placeholder="https://example.com/page" />
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label>Campaign Source *</Label>
+          <Input value={source} onChange={(e) => setSource(e.target.value)} placeholder="google, facebook, newsletter" />
+        </div>
+        <div className="space-y-2">
+          <Label>Campaign Medium *</Label>
+          <Input value={medium} onChange={(e) => setMedium(e.target.value)} placeholder="cpc, email, social" />
+        </div>
+      </div>
+      <div className="space-y-2">
+        <Label>Campaign Name *</Label>
+        <Input value={campaign} onChange={(e) => setCampaign(e.target.value)} placeholder="spring_sale, product_launch" />
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label>Campaign Term (optional)</Label>
+          <Input value={term} onChange={(e) => setTerm(e.target.value)} placeholder="running+shoes" />
+        </div>
+        <div className="space-y-2">
+          <Label>Campaign Content (optional)</Label>
+          <Input value={content} onChange={(e) => setContent(e.target.value)} placeholder="logolink, textlink" />
+        </div>
+      </div>
+      {generatedUrl() && generatedUrl() !== 'Invalid URL' && (
+        <div className="space-y-2">
+          <Label>Generated URL</Label>
+          <div className="p-3 bg-muted rounded-lg break-all text-sm font-mono">
+            {generatedUrl()}
+          </div>
+          <Button onClick={copyUrl} className="w-full"><Copy className="mr-2 h-4 w-4" /> Copy URL</Button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const MetaTagGenerator = () => {
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [keywords, setKeywords] = useState('');
+  const [ogImage, setOgImage] = useState('');
+  const [url, setUrl] = useState('');
+  const { toast } = useToast();
+
+  const generateTags = () => {
+    return `<!-- Primary Meta Tags -->
+<title>${title}</title>
+<meta name="title" content="${title}">
+<meta name="description" content="${description}">
+${keywords ? `<meta name="keywords" content="${keywords}">` : ''}
+
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+${url ? `<meta property="og:url" content="${url}">` : ''}
+<meta property="og:title" content="${title}">
+<meta property="og:description" content="${description}">
+${ogImage ? `<meta property="og:image" content="${ogImage}">` : ''}
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image">
+${url ? `<meta property="twitter:url" content="${url}">` : ''}
+<meta property="twitter:title" content="${title}">
+<meta property="twitter:description" content="${description}">
+${ogImage ? `<meta property="twitter:image" content="${ogImage}">` : ''}`;
+  };
+
+  const copyTags = () => {
+    navigator.clipboard.writeText(generateTags());
+    toast({ title: "Copied!", description: "Meta tags copied to clipboard" });
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="space-y-2">
+        <Label>Page Title (50-60 characters)</Label>
+        <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="My Awesome Page Title" maxLength={60} />
+        <p className="text-xs text-muted-foreground">{title.length}/60 characters</p>
+      </div>
+      <div className="space-y-2">
+        <Label>Description (150-160 characters)</Label>
+        <Textarea value={description} onChange={(e) => setDescription(e.target.value)} placeholder="A brief description of your page..." maxLength={160} rows={3} />
+        <p className="text-xs text-muted-foreground">{description.length}/160 characters</p>
+      </div>
+      <div className="space-y-2">
+        <Label>Keywords (comma separated)</Label>
+        <Input value={keywords} onChange={(e) => setKeywords(e.target.value)} placeholder="keyword1, keyword2, keyword3" />
+      </div>
+      <div className="space-y-2">
+        <Label>Page URL</Label>
+        <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://example.com/page" />
+      </div>
+      <div className="space-y-2">
+        <Label>OG Image URL</Label>
+        <Input value={ogImage} onChange={(e) => setOgImage(e.target.value)} placeholder="https://example.com/image.jpg" />
+      </div>
+      {title && (
+        <div className="space-y-2">
+          <Label>Generated Meta Tags</Label>
+          <Textarea value={generateTags()} readOnly rows={12} className="font-mono text-xs" />
+          <Button onClick={copyTags} className="w-full"><Copy className="mr-2 h-4 w-4" /> Copy Meta Tags</Button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const EmailSignatureGenerator = () => {
+  const [name, setName] = useState('');
+  const [jobTitle, setJobTitle] = useState('');
+  const [company, setCompany] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [website, setWebsite] = useState('');
+  const [linkedin, setLinkedin] = useState('');
+  const { toast } = useToast();
+
+  const generateSignature = () => {
+    return `<table cellpadding="0" cellspacing="0" style="font-family: Arial, sans-serif; font-size: 14px; color: #333;">
+  <tr>
+    <td style="padding-bottom: 8px; border-bottom: 2px solid #3b82f6;">
+      <strong style="font-size: 16px; color: #1e293b;">${name}</strong>
+      ${jobTitle ? `<br><span style="color: #64748b;">${jobTitle}</span>` : ''}
+      ${company ? `<br><span style="font-weight: 500;">${company}</span>` : ''}
+    </td>
+  </tr>
+  <tr>
+    <td style="padding-top: 8px;">
+      ${email ? `<div style="margin: 4px 0;">📧 <a href="mailto:${email}" style="color: #3b82f6; text-decoration: none;">${email}</a></div>` : ''}
+      ${phone ? `<div style="margin: 4px 0;">📱 <a href="tel:${phone}" style="color: #3b82f6; text-decoration: none;">${phone}</a></div>` : ''}
+      ${website ? `<div style="margin: 4px 0;">🌐 <a href="${website}" style="color: #3b82f6; text-decoration: none;">${website}</a></div>` : ''}
+      ${linkedin ? `<div style="margin: 4px 0;">💼 <a href="${linkedin}" style="color: #3b82f6; text-decoration: none;">LinkedIn Profile</a></div>` : ''}
+    </td>
+  </tr>
+</table>`;
+  };
+
+  const copySignature = () => {
+    navigator.clipboard.writeText(generateSignature());
+    toast({ title: "Copied!", description: "Email signature HTML copied to clipboard" });
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label>Full Name *</Label>
+          <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="John Doe" />
+        </div>
+        <div className="space-y-2">
+          <Label>Job Title</Label>
+          <Input value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} placeholder="Marketing Manager" />
+        </div>
+      </div>
+      <div className="space-y-2">
+        <Label>Company</Label>
+        <Input value={company} onChange={(e) => setCompany(e.target.value)} placeholder="Acme Inc." />
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label>Email</Label>
+          <Input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="john@example.com" />
+        </div>
+        <div className="space-y-2">
+          <Label>Phone</Label>
+          <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+1 234 567 890" />
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label>Website</Label>
+          <Input value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="https://example.com" />
+        </div>
+        <div className="space-y-2">
+          <Label>LinkedIn</Label>
+          <Input value={linkedin} onChange={(e) => setLinkedin(e.target.value)} placeholder="https://linkedin.com/in/johndoe" />
+        </div>
+      </div>
+      {name && (
+        <div className="space-y-4">
+          <Label>Preview</Label>
+          <div className="p-4 bg-white rounded-lg border" dangerouslySetInnerHTML={{ __html: generateSignature() }} />
+          <Button onClick={copySignature} className="w-full"><Copy className="mr-2 h-4 w-4" /> Copy HTML Signature</Button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const HeadlineAnalyzer = () => {
+  const [headline, setHeadline] = useState('');
+
+  const analyzeHeadline = () => {
+    if (!headline) return null;
+
+    const words = headline.trim().split(/\s+/);
+    const wordCount = words.length;
+    const charCount = headline.length;
+    
+    // Power words that drive engagement
+    const powerWords = ['free', 'new', 'you', 'how', 'why', 'best', 'top', 'secret', 'proven', 'easy', 'simple', 'quick', 'fast', 'ultimate', 'amazing', 'incredible', 'essential', 'exclusive', 'limited', 'guaranteed'];
+    const emotionalWords = ['love', 'hate', 'fear', 'happy', 'sad', 'angry', 'excited', 'surprised', 'beautiful', 'ugly', 'powerful', 'weak', 'success', 'failure'];
+    
+    const foundPowerWords = words.filter(w => powerWords.includes(w.toLowerCase()));
+    const foundEmotionalWords = words.filter(w => emotionalWords.includes(w.toLowerCase()));
+    const hasNumber = /\d/.test(headline);
+    const hasQuestion = headline.includes('?');
+    const startsWithNumber = /^\d/.test(headline.trim());
+    
+    // Calculate score
+    let score = 50;
+    if (wordCount >= 6 && wordCount <= 12) score += 15;
+    else if (wordCount >= 4 && wordCount <= 14) score += 8;
+    if (charCount >= 50 && charCount <= 60) score += 10;
+    if (foundPowerWords.length > 0) score += foundPowerWords.length * 5;
+    if (foundEmotionalWords.length > 0) score += foundEmotionalWords.length * 5;
+    if (hasNumber) score += 10;
+    if (startsWithNumber) score += 5;
+    if (hasQuestion) score += 5;
+    
+    score = Math.min(100, score);
+
+    return {
+      score,
+      wordCount,
+      charCount,
+      powerWords: foundPowerWords,
+      emotionalWords: foundEmotionalWords,
+      hasNumber,
+      hasQuestion,
+      tips: [
+        wordCount < 6 ? "Consider adding more words (6-12 is ideal)" : null,
+        wordCount > 12 ? "Try shortening your headline (6-12 words is ideal)" : null,
+        foundPowerWords.length === 0 ? "Add power words like 'free', 'proven', or 'essential'" : null,
+        !hasNumber ? "Consider adding a number for more impact" : null,
+        charCount > 70 ? "Headline may get truncated in search results" : null,
+      ].filter(Boolean)
+    };
+  };
+
+  const analysis = analyzeHeadline();
+
+  const getScoreColor = (score: number) => {
+    if (score >= 70) return 'text-green-600';
+    if (score >= 50) return 'text-yellow-600';
+    return 'text-red-600';
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="space-y-2">
+        <Label>Enter Your Headline</Label>
+        <Input value={headline} onChange={(e) => setHeadline(e.target.value)} placeholder="10 Proven Ways to Boost Your Marketing ROI" />
+      </div>
+      
+      {analysis && (
+        <div className="space-y-4">
+          <div className="text-center p-6 bg-muted rounded-lg">
+            <p className="text-sm text-muted-foreground mb-2">Headline Score</p>
+            <p className={`text-5xl font-bold ${getScoreColor(analysis.score)}`}>{analysis.score}</p>
+            <p className="text-sm text-muted-foreground mt-2">out of 100</p>
+          </div>
+          
+          <div className="grid grid-cols-2 gap-4">
+            <div className="p-3 bg-muted rounded-lg text-center">
+              <p className="text-xl font-bold text-primary">{analysis.wordCount}</p>
+              <p className="text-xs text-muted-foreground">Words</p>
+            </div>
+            <div className="p-3 bg-muted rounded-lg text-center">
+              <p className="text-xl font-bold text-primary">{analysis.charCount}</p>
+              <p className="text-xs text-muted-foreground">Characters</p>
+            </div>
+          </div>
+          
+          {analysis.powerWords.length > 0 && (
+            <div className="p-3 bg-green-500/10 rounded-lg">
+              <p className="text-sm font-medium text-green-700">✓ Power words found: {analysis.powerWords.join(', ')}</p>
+            </div>
+          )}
+          
+          {analysis.emotionalWords.length > 0 && (
+            <div className="p-3 bg-blue-500/10 rounded-lg">
+              <p className="text-sm font-medium text-blue-700">✓ Emotional words found: {analysis.emotionalWords.join(', ')}</p>
+            </div>
+          )}
+          
+          {analysis.hasNumber && (
+            <div className="p-3 bg-green-500/10 rounded-lg">
+              <p className="text-sm font-medium text-green-700">✓ Contains a number (increases clicks)</p>
+            </div>
+          )}
+          
+          {analysis.tips.length > 0 && (
+            <div className="space-y-2">
+              <Label>Tips to Improve</Label>
+              {analysis.tips.map((tip, i) => (
+                <div key={i} className="p-3 bg-yellow-500/10 rounded-lg">
+                  <p className="text-sm text-yellow-700">💡 {tip}</p>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
 export const tools = [
+  // General Tools
   { id: 'image-compress', name: 'Image Compressor', description: 'Reduce image file size while maintaining quality', icon: Minimize2, color: 'text-blue-500', component: ImageCompressor },
   { id: 'image-convert', name: 'Image Converter', description: 'Convert images between PNG, JPG, and WebP formats', icon: FileImage, color: 'text-green-500', component: ImageConverter },
   { id: 'text-case', name: 'Text Case Converter', description: 'Convert text to uppercase, lowercase, title case, and more', icon: Type, color: 'text-purple-500', component: TextCaseConverter },
@@ -458,6 +810,11 @@ export const tools = [
   { id: 'qr-generator', name: 'QR Code Generator', description: 'Generate QR codes from text or URLs', icon: QrCode, color: 'text-pink-500', component: QRCodeGenerator },
   { id: 'color-converter', name: 'Color Converter', description: 'Convert colors between HEX, RGB, and HSL', icon: Palette, color: 'text-cyan-500', component: ColorConverter },
   { id: 'lorem-generator', name: 'Lorem Ipsum Generator', description: 'Generate placeholder text for your designs', icon: AlignLeft, color: 'text-yellow-500', component: LoremGenerator },
+  // Marketing Tools
+  { id: 'utm-builder', name: 'UTM Link Builder', description: 'Create trackable campaign URLs with UTM parameters', icon: Link2, color: 'text-indigo-500', component: UTMBuilder },
+  { id: 'meta-tags', name: 'Meta Tag Generator', description: 'Generate SEO meta tags and Open Graph tags', icon: Globe, color: 'text-emerald-500', component: MetaTagGenerator },
+  { id: 'email-signature', name: 'Email Signature Generator', description: 'Create professional HTML email signatures', icon: Mail, color: 'text-rose-500', component: EmailSignatureGenerator },
+  { id: 'headline-analyzer', name: 'Headline Analyzer', description: 'Analyze and score your headlines for engagement', icon: Target, color: 'text-amber-500', component: HeadlineAnalyzer },
 ];
 
 export default function DashboardTools() {

@@ -459,6 +459,146 @@ serve(async (req) => {
         );
       }
 
+      // Promotion operations
+      case 'get-promotions': {
+        const { data: promotions, error } = await supabaseAdmin
+          .from('promotions')
+          .select('*')
+          .order('created_at', { ascending: false });
+
+        if (error) {
+          console.error('Error fetching promotions:', error);
+          return new Response(
+            JSON.stringify({ error: 'Failed to fetch promotions' }),
+            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        return new Response(
+          JSON.stringify({ promotions }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      case 'create-promotion': {
+        const { title, message, button_text, button_link, image_url, show_on_landing, show_on_dashboard, target_users, start_date, end_date } = data;
+        
+        if (!title || !message) {
+          return new Response(
+            JSON.stringify({ error: 'Title and message are required' }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        const { data: promotion, error } = await supabaseAdmin
+          .from('promotions')
+          .insert({
+            title,
+            message,
+            button_text: button_text || 'Learn More',
+            button_link,
+            image_url,
+            show_on_landing: show_on_landing ?? true,
+            show_on_dashboard: show_on_dashboard ?? true,
+            target_users: target_users || 'free',
+            start_date,
+            end_date,
+            is_active: false
+          })
+          .select()
+          .single();
+
+        if (error) {
+          console.error('Error creating promotion:', error);
+          return new Response(
+            JSON.stringify({ error: 'Failed to create promotion' }),
+            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        console.log(`Promotion created: ${promotion.id}`);
+        return new Response(
+          JSON.stringify({ success: true, promotion }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      case 'update-promotion': {
+        const { promotionId, updates } = data;
+        
+        if (!promotionId) {
+          return new Response(
+            JSON.stringify({ error: 'Promotion ID is required' }),
+            { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        const { error } = await supabaseAdmin
+          .from('promotions')
+          .update(updates)
+          .eq('id', promotionId);
+
+        if (error) {
+          console.error('Error updating promotion:', error);
+          return new Response(
+            JSON.stringify({ error: 'Failed to update promotion' }),
+            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        console.log(`Promotion updated: ${promotionId}`);
+        return new Response(
+          JSON.stringify({ success: true }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      case 'toggle-promotion': {
+        const { promotionId, isActive } = data;
+        
+        const { error } = await supabaseAdmin
+          .from('promotions')
+          .update({ is_active: !isActive })
+          .eq('id', promotionId);
+
+        if (error) {
+          console.error('Error toggling promotion:', error);
+          return new Response(
+            JSON.stringify({ error: 'Failed to toggle promotion' }),
+            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        console.log(`Promotion toggled: ${promotionId}`);
+        return new Response(
+          JSON.stringify({ success: true }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
+      case 'delete-promotion': {
+        const { promotionId } = data;
+        
+        const { error } = await supabaseAdmin
+          .from('promotions')
+          .delete()
+          .eq('id', promotionId);
+
+        if (error) {
+          console.error('Error deleting promotion:', error);
+          return new Response(
+            JSON.stringify({ error: 'Failed to delete promotion' }),
+            { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+
+        console.log(`Promotion deleted: ${promotionId}`);
+        return new Response(
+          JSON.stringify({ success: true }),
+          { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
+      }
+
       default:
         return new Response(
           JSON.stringify({ error: 'Unknown action' }),

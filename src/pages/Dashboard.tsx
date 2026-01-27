@@ -13,6 +13,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate, Link } from "react-router-dom";
 import { ExportDropdown } from "@/components/ExportDropdown";
+import { PromotionPopup } from "@/components/PromotionPopup";
 const templates = [{
   title: "Blog Post Generator",
   description: "Create engaging blog posts with AI assistance",
@@ -353,6 +354,7 @@ export default function Dashboard() {
   const usagePercentage = profile ? profile.words_used / profile.words_limit * 100 : 0;
   return (
     <div className="min-h-screen bg-background">
+      <PromotionPopup showOnDashboard />
       <div className="space-y-8 p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
         {/* Welcome Header - Sleek glassmorphism design */}
         <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary via-primary/90 to-primary/80 p-6 sm:p-8 text-primary-foreground shadow-xl">

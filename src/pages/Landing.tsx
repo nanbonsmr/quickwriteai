@@ -14,6 +14,7 @@ import { useInView } from '@/hooks/useInView';
 import { useParallax } from '@/hooks/useParallax';
 import { PublicNavbar } from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
+import { PromotionPopup } from '@/components/PromotionPopup';
 
 const siteUrl = 'https://peakdraft.app';
 
@@ -203,6 +204,7 @@ export default function Landing() {
       
     <main className="min-h-screen bg-background">
       <PublicNavbar />
+      <PromotionPopup showOnLanding />
 
       {/* Hero Section with 3D Animation */}
       <section className="relative pt-24 sm:pt-32 pb-12 sm:pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">

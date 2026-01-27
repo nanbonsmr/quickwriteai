@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
-import { Loader2, Copy, Bot, Hash, Sparkles, Lightbulb, ArrowRight, FileText, MessageSquare, Mail, ChevronDown, ShoppingBag, Search, MousePointerClick, Type, Megaphone, Star } from 'lucide-react';
+import { Loader2, Copy, Bot, Hash, Sparkles, Lightbulb, ArrowRight, FileText, MessageSquare, Mail, ChevronDown, ShoppingBag, Search, MousePointerClick, Type, Megaphone, Star, Film, User, HelpCircle } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useToast } from '@/hooks/use-toast';
 import { Link } from 'react-router-dom';
@@ -103,6 +103,38 @@ const tools = [
     color: 'text-yellow-500',
     bgColor: 'bg-yellow-500/10',
   },
+  {
+    id: 'postideas',
+    title: 'Post Ideas Generator',
+    description: 'Generate creative content ideas for your social media',
+    icon: Lightbulb,
+    color: 'text-lime-500',
+    bgColor: 'bg-lime-500/10',
+  },
+  {
+    id: 'videoprompt',
+    title: 'Video Prompt Generator',
+    description: 'Create detailed prompts for AI video generation',
+    icon: Film,
+    color: 'text-red-500',
+    bgColor: 'bg-red-500/10',
+  },
+  {
+    id: 'bio',
+    title: 'Bio Generator',
+    description: 'Write professional bios for social media profiles',
+    icon: User,
+    color: 'text-teal-500',
+    bgColor: 'bg-teal-500/10',
+  },
+  {
+    id: 'faq',
+    title: 'FAQ Generator',
+    description: 'Generate frequently asked questions for your business',
+    icon: HelpCircle,
+    color: 'text-sky-500',
+    bgColor: 'bg-sky-500/10',
+  },
 ];
 
 // JSON-LD structured data for free tools
@@ -110,8 +142,8 @@ const freeToolsStructuredData = {
   "@context": "https://schema.org",
   "@type": "ItemList",
   "name": "Free AI Content Generation Tools",
-  "description": "Collection of 11 free AI-powered content generation tools including hashtag generator, headline generator, slogan generator, and more.",
-  "numberOfItems": 11,
+  "description": "Collection of 15 free AI-powered content generation tools including hashtag generator, headline generator, slogan generator, post ideas, video prompts, and more.",
+  "numberOfItems": 15,
   "itemListElement": tools.map((tool, index) => ({
     "@type": "ListItem",
     "position": index + 1,
@@ -136,18 +168,18 @@ export default function FreeTools() {
   return (
     <>
       <Helmet>
-        <title>Free AI Tools - Hashtag, Headline, Slogan & Content Generators | PeakDraft</title>
-        <meta name="description" content="Use 11 free AI tools: Hashtag Generator, Headline Generator, Slogan Generator, Testimonial Generator, SEO Meta Description Generator, CTA Generator & more. No signup required!" />
-        <meta name="keywords" content="free AI tools, free hashtag generator, free headline generator, free slogan generator, free testimonial generator, free SEO meta generator, free CTA generator, AI content tools, free content generator, no signup AI tools" />
+        <title>Free AI Tools - Hashtag, Headline, Slogan, Video & Content Generators | PeakDraft</title>
+        <meta name="description" content="Use 15 free AI tools: Hashtag Generator, Headline Generator, Slogan Generator, Post Ideas, Video Prompt, Bio Generator, FAQ Generator & more. No signup required!" />
+        <meta name="keywords" content="free AI tools, free hashtag generator, free headline generator, free slogan generator, free post ideas generator, free video prompt generator, free bio generator, free FAQ generator, AI content tools, no signup AI tools" />
         <link rel="canonical" href="https://peakdraft.com/free-tools" />
         
-        <meta property="og:title" content="11 Free AI Content Tools - No Signup Required | PeakDraft" />
-        <meta property="og:description" content="Generate hashtags, headlines, slogans, testimonials, SEO meta descriptions & more with our free AI tools. No account needed!" />
+        <meta property="og:title" content="15 Free AI Content Tools - No Signup Required | PeakDraft" />
+        <meta property="og:description" content="Generate hashtags, headlines, slogans, post ideas, video prompts, bios, FAQs & more with our free AI tools. No account needed!" />
         <meta property="og:url" content="https://peakdraft.com/free-tools" />
         <meta property="og:type" content="website" />
         
-        <meta name="twitter:title" content="11 Free AI Content Tools | PeakDraft" />
-        <meta name="twitter:description" content="Free AI generators: Hashtags, Headlines, Slogans, Testimonials, SEO Meta, CTAs & more. No signup!" />
+        <meta name="twitter:title" content="15 Free AI Content Tools | PeakDraft" />
+        <meta name="twitter:description" content="Free AI generators: Hashtags, Headlines, Slogans, Post Ideas, Video Prompts, Bios, FAQs & more. No signup!" />
         
         <script type="application/ld+json">
           {JSON.stringify(freeToolsStructuredData)}
@@ -172,7 +204,7 @@ export default function FreeTools() {
                   Free AI Content Generation Tools
                 </h1>
                 <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                  Access 11 powerful AI generators without signing up. Create hashtags, headlines, slogans, testimonials, SEO meta descriptions, and more instantly!
+                  Access 15 powerful AI generators without signing up. Create hashtags, headlines, post ideas, video prompts, bios, FAQs, and more instantly!
                 </p>
               </motion.div>
             </header>
@@ -264,6 +296,10 @@ export default function FreeTools() {
                                   {tool.id === 'headline' && <FreeHeadlineGenerator />}
                                   {tool.id === 'slogan' && <FreeSloganGenerator />}
                                   {tool.id === 'testimonial' && <FreeTestimonialGenerator />}
+                                  {tool.id === 'postideas' && <FreePostIdeasGenerator />}
+                                  {tool.id === 'videoprompt' && <FreeVideoPromptGenerator />}
+                                  {tool.id === 'bio' && <FreeBioGenerator />}
+                                  {tool.id === 'faq' && <FreeFAQGenerator />}
                                 </motion.div>
                               </CardContent>
                             </motion.div>
@@ -282,7 +318,7 @@ export default function FreeTools() {
                 <CardContent className="py-8 text-center">
                   <h2 className="text-2xl font-bold mb-2">Want More Features?</h2>
                   <p className="text-muted-foreground mb-6">
-                    Sign up for free to get 5,000 words/month and access to all 14+ AI templates!
+                    Sign up for free to get 5,000 words/month and access to all 25+ AI templates!
                   </p>
                   <Button asChild size="lg">
                     <Link to="/auth">
@@ -2078,6 +2114,647 @@ Format each with the testimonial text, followed by "— [Name], [Role/Context]"`
             <div className="text-center py-12 text-muted-foreground">
               <Star className="h-12 w-12 mx-auto mb-4 opacity-20" />
               <p className="text-sm">Your generated testimonials will appear here</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+// Post Ideas Generator
+const postIdeasExamples = [
+  "Generate post ideas for a fitness coach targeting beginners",
+  "Content ideas for a sustainable fashion brand",
+  "Post ideas for a SaaS company in project management",
+];
+
+function FreePostIdeasGenerator() {
+  const [prompt, setPrompt] = useState('');
+  const [niche, setNiche] = useState('');
+  const [generatedContent, setGeneratedContent] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const { toast } = useToast();
+
+  const handleGenerate = async () => {
+    if (!prompt.trim()) {
+      toast({
+        title: "Error",
+        description: "Please describe what kind of post ideas you need",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsGenerating(true);
+
+    try {
+      const enhancedPrompt = `Generate 10 creative and engaging post ideas for: ${prompt}. Niche: ${niche || 'general'}. Provide diverse ideas with brief descriptions. Make them actionable and trendy.`;
+
+      const { data, error } = await supabase.functions.invoke('generate-content', {
+        body: { 
+          prompt: enhancedPrompt,
+          template_type: 'post-ideas',
+          language: 'en'
+        }
+      });
+
+      if (error) throw error;
+
+      setGeneratedContent(data.generated_content);
+
+      toast({
+        title: "Success!",
+        description: "Post ideas generated successfully"
+      });
+    } catch (error: any) {
+      console.error('Generation error:', error);
+      toast({
+        title: "Generation Failed",
+        description: error.message || "Failed to generate post ideas",
+        variant: "destructive"
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(generatedContent);
+    toast({
+      title: "Copied!",
+      description: "Post ideas copied to clipboard"
+    });
+  };
+
+  return (
+    <div className="grid lg:grid-cols-2 gap-4 sm:gap-6">
+      <div className="space-y-3 sm:space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="postNiche">Niche/Industry</Label>
+          <Input
+            id="postNiche"
+            placeholder="e.g., Fitness, Marketing, Technology"
+            value={niche}
+            onChange={(e) => setNiche(e.target.value)}
+          />
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="postPrompt">What kind of post ideas do you need?</Label>
+          <Textarea
+            id="postPrompt"
+            placeholder="Describe your content goals, themes, or specific topics..."
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            rows={4}
+          />
+        </div>
+
+        <Button 
+          onClick={handleGenerate} 
+          disabled={isGenerating}
+          className="w-full"
+        >
+          {isGenerating ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Generating...
+            </>
+          ) : (
+            <>
+              <Sparkles className="mr-2 h-4 w-4" />
+              Generate Post Ideas
+            </>
+          )}
+        </Button>
+
+        <div className="pt-4 border-t">
+          <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
+            <Lightbulb className="w-3 h-3" /> Try these examples:
+          </p>
+          <div className="space-y-2">
+            {postIdeasExamples.map((example, index) => (
+              <Button
+                key={index}
+                variant="ghost"
+                size="sm"
+                className="w-full justify-start text-left h-auto py-2 text-xs"
+                onClick={() => setPrompt(example)}
+              >
+                {example}
+              </Button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <Card className="bg-muted/30">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base flex items-center justify-between">
+            Generated Post Ideas
+            {generatedContent && (
+              <Button variant="outline" size="sm" onClick={copyToClipboard}>
+                <Copy className="h-4 w-4 mr-2" />
+                Copy
+              </Button>
+            )}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {generatedContent ? (
+            <pre className="whitespace-pre-wrap font-sans text-sm bg-background p-4 rounded-lg border max-h-[400px] overflow-auto">
+              {generatedContent}
+            </pre>
+          ) : (
+            <div className="text-center py-12 text-muted-foreground">
+              <Lightbulb className="h-12 w-12 mx-auto mb-4 opacity-20" />
+              <p className="text-sm">Your generated post ideas will appear here</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+// Video Prompt Generator
+const videoPromptExamples = [
+  "A time-lapse of a flower blooming in spring",
+  "Product showcase video for a smartphone with cinematic shots",
+  "Behind-the-scenes footage of a coffee shop morning routine",
+];
+
+function FreeVideoPromptGenerator() {
+  const [prompt, setPrompt] = useState('');
+  const [style, setStyle] = useState('cinematic');
+  const [generatedContent, setGeneratedContent] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const { toast } = useToast();
+
+  const handleGenerate = async () => {
+    if (!prompt.trim()) {
+      toast({
+        title: "Error",
+        description: "Please describe the video you want to create",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsGenerating(true);
+
+    try {
+      const enhancedPrompt = `Create a detailed video generation prompt for: ${prompt}. Style: ${style}. Include camera movements, scene descriptions, transitions, lighting, mood, and technical specifications. Make it suitable for AI video generators like Runway, Pika, or traditional video production.`;
+
+      const { data, error } = await supabase.functions.invoke('generate-content', {
+        body: { 
+          prompt: enhancedPrompt,
+          template_type: 'video-prompt',
+          language: 'en'
+        }
+      });
+
+      if (error) throw error;
+
+      setGeneratedContent(data.generated_content);
+
+      toast({
+        title: "Success!",
+        description: "Video prompt generated successfully"
+      });
+    } catch (error: any) {
+      console.error('Generation error:', error);
+      toast({
+        title: "Generation Failed",
+        description: error.message || "Failed to generate video prompt",
+        variant: "destructive"
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(generatedContent);
+    toast({
+      title: "Copied!",
+      description: "Video prompt copied to clipboard"
+    });
+  };
+
+  return (
+    <div className="grid lg:grid-cols-2 gap-4 sm:gap-6">
+      <div className="space-y-3 sm:space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="videoStyle">Video Style</Label>
+          <select
+            id="videoStyle"
+            className="w-full px-3 py-2 border border-input bg-background rounded-md"
+            value={style}
+            onChange={(e) => setStyle(e.target.value)}
+          >
+            <option value="cinematic">Cinematic</option>
+            <option value="documentary">Documentary</option>
+            <option value="animated">Animated</option>
+            <option value="commercial">Commercial</option>
+            <option value="social">Social Media</option>
+          </select>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="videoPrompt">Video Concept</Label>
+          <Textarea
+            id="videoPrompt"
+            placeholder="Describe what you want to see in the video..."
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            rows={4}
+          />
+        </div>
+
+        <Button 
+          onClick={handleGenerate} 
+          disabled={isGenerating}
+          className="w-full"
+        >
+          {isGenerating ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Generating...
+            </>
+          ) : (
+            <>
+              <Sparkles className="mr-2 h-4 w-4" />
+              Generate Video Prompt
+            </>
+          )}
+        </Button>
+
+        <div className="pt-4 border-t">
+          <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
+            <Lightbulb className="w-3 h-3" /> Try these examples:
+          </p>
+          <div className="space-y-2">
+            {videoPromptExamples.map((example, index) => (
+              <Button
+                key={index}
+                variant="ghost"
+                size="sm"
+                className="w-full justify-start text-left h-auto py-2 text-xs"
+                onClick={() => setPrompt(example)}
+              >
+                {example}
+              </Button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <Card className="bg-muted/30">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base flex items-center justify-between">
+            Generated Video Prompt
+            {generatedContent && (
+              <Button variant="outline" size="sm" onClick={copyToClipboard}>
+                <Copy className="h-4 w-4 mr-2" />
+                Copy
+              </Button>
+            )}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {generatedContent ? (
+            <pre className="whitespace-pre-wrap font-sans text-sm bg-background p-4 rounded-lg border max-h-[400px] overflow-auto">
+              {generatedContent}
+            </pre>
+          ) : (
+            <div className="text-center py-12 text-muted-foreground">
+              <Film className="h-12 w-12 mx-auto mb-4 opacity-20" />
+              <p className="text-sm">Your generated video prompt will appear here</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+// Bio Generator
+const bioExamples = [
+  "A software engineer with 5 years of experience in React and Node.js",
+  "A digital marketing consultant specializing in e-commerce",
+  "A freelance photographer based in New York City",
+];
+
+function FreeBioGenerator() {
+  const [prompt, setPrompt] = useState('');
+  const [platform, setPlatform] = useState('linkedin');
+  const [generatedContent, setGeneratedContent] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const { toast } = useToast();
+
+  const handleGenerate = async () => {
+    if (!prompt.trim()) {
+      toast({
+        title: "Error",
+        description: "Please describe yourself or your professional background",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsGenerating(true);
+
+    try {
+      const enhancedPrompt = `Write 3 professional bio variations for ${platform} based on: ${prompt}. Each bio should be optimized for the platform, engaging, and highlight key strengths. Include appropriate length for the platform (short, medium, detailed).`;
+
+      const { data, error } = await supabase.functions.invoke('generate-content', {
+        body: { 
+          prompt: enhancedPrompt,
+          template_type: 'bio',
+          language: 'en'
+        }
+      });
+
+      if (error) throw error;
+
+      setGeneratedContent(data.generated_content);
+
+      toast({
+        title: "Success!",
+        description: "Bio generated successfully"
+      });
+    } catch (error: any) {
+      console.error('Generation error:', error);
+      toast({
+        title: "Generation Failed",
+        description: error.message || "Failed to generate bio",
+        variant: "destructive"
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(generatedContent);
+    toast({
+      title: "Copied!",
+      description: "Bio copied to clipboard"
+    });
+  };
+
+  return (
+    <div className="grid lg:grid-cols-2 gap-4 sm:gap-6">
+      <div className="space-y-3 sm:space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="bioPlatform">Platform</Label>
+          <select
+            id="bioPlatform"
+            className="w-full px-3 py-2 border border-input bg-background rounded-md"
+            value={platform}
+            onChange={(e) => setPlatform(e.target.value)}
+          >
+            <option value="linkedin">LinkedIn</option>
+            <option value="twitter">Twitter/X</option>
+            <option value="instagram">Instagram</option>
+            <option value="personal">Personal Website</option>
+            <option value="resume">Resume/CV</option>
+          </select>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="bioPrompt">About You</Label>
+          <Textarea
+            id="bioPrompt"
+            placeholder="Describe your profession, skills, achievements, and personality..."
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            rows={4}
+          />
+        </div>
+
+        <Button 
+          onClick={handleGenerate} 
+          disabled={isGenerating}
+          className="w-full"
+        >
+          {isGenerating ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Generating...
+            </>
+          ) : (
+            <>
+              <Sparkles className="mr-2 h-4 w-4" />
+              Generate Bio
+            </>
+          )}
+        </Button>
+
+        <div className="pt-4 border-t">
+          <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
+            <Lightbulb className="w-3 h-3" /> Try these examples:
+          </p>
+          <div className="space-y-2">
+            {bioExamples.map((example, index) => (
+              <Button
+                key={index}
+                variant="ghost"
+                size="sm"
+                className="w-full justify-start text-left h-auto py-2 text-xs"
+                onClick={() => setPrompt(example)}
+              >
+                {example}
+              </Button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <Card className="bg-muted/30">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base flex items-center justify-between">
+            Generated Bio
+            {generatedContent && (
+              <Button variant="outline" size="sm" onClick={copyToClipboard}>
+                <Copy className="h-4 w-4 mr-2" />
+                Copy
+              </Button>
+            )}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {generatedContent ? (
+            <pre className="whitespace-pre-wrap font-sans text-sm bg-background p-4 rounded-lg border max-h-[400px] overflow-auto">
+              {generatedContent}
+            </pre>
+          ) : (
+            <div className="text-center py-12 text-muted-foreground">
+              <User className="h-12 w-12 mx-auto mb-4 opacity-20" />
+              <p className="text-sm">Your generated bio will appear here</p>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
+// FAQ Generator
+const faqExamples = [
+  "An online fitness coaching service with monthly subscriptions",
+  "A SaaS project management tool for small teams",
+  "An e-commerce store selling handmade jewelry",
+];
+
+function FreeFAQGenerator() {
+  const [prompt, setPrompt] = useState('');
+  const [faqCount, setFaqCount] = useState('10');
+  const [generatedContent, setGeneratedContent] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
+  const { toast } = useToast();
+
+  const handleGenerate = async () => {
+    if (!prompt.trim()) {
+      toast({
+        title: "Error",
+        description: "Please describe your business or product",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsGenerating(true);
+
+    try {
+      const enhancedPrompt = `Generate ${faqCount} frequently asked questions and detailed answers for: ${prompt}. Include questions about pricing, features, usage, support, and common concerns. Format each as "Q: [question]" followed by "A: [answer]".`;
+
+      const { data, error } = await supabase.functions.invoke('generate-content', {
+        body: { 
+          prompt: enhancedPrompt,
+          template_type: 'faq',
+          language: 'en'
+        }
+      });
+
+      if (error) throw error;
+
+      setGeneratedContent(data.generated_content);
+
+      toast({
+        title: "Success!",
+        description: "FAQs generated successfully"
+      });
+    } catch (error: any) {
+      console.error('Generation error:', error);
+      toast({
+        title: "Generation Failed",
+        description: error.message || "Failed to generate FAQs",
+        variant: "destructive"
+      });
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(generatedContent);
+    toast({
+      title: "Copied!",
+      description: "FAQs copied to clipboard"
+    });
+  };
+
+  return (
+    <div className="grid lg:grid-cols-2 gap-4 sm:gap-6">
+      <div className="space-y-3 sm:space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="faqCount">Number of FAQs</Label>
+          <select
+            id="faqCount"
+            className="w-full px-3 py-2 border border-input bg-background rounded-md"
+            value={faqCount}
+            onChange={(e) => setFaqCount(e.target.value)}
+          >
+            <option value="5">5 FAQs</option>
+            <option value="10">10 FAQs</option>
+            <option value="15">15 FAQs</option>
+            <option value="20">20 FAQs</option>
+          </select>
+        </div>
+
+        <div className="space-y-2">
+          <Label htmlFor="faqPrompt">Describe Your Business/Product</Label>
+          <Textarea
+            id="faqPrompt"
+            placeholder="Describe your business, products, services, target audience, and any specific topics to cover..."
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            rows={4}
+          />
+        </div>
+
+        <Button 
+          onClick={handleGenerate} 
+          disabled={isGenerating}
+          className="w-full"
+        >
+          {isGenerating ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Generating...
+            </>
+          ) : (
+            <>
+              <Sparkles className="mr-2 h-4 w-4" />
+              Generate FAQs
+            </>
+          )}
+        </Button>
+
+        <div className="pt-4 border-t">
+          <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
+            <Lightbulb className="w-3 h-3" /> Try these examples:
+          </p>
+          <div className="space-y-2">
+            {faqExamples.map((example, index) => (
+              <Button
+                key={index}
+                variant="ghost"
+                size="sm"
+                className="w-full justify-start text-left h-auto py-2 text-xs"
+                onClick={() => setPrompt(example)}
+              >
+                {example}
+              </Button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <Card className="bg-muted/30">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base flex items-center justify-between">
+            Generated FAQs
+            {generatedContent && (
+              <Button variant="outline" size="sm" onClick={copyToClipboard}>
+                <Copy className="h-4 w-4 mr-2" />
+                Copy
+              </Button>
+            )}
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {generatedContent ? (
+            <pre className="whitespace-pre-wrap font-sans text-sm bg-background p-4 rounded-lg border max-h-[400px] overflow-auto">
+              {generatedContent}
+            </pre>
+          ) : (
+            <div className="text-center py-12 text-muted-foreground">
+              <HelpCircle className="h-12 w-12 mx-auto mb-4 opacity-20" />
+              <p className="text-sm">Your generated FAQs will appear here</p>
             </div>
           )}
         </CardContent>

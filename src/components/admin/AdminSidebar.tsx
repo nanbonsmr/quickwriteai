@@ -83,21 +83,21 @@ export function AdminSidebar() {
 
   return (
     <Sidebar className="border-r border-border/50">
-      <SidebarHeader className="p-4 border-b border-border/50">
-        <div className="flex items-center gap-3">
-          <div className="p-2 bg-gradient-to-br from-red-500 to-orange-500 rounded-lg">
-            <Shield className="h-5 w-5 text-white" />
+      <SidebarHeader className="p-3 sm:p-4 border-b border-border/50">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="p-1.5 sm:p-2 bg-gradient-to-br from-red-500 to-orange-500 rounded-lg shrink-0">
+            <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
           </div>
-          <div>
-            <h2 className="font-bold text-lg">Admin Panel</h2>
-            <p className="text-xs text-muted-foreground">PeakDraft Management</p>
+          <div className="min-w-0">
+            <h2 className="font-bold text-base sm:text-lg truncate">Admin Panel</h2>
+            <p className="text-[10px] sm:text-xs text-muted-foreground truncate">PeakDraft Management</p>
           </div>
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="px-2">
+      <SidebarContent className="px-1.5 sm:px-2">
         <SidebarGroup>
-          <SidebarGroupLabel className="text-xs uppercase tracking-wider text-muted-foreground px-2">
+          <SidebarGroupLabel className="text-[10px] sm:text-xs uppercase tracking-wider text-muted-foreground px-2">
             Management
           </SidebarGroupLabel>
           <SidebarGroupContent>
@@ -106,14 +106,14 @@ export function AdminSidebar() {
                 <SidebarMenuItem key={item.path}>
                   <SidebarMenuButton
                     onClick={() => navigate(item.path)}
-                    className={`w-full justify-start gap-3 px-3 py-2.5 rounded-lg transition-all ${
+                    className={`w-full justify-start gap-2 sm:gap-3 px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg transition-all text-sm ${
                       isActive(item.path)
                         ? "bg-primary text-primary-foreground hover:bg-primary/90"
                         : "hover:bg-muted"
                     }`}
                   >
-                    <item.icon className="h-4 w-4" />
-                    <span className="font-medium">{item.title}</span>
+                    <item.icon className="h-4 w-4 shrink-0" />
+                    <span className="font-medium truncate">{item.title}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ))}
@@ -122,18 +122,18 @@ export function AdminSidebar() {
         </SidebarGroup>
       </SidebarContent>
 
-      <SidebarFooter className="p-4 border-t border-border/50">
+      <SidebarFooter className="p-3 sm:p-4 border-t border-border/50">
         <Button
           variant="outline"
-          className="w-full justify-start gap-2"
+          className="w-full justify-start gap-2 text-sm"
           onClick={() => navigate("/app")}
         >
-          <ArrowLeft className="h-4 w-4" />
-          Back to Dashboard
+          <ArrowLeft className="h-4 w-4 shrink-0" />
+          <span className="truncate">Back to Dashboard</span>
         </Button>
-        <div className="flex items-center gap-2 mt-4 opacity-60">
-          <img src={logo} alt="PeakDraft" className="h-6 w-6" />
-          <span className="text-xs text-muted-foreground">PeakDraft Admin</span>
+        <div className="flex items-center gap-2 mt-3 sm:mt-4 opacity-60">
+          <img src={logo} alt="PeakDraft" className="h-5 w-5 sm:h-6 sm:w-6" />
+          <span className="text-[10px] sm:text-xs text-muted-foreground truncate">PeakDraft Admin</span>
         </div>
       </SidebarFooter>
     </Sidebar>

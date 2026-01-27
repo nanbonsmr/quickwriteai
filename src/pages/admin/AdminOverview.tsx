@@ -62,70 +62,70 @@ export default function AdminOverview() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold">Dashboard Overview</h1>
-        <p className="text-muted-foreground">Welcome back! Here's what's happening with PeakDraft.</p>
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold">Dashboard Overview</h1>
+        <p className="text-sm sm:text-base text-muted-foreground">Welcome back! Here's what's happening with PeakDraft.</p>
       </div>
 
       {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <Card className="bg-gradient-to-br from-blue-500/10 to-blue-600/5 border-blue-500/20">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Total Users</p>
-                <p className="text-3xl font-bold">{userStats?.totalUsers || 0}</p>
+          <CardContent className="p-3 sm:p-4 md:p-6">
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0">
+                <p className="text-xs sm:text-sm text-muted-foreground truncate">Total Users</p>
+                <p className="text-xl sm:text-2xl md:text-3xl font-bold">{userStats?.totalUsers || 0}</p>
               </div>
-              <div className="p-3 bg-blue-500/20 rounded-xl">
-                <Users className="h-6 w-6 text-blue-500" />
+              <div className="p-2 sm:p-3 bg-blue-500/20 rounded-lg sm:rounded-xl shrink-0">
+                <Users className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-blue-500" />
               </div>
             </div>
           </CardContent>
         </Card>
 
         <Card className="bg-gradient-to-br from-amber-500/10 to-amber-600/5 border-amber-500/20">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Premium Users</p>
-                <p className="text-3xl font-bold">{userStats?.premiumUsers || 0}</p>
+          <CardContent className="p-3 sm:p-4 md:p-6">
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0">
+                <p className="text-xs sm:text-sm text-muted-foreground truncate">Premium Users</p>
+                <p className="text-xl sm:text-2xl md:text-3xl font-bold">{userStats?.premiumUsers || 0}</p>
               </div>
-              <div className="p-3 bg-amber-500/20 rounded-xl">
-                <Crown className="h-6 w-6 text-amber-500" />
+              <div className="p-2 sm:p-3 bg-amber-500/20 rounded-lg sm:rounded-xl shrink-0">
+                <Crown className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-amber-500" />
               </div>
             </div>
           </CardContent>
         </Card>
 
         <Card className="bg-gradient-to-br from-green-500/10 to-green-600/5 border-green-500/20">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Words Generated</p>
-                <p className="text-3xl font-bold">{userStats?.totalWordsUsed?.toLocaleString() || 0}</p>
+          <CardContent className="p-3 sm:p-4 md:p-6">
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0">
+                <p className="text-xs sm:text-sm text-muted-foreground truncate">Words Generated</p>
+                <p className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold truncate">{userStats?.totalWordsUsed?.toLocaleString() || 0}</p>
               </div>
-              <div className="p-3 bg-green-500/20 rounded-xl">
-                <FileText className="h-6 w-6 text-green-500" />
+              <div className="p-2 sm:p-3 bg-green-500/20 rounded-lg sm:rounded-xl shrink-0">
+                <FileText className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-green-500" />
               </div>
             </div>
           </CardContent>
         </Card>
 
         <Card className="bg-gradient-to-br from-purple-500/10 to-purple-600/5 border-purple-500/20">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground">Conversion Rate</p>
-                <p className="text-3xl font-bold">
+          <CardContent className="p-3 sm:p-4 md:p-6">
+            <div className="flex items-center justify-between gap-2">
+              <div className="min-w-0">
+                <p className="text-xs sm:text-sm text-muted-foreground truncate">Conversion Rate</p>
+                <p className="text-xl sm:text-2xl md:text-3xl font-bold">
                   {userStats?.totalUsers 
                     ? Math.round((userStats.premiumUsers / userStats.totalUsers) * 100) 
                     : 0}%
                 </p>
               </div>
-              <div className="p-3 bg-purple-500/20 rounded-xl">
-                <TrendingUp className="h-6 w-6 text-purple-500" />
+              <div className="p-2 sm:p-3 bg-purple-500/20 rounded-lg sm:rounded-xl shrink-0">
+                <TrendingUp className="h-4 w-4 sm:h-5 sm:w-5 md:h-6 md:w-6 text-purple-500" />
               </div>
             </div>
           </CardContent>
@@ -133,54 +133,54 @@ export default function AdminOverview() {
       </div>
 
       {/* Subscription Distribution */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Activity className="h-5 w-5" />
+          <CardHeader className="p-4 sm:p-6">
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <Activity className="h-4 w-4 sm:h-5 sm:w-5" />
               Subscription Distribution
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="space-y-3">
+          <CardContent className="space-y-3 sm:space-y-4 p-4 pt-0 sm:p-6 sm:pt-0">
+            <div className="space-y-2 sm:space-y-3">
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-medium">Free Users</span>
-                  <span className="text-sm text-muted-foreground">{userStats?.freeUsers || 0}</span>
+                  <span className="text-xs sm:text-sm font-medium">Free Users</span>
+                  <span className="text-xs sm:text-sm text-muted-foreground">{userStats?.freeUsers || 0}</span>
                 </div>
                 <Progress 
                   value={userStats?.totalUsers ? (userStats.freeUsers / userStats.totalUsers) * 100 : 0} 
-                  className="h-2" 
+                  className="h-1.5 sm:h-2" 
                 />
               </div>
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-medium">Basic</span>
-                  <span className="text-sm text-muted-foreground">{userStats?.basicUsers || 0}</span>
+                  <span className="text-xs sm:text-sm font-medium">Basic</span>
+                  <span className="text-xs sm:text-sm text-muted-foreground">{userStats?.basicUsers || 0}</span>
                 </div>
                 <Progress 
                   value={userStats?.totalUsers ? (userStats.basicUsers / userStats.totalUsers) * 100 : 0} 
-                  className="h-2 [&>div]:bg-blue-500" 
+                  className="h-1.5 sm:h-2 [&>div]:bg-blue-500" 
                 />
               </div>
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-medium">Pro</span>
-                  <span className="text-sm text-muted-foreground">{userStats?.proUsers || 0}</span>
+                  <span className="text-xs sm:text-sm font-medium">Pro</span>
+                  <span className="text-xs sm:text-sm text-muted-foreground">{userStats?.proUsers || 0}</span>
                 </div>
                 <Progress 
                   value={userStats?.totalUsers ? (userStats.proUsers / userStats.totalUsers) * 100 : 0} 
-                  className="h-2 [&>div]:bg-purple-500" 
+                  className="h-1.5 sm:h-2 [&>div]:bg-purple-500" 
                 />
               </div>
               <div>
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-medium">Enterprise</span>
-                  <span className="text-sm text-muted-foreground">{userStats?.enterpriseUsers || 0}</span>
+                  <span className="text-xs sm:text-sm font-medium">Enterprise</span>
+                  <span className="text-xs sm:text-sm text-muted-foreground">{userStats?.enterpriseUsers || 0}</span>
                 </div>
                 <Progress 
                   value={userStats?.totalUsers ? (userStats.enterpriseUsers / userStats.totalUsers) * 100 : 0} 
-                  className="h-2 [&>div]:bg-amber-500" 
+                  className="h-1.5 sm:h-2 [&>div]:bg-amber-500" 
                 />
               </div>
             </div>
@@ -188,29 +188,29 @@ export default function AdminOverview() {
         </Card>
 
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Zap className="h-5 w-5" />
+          <CardHeader className="p-4 sm:p-6">
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <Zap className="h-4 w-4 sm:h-5 sm:w-5" />
               Quick Actions
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 gap-3">
-              <a href="/admin/users" className="p-4 rounded-lg border hover:bg-muted/50 transition-colors">
-                <Users className="h-5 w-5 mb-2 text-primary" />
-                <p className="font-medium text-sm">Manage Users</p>
+          <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
+            <div className="grid grid-cols-2 gap-2 sm:gap-3">
+              <a href="/admin/users" className="p-3 sm:p-4 rounded-lg border hover:bg-muted/50 transition-colors">
+                <Users className="h-4 w-4 sm:h-5 sm:w-5 mb-1.5 sm:mb-2 text-primary" />
+                <p className="font-medium text-xs sm:text-sm">Manage Users</p>
               </a>
-              <a href="/admin/promotions" className="p-4 rounded-lg border hover:bg-muted/50 transition-colors">
-                <Activity className="h-5 w-5 mb-2 text-primary" />
-                <p className="font-medium text-sm">Promotions</p>
+              <a href="/admin/promotions" className="p-3 sm:p-4 rounded-lg border hover:bg-muted/50 transition-colors">
+                <Activity className="h-4 w-4 sm:h-5 sm:w-5 mb-1.5 sm:mb-2 text-primary" />
+                <p className="font-medium text-xs sm:text-sm">Promotions</p>
               </a>
-              <a href="/admin/notifications" className="p-4 rounded-lg border hover:bg-muted/50 transition-colors">
-                <FileText className="h-5 w-5 mb-2 text-primary" />
-                <p className="font-medium text-sm">Notifications</p>
+              <a href="/admin/notifications" className="p-3 sm:p-4 rounded-lg border hover:bg-muted/50 transition-colors">
+                <FileText className="h-4 w-4 sm:h-5 sm:w-5 mb-1.5 sm:mb-2 text-primary" />
+                <p className="font-medium text-xs sm:text-sm">Notifications</p>
               </a>
-              <a href="/admin/templates" className="p-4 rounded-lg border hover:bg-muted/50 transition-colors">
-                <Crown className="h-5 w-5 mb-2 text-primary" />
-                <p className="font-medium text-sm">Templates</p>
+              <a href="/admin/templates" className="p-3 sm:p-4 rounded-lg border hover:bg-muted/50 transition-colors">
+                <Crown className="h-4 w-4 sm:h-5 sm:w-5 mb-1.5 sm:mb-2 text-primary" />
+                <p className="font-medium text-xs sm:text-sm">Templates</p>
               </a>
             </div>
           </CardContent>

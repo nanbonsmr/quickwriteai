@@ -89,35 +89,35 @@ export default function AdminSettings() {
   const passwordStrength = getPasswordStrength(newPassword);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <div className="p-3 bg-gradient-to-br from-primary to-primary/80 rounded-xl">
-          <Settings className="h-6 w-6 text-primary-foreground" />
+      <div className="flex items-center gap-2 sm:gap-3">
+        <div className="p-2 sm:p-3 bg-gradient-to-br from-primary to-primary/80 rounded-lg sm:rounded-xl shrink-0">
+          <Settings className="h-5 w-5 sm:h-6 sm:w-6 text-primary-foreground" />
         </div>
-        <div>
-          <h1 className="text-2xl font-bold">Admin Settings</h1>
-          <p className="text-muted-foreground">Manage your admin account settings</p>
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl font-bold truncate">Admin Settings</h1>
+          <p className="text-sm text-muted-foreground truncate">Manage your admin account settings</p>
         </div>
       </div>
 
-      <div className="grid gap-6 max-w-2xl">
+      <div className="grid gap-4 sm:gap-6 max-w-2xl">
         {/* Change Password Card */}
         <Card className="border-border/50">
-          <CardHeader>
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-primary/10 rounded-lg">
-                <Lock className="h-5 w-5 text-primary" />
+          <CardHeader className="p-4 sm:p-6">
+            <div className="flex items-center gap-2 sm:gap-3">
+              <div className="p-1.5 sm:p-2 bg-primary/10 rounded-lg shrink-0">
+                <Lock className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
               </div>
-              <div>
-                <CardTitle className="text-lg">Change Password</CardTitle>
-                <CardDescription>
+              <div className="min-w-0">
+                <CardTitle className="text-base sm:text-lg">Change Password</CardTitle>
+                <CardDescription className="text-xs sm:text-sm">
                   Update your admin account password
                 </CardDescription>
               </div>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4 pt-0 sm:p-6 sm:pt-0">
             <form onSubmit={handlePasswordChange} className="space-y-4">
               {/* Current Password */}
               <div className="space-y-2">
@@ -248,32 +248,32 @@ export default function AdminSettings() {
 
         {/* Security Info Card */}
         <Card className="border-border/50 bg-primary/5">
-          <CardContent className="pt-6">
-            <div className="flex items-start gap-3">
-              <div className="p-2 bg-primary/10 rounded-lg mt-0.5">
-                <Shield className="h-5 w-5 text-primary" />
+          <CardContent className="p-4 sm:pt-6 sm:p-6">
+            <div className="flex items-start gap-2 sm:gap-3">
+              <div className="p-1.5 sm:p-2 bg-primary/10 rounded-lg mt-0.5 shrink-0">
+                <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-primary" />
               </div>
-              <div className="space-y-1">
-                <h3 className="font-semibold">Security Recommendations</h3>
-                <ul className="text-sm text-muted-foreground space-y-1.5">
+              <div className="space-y-1 min-w-0">
+                <h3 className="font-semibold text-sm sm:text-base">Security Recommendations</h3>
+                <ul className="text-xs sm:text-sm text-muted-foreground space-y-1 sm:space-y-1.5">
                   <li className="flex items-center gap-2">
-                    <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+                    <div className="h-1 w-1 sm:h-1.5 sm:w-1.5 rounded-full bg-primary shrink-0" />
                     Use at least 8 characters
                   </li>
                   <li className="flex items-center gap-2">
-                    <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+                    <div className="h-1 w-1 sm:h-1.5 sm:w-1.5 rounded-full bg-primary shrink-0" />
                     Include uppercase and lowercase letters
                   </li>
                   <li className="flex items-center gap-2">
-                    <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+                    <div className="h-1 w-1 sm:h-1.5 sm:w-1.5 rounded-full bg-primary shrink-0" />
                     Include at least one number
                   </li>
                   <li className="flex items-center gap-2">
-                    <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+                    <div className="h-1 w-1 sm:h-1.5 sm:w-1.5 rounded-full bg-primary shrink-0" />
                     Include at least one special character
                   </li>
                   <li className="flex items-center gap-2">
-                    <div className="h-1.5 w-1.5 rounded-full bg-primary" />
+                    <div className="h-1 w-1 sm:h-1.5 sm:w-1.5 rounded-full bg-primary shrink-0" />
                     Don't reuse passwords from other accounts
                   </li>
                 </ul>

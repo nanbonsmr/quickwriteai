@@ -23,7 +23,8 @@ import {
   Link2,
   Globe,
   Mail,
-  Target
+  Target,
+  Image
 } from 'lucide-react';
 
 // Tool Components
@@ -801,6 +802,129 @@ const HeadlineAnalyzer = () => {
   );
 };
 
+const SocialMediaSizeGuide = () => {
+  const { toast } = useToast();
+  
+  const platforms = [
+    {
+      name: 'Instagram',
+      color: 'bg-gradient-to-r from-purple-500 to-pink-500',
+      sizes: [
+        { type: 'Profile Photo', dimensions: '320 x 320', ratio: '1:1' },
+        { type: 'Square Post', dimensions: '1080 x 1080', ratio: '1:1' },
+        { type: 'Portrait Post', dimensions: '1080 x 1350', ratio: '4:5' },
+        { type: 'Landscape Post', dimensions: '1080 x 566', ratio: '1.91:1' },
+        { type: 'Story / Reels', dimensions: '1080 x 1920', ratio: '9:16' },
+        { type: 'Carousel', dimensions: '1080 x 1080', ratio: '1:1' },
+      ]
+    },
+    {
+      name: 'Facebook',
+      color: 'bg-blue-600',
+      sizes: [
+        { type: 'Profile Photo', dimensions: '170 x 170', ratio: '1:1' },
+        { type: 'Cover Photo', dimensions: '820 x 312', ratio: '2.63:1' },
+        { type: 'Feed Post', dimensions: '1200 x 630', ratio: '1.91:1' },
+        { type: 'Square Post', dimensions: '1080 x 1080', ratio: '1:1' },
+        { type: 'Story', dimensions: '1080 x 1920', ratio: '9:16' },
+        { type: 'Event Cover', dimensions: '1920 x 1005', ratio: '1.91:1' },
+      ]
+    },
+    {
+      name: 'X (Twitter)',
+      color: 'bg-black',
+      sizes: [
+        { type: 'Profile Photo', dimensions: '400 x 400', ratio: '1:1' },
+        { type: 'Header Photo', dimensions: '1500 x 500', ratio: '3:1' },
+        { type: 'In-Stream Photo', dimensions: '1600 x 900', ratio: '16:9' },
+        { type: 'Card Image', dimensions: '1200 x 628', ratio: '1.91:1' },
+      ]
+    },
+    {
+      name: 'LinkedIn',
+      color: 'bg-blue-700',
+      sizes: [
+        { type: 'Profile Photo', dimensions: '400 x 400', ratio: '1:1' },
+        { type: 'Cover Photo', dimensions: '1584 x 396', ratio: '4:1' },
+        { type: 'Feed Post', dimensions: '1200 x 627', ratio: '1.91:1' },
+        { type: 'Company Logo', dimensions: '300 x 300', ratio: '1:1' },
+        { type: 'Company Cover', dimensions: '1128 x 191', ratio: '5.91:1' },
+      ]
+    },
+    {
+      name: 'YouTube',
+      color: 'bg-red-600',
+      sizes: [
+        { type: 'Profile Photo', dimensions: '800 x 800', ratio: '1:1' },
+        { type: 'Channel Banner', dimensions: '2560 x 1440', ratio: '16:9' },
+        { type: 'Thumbnail', dimensions: '1280 x 720', ratio: '16:9' },
+        { type: 'Video', dimensions: '1920 x 1080', ratio: '16:9' },
+      ]
+    },
+    {
+      name: 'TikTok',
+      color: 'bg-black',
+      sizes: [
+        { type: 'Profile Photo', dimensions: '200 x 200', ratio: '1:1' },
+        { type: 'Video', dimensions: '1080 x 1920', ratio: '9:16' },
+      ]
+    },
+    {
+      name: 'Pinterest',
+      color: 'bg-red-500',
+      sizes: [
+        { type: 'Profile Photo', dimensions: '165 x 165', ratio: '1:1' },
+        { type: 'Standard Pin', dimensions: '1000 x 1500', ratio: '2:3' },
+        { type: 'Square Pin', dimensions: '1000 x 1000', ratio: '1:1' },
+        { type: 'Long Pin', dimensions: '1000 x 2100', ratio: '1:2.1' },
+      ]
+    },
+  ];
+
+  const copyDimensions = (dimensions: string) => {
+    navigator.clipboard.writeText(dimensions);
+    toast({ title: "Copied!", description: `${dimensions} copied to clipboard` });
+  };
+
+  return (
+    <div className="space-y-6">
+      <p className="text-sm text-muted-foreground">
+        Click on any dimension to copy it to your clipboard.
+      </p>
+      
+      {platforms.map((platform) => (
+        <div key={platform.name} className="space-y-3">
+          <div className="flex items-center gap-2">
+            <div className={`w-3 h-3 rounded-full ${platform.color}`} />
+            <h3 className="font-semibold">{platform.name}</h3>
+          </div>
+          
+          <div className="grid gap-2">
+            {platform.sizes.map((size) => (
+              <div 
+                key={`${platform.name}-${size.type}`}
+                className="flex items-center justify-between p-3 bg-muted rounded-lg hover:bg-muted/80 cursor-pointer transition-colors"
+                onClick={() => copyDimensions(size.dimensions)}
+              >
+                <div className="flex-1">
+                  <p className="font-medium text-sm">{size.type}</p>
+                  <p className="text-xs text-muted-foreground">Ratio: {size.ratio}</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="font-mono text-sm bg-background px-2 py-1 rounded">
+                    {size.dimensions}
+                  </span>
+                  <Copy className="h-4 w-4 text-muted-foreground" />
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
+
 export const tools = [
   // General Tools
   { id: 'image-compress', name: 'Image Compressor', description: 'Reduce image file size while maintaining quality', icon: Minimize2, color: 'text-blue-500', component: ImageCompressor },
@@ -815,6 +939,7 @@ export const tools = [
   { id: 'meta-tags', name: 'Meta Tag Generator', description: 'Generate SEO meta tags and Open Graph tags', icon: Globe, color: 'text-emerald-500', component: MetaTagGenerator },
   { id: 'email-signature', name: 'Email Signature Generator', description: 'Create professional HTML email signatures', icon: Mail, color: 'text-rose-500', component: EmailSignatureGenerator },
   { id: 'headline-analyzer', name: 'Headline Analyzer', description: 'Analyze and score your headlines for engagement', icon: Target, color: 'text-amber-500', component: HeadlineAnalyzer },
+  { id: 'social-sizes', name: 'Social Media Size Guide', description: 'Image dimensions for all social media platforms', icon: Image, color: 'text-violet-500', component: SocialMediaSizeGuide },
 ];
 
 export default function DashboardTools() {

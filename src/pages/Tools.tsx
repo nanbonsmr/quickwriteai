@@ -21,7 +21,8 @@ import {
   Link2,
   Globe,
   Mail,
-  Target
+  Target,
+  Image
 } from 'lucide-react';
 
 const tools = [
@@ -38,6 +39,7 @@ const tools = [
   { id: 'meta-tags', name: 'Meta Tag Generator', description: 'Generate SEO meta tags and Open Graph tags', icon: Globe, color: 'text-emerald-500' },
   { id: 'email-signature', name: 'Email Signature Generator', description: 'Create professional HTML email signatures', icon: Mail, color: 'text-rose-500' },
   { id: 'headline-analyzer', name: 'Headline Analyzer', description: 'Analyze and score your headlines for engagement', icon: Target, color: 'text-amber-500' },
+  { id: 'social-sizes', name: 'Social Media Size Guide', description: 'Image dimensions for all social media platforms', icon: Image, color: 'text-violet-500' },
 ];
 
 export default function Tools() {

@@ -15,7 +15,10 @@ export function PublicNavbar() {
     label: 'Features'
   }, {
     href: '/free-tools',
-    label: 'Free Tools'
+    label: 'Free AI Tools'
+  }, {
+    href: '/tools',
+    label: 'Utility Tools'
   }, {
     href: '/pricing',
     label: 'Pricing'

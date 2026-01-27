@@ -23,12 +23,11 @@ interface PromotionPopupProps {
 export function PromotionPopup({ showOnDashboard = false, showOnLanding = false }: PromotionPopupProps) {
   const [promotion, setPromotion] = useState<Promotion | null>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const { user, profile } = useAuth();
+  const { profile } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchPromotion = async () => {
-      // For landing page, show to all users
       // For dashboard, only show to free users
       if (showOnDashboard && profile?.subscription_plan !== 'free') {
         return;
@@ -58,48 +57,15 @@ export function PromotionPopup({ showOnDashboard = false, showOnLanding = false 
         return;
       }
 
-      // Check if user has dismissed this promotion
-      if (user) {
-        const { data: dismissed } = await supabase
-          .from('dismissed_promotions')
-          .select('id')
-          .eq('user_id', user.id)
-          .eq('promotion_id', promotions.id)
-          .maybeSingle();
-
-        if (dismissed) {
-          return;
-        }
-      } else {
-        // For non-logged-in users, check localStorage
-        const dismissedPromotions = JSON.parse(localStorage.getItem('dismissed_promotions') || '[]');
-        if (dismissedPromotions.includes(promotions.id)) {
-          return;
-        }
-      }
-
       setPromotion(promotions);
       // Small delay before showing popup for better UX
       setTimeout(() => setIsOpen(true), 1000);
     };
 
     fetchPromotion();
-  }, [user, profile, showOnDashboard, showOnLanding]);
+  }, [profile, showOnDashboard, showOnLanding]);
 
-  const handleDismiss = async () => {
-    if (!promotion) return;
-
-    if (user) {
-      await supabase.from('dismissed_promotions').insert({
-        user_id: user.id,
-        promotion_id: promotion.id,
-      });
-    } else {
-      const dismissedPromotions = JSON.parse(localStorage.getItem('dismissed_promotions') || '[]');
-      dismissedPromotions.push(promotion.id);
-      localStorage.setItem('dismissed_promotions', JSON.stringify(dismissedPromotions));
-    }
-
+  const handleClose = () => {
     setIsOpen(false);
   };
 
@@ -111,24 +77,25 @@ export function PromotionPopup({ showOnDashboard = false, showOnLanding = false 
         navigate(promotion.button_link);
       }
     }
-    handleDismiss();
+    handleClose();
   };
 
   if (!promotion) return null;
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => !open && handleDismiss()}>
-      <DialogContent className="sm:max-w-md p-0 overflow-hidden border-0 bg-transparent">
+    <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
+      <DialogContent className="sm:max-w-md p-0 overflow-hidden border-0 bg-transparent [&>button]:hidden">
         <div className="relative bg-gradient-to-br from-primary via-primary/90 to-primary/80 rounded-xl overflow-hidden shadow-xl">
           {/* Background pattern */}
-          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93dy53My5vcmcvMjAwMC9zdmciPjxnIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCI+PGcgZmlsbD0iI2ZmZmZmZiIgZmlsbC1vcGFjaXR5PSIwLjA1Ij48Y2lyY2xlIGN4PSIzMCIgY3k9IjMwIiByPSIyIi8+PC9nPjwvZz48L3N2Zz4=')] opacity-50" />
           
-          {/* Close button */}
+          {/* Close button - prominent X button */}
           <button
-            onClick={handleDismiss}
-            className="absolute top-3 right-3 z-10 p-1.5 rounded-full bg-primary-foreground/20 hover:bg-primary-foreground/30 transition-colors"
+            onClick={handleClose}
+            className="absolute top-3 right-3 z-10 p-2 rounded-full bg-primary-foreground/20 hover:bg-primary-foreground/40 transition-colors"
+            aria-label="Close"
           >
-            <X className="w-4 h-4 text-primary-foreground" />
+            <X className="w-5 h-5 text-primary-foreground" />
           </button>
 
           {/* Decorative elements */}
@@ -172,12 +139,12 @@ export function PromotionPopup({ showOnDashboard = false, showOnLanding = false 
               {promotion.button_text || 'Learn More'}
             </Button>
 
-            {/* Dismiss text */}
+            {/* Close text button */}
             <button
-              onClick={handleDismiss}
+              onClick={handleClose}
               className="w-full mt-3 text-primary-foreground/70 hover:text-primary-foreground text-sm transition-colors"
             >
-              Maybe later
+              Close
             </button>
           </div>
         </div>

@@ -77,15 +77,15 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-muted/30">
         <AdminSidebar />
-        <SidebarInset className="flex-1">
-          <header className="flex h-14 items-center gap-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-6">
-            <SidebarTrigger />
-            <div className="flex items-center gap-2">
-              <Shield className="h-5 w-5 text-primary" />
-              <span className="font-semibold">Admin Dashboard</span>
+        <SidebarInset className="flex-1 min-w-0">
+          <header className="sticky top-0 z-10 flex h-12 sm:h-14 items-center gap-2 sm:gap-4 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 px-3 sm:px-6">
+            <SidebarTrigger className="shrink-0" />
+            <div className="flex items-center gap-2 min-w-0">
+              <Shield className="h-4 w-4 sm:h-5 sm:w-5 text-primary shrink-0" />
+              <span className="font-semibold text-sm sm:text-base truncate">Admin Dashboard</span>
             </div>
           </header>
-          <main className="flex-1 p-6 overflow-auto">
+          <main className="flex-1 p-3 sm:p-4 md:p-6 overflow-auto">
             {children}
           </main>
         </SidebarInset>

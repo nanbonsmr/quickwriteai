@@ -29,7 +29,9 @@ import {
   RotateCcw,
   Pin,
   PinOff,
-  Layout
+  Layout,
+  Megaphone,
+  Plus
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -74,6 +76,22 @@ interface PinnedTemplate {
   pinned_by: string;
 }
 
+interface Promotion {
+  id: string;
+  title: string;
+  message: string;
+  button_text: string;
+  button_link: string | null;
+  image_url: string | null;
+  is_active: boolean;
+  show_on_landing: boolean;
+  show_on_dashboard: boolean;
+  target_users: string;
+  start_date: string | null;
+  end_date: string | null;
+  created_at: string;
+}
+
 // Template list for admin display - synced with Templates page
 const availableTemplates = [
   { id: 'blog', title: 'Blog Posts', description: 'Create engaging blog content' },
@@ -112,6 +130,7 @@ export default function Admin() {
   const [users, setUsers] = useState<UserProfile[]>([]);
   const [userStats, setUserStats] = useState<UserStats | null>(null);
   const [pinnedTemplates, setPinnedTemplates] = useState<PinnedTemplate[]>([]);
+  const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   
   // Plan change confirmation dialog
@@ -128,6 +147,17 @@ export default function Admin() {
     message: "",
     type: "info",
     target_users: "all"
+  });
+
+  const [newPromotion, setNewPromotion] = useState({
+    title: "",
+    message: "",
+    button_text: "Learn More",
+    button_link: "",
+    image_url: "",
+    show_on_landing: true,
+    show_on_dashboard: true,
+    target_users: "free"
   });
 
   // Server-side admin verification
@@ -165,7 +195,8 @@ export default function Admin() {
             loadNotifications(),
             loadUsers(),
             loadUserStats(),
-            loadPinnedTemplates()
+            loadPinnedTemplates(),
+            loadPromotions()
           ]);
         }
       }
@@ -181,7 +212,8 @@ export default function Admin() {
       loadNotifications(),
       loadUsers(),
       loadUserStats(),
-      loadPinnedTemplates()
+      loadPinnedTemplates(),
+      loadPromotions()
     ]);
     setRefreshing(false);
     toast({ title: "Data refreshed" });
@@ -274,6 +306,126 @@ export default function Admin() {
 
   const isTemplatePinned = (templateId: string) => {
     return pinnedTemplates.some(pt => pt.template_id === templateId);
+  };
+
+  // Promotion functions
+  const loadPromotions = async () => {
+    if (!user?.id || !user?.email) return;
+
+    try {
+      const { data, error } = await supabase.functions.invoke('admin-operations', {
+        body: {
+          action: 'get-promotions',
+          userId: user.id,
+          userEmail: user.email
+        }
+      });
+
+      if (error) {
+        console.error('Error loading promotions:', error);
+        return;
+      }
+
+      setPromotions(data?.promotions || []);
+    } catch (error) {
+      console.error('Error loading promotions:', error);
+    }
+  };
+
+  const createPromotion = async () => {
+    if (!newPromotion.title || !newPromotion.message) return;
+    if (!user?.id || !user?.email) return;
+
+    try {
+      const { data, error } = await supabase.functions.invoke('admin-operations', {
+        body: {
+          action: 'create-promotion',
+          userId: user.id,
+          userEmail: user.email,
+          data: newPromotion
+        }
+      });
+
+      if (error) throw error;
+
+      if (data?.error) {
+        throw new Error(data.error);
+      }
+
+      toast({
+        title: "Success",
+        description: "Promotion created successfully",
+      });
+
+      setNewPromotion({
+        title: "",
+        message: "",
+        button_text: "Learn More",
+        button_link: "",
+        image_url: "",
+        show_on_landing: true,
+        show_on_dashboard: true,
+        target_users: "free"
+      });
+      await loadPromotions();
+    } catch (error) {
+      console.error('Error creating promotion:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create promotion",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const togglePromotionStatus = async (id: string, currentStatus: boolean) => {
+    if (!user?.id || !user?.email) return;
+
+    try {
+      const { error } = await supabase.functions.invoke('admin-operations', {
+        body: {
+          action: 'toggle-promotion',
+          userId: user.id,
+          userEmail: user.email,
+          data: { promotionId: id, isActive: currentStatus }
+        }
+      });
+
+      if (error) throw error;
+      await loadPromotions();
+    } catch (error) {
+      console.error('Error toggling promotion status:', error);
+    }
+  };
+
+  const deletePromotion = async (id: string) => {
+    if (!user?.id || !user?.email) return;
+
+    try {
+      const { error } = await supabase.functions.invoke('admin-operations', {
+        body: {
+          action: 'delete-promotion',
+          userId: user.id,
+          userEmail: user.email,
+          data: { promotionId: id }
+        }
+      });
+
+      if (error) throw error;
+      
+      toast({
+        title: "Success",
+        description: "Promotion deleted successfully",
+      });
+      await loadPromotions();
+    } catch (error) {
+      console.error('Error deleting promotion:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete promotion",
+        variant: "destructive",
+      });
+    }
   };
 
   const loadNotifications = async () => {
@@ -604,7 +756,7 @@ export default function Admin() {
 
       {/* Main Tabs */}
       <Tabs defaultValue="overview" className="space-y-6">
-        <TabsList className="grid w-full max-w-lg grid-cols-4">
+        <TabsList className="grid w-full max-w-2xl grid-cols-5">
           <TabsTrigger value="overview" className="flex items-center gap-2">
             <LayoutDashboard className="h-4 w-4" />
             <span className="hidden sm:inline">Overview</span>
@@ -616,6 +768,10 @@ export default function Admin() {
           <TabsTrigger value="templates" className="flex items-center gap-2">
             <Layout className="h-4 w-4" />
             <span className="hidden sm:inline">Templates</span>
+          </TabsTrigger>
+          <TabsTrigger value="promotions" className="flex items-center gap-2">
+            <Megaphone className="h-4 w-4" />
+            <span className="hidden sm:inline">Promotions</span>
           </TabsTrigger>
           <TabsTrigger value="notifications" className="flex items-center gap-2">
             <Bell className="h-4 w-4" />
@@ -921,6 +1077,167 @@ export default function Admin() {
         </TabsContent>
 
         {/* Notifications Tab */}
+        {/* Promotions Tab */}
+        <TabsContent value="promotions" className="space-y-6">
+          {/* Create Promotion */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Megaphone className="h-5 w-5" />
+                Create New Promotion Popup
+              </CardTitle>
+              <CardDescription>Create promotional popups that appear on landing page and dashboard for free users</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="promo-title">Title</Label>
+                  <Input
+                    id="promo-title"
+                    value={newPromotion.title}
+                    onChange={(e) => setNewPromotion({ ...newPromotion, title: e.target.value })}
+                    placeholder="e.g., Upgrade to Pro!"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="promo-button-text">Button Text</Label>
+                  <Input
+                    id="promo-button-text"
+                    value={newPromotion.button_text}
+                    onChange={(e) => setNewPromotion({ ...newPromotion, button_text: e.target.value })}
+                    placeholder="e.g., Learn More"
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="promo-message">Message</Label>
+                <Textarea
+                  id="promo-message"
+                  value={newPromotion.message}
+                  onChange={(e) => setNewPromotion({ ...newPromotion, message: e.target.value })}
+                  placeholder="Your promotional message..."
+                  rows={3}
+                />
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="promo-button-link">Button Link</Label>
+                  <Input
+                    id="promo-button-link"
+                    value={newPromotion.button_link}
+                    onChange={(e) => setNewPromotion({ ...newPromotion, button_link: e.target.value })}
+                    placeholder="/app/pricing or https://..."
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="promo-image-url">Image URL (optional)</Label>
+                  <Input
+                    id="promo-image-url"
+                    value={newPromotion.image_url}
+                    onChange={(e) => setNewPromotion({ ...newPromotion, image_url: e.target.value })}
+                    placeholder="https://example.com/image.jpg"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="space-y-2">
+                  <Label>Target Users</Label>
+                  <Select 
+                    value={newPromotion.target_users} 
+                    onValueChange={(value) => setNewPromotion({ ...newPromotion, target_users: value })}
+                  >
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="free">Free Users Only</SelectItem>
+                      <SelectItem value="all">All Users</SelectItem>
+                      <SelectItem value="paid">Paid Users Only</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center gap-2 pt-6">
+                  <Switch
+                    checked={newPromotion.show_on_landing}
+                    onCheckedChange={(checked) => setNewPromotion({ ...newPromotion, show_on_landing: checked })}
+                  />
+                  <Label>Show on Landing Page</Label>
+                </div>
+                <div className="flex items-center gap-2 pt-6">
+                  <Switch
+                    checked={newPromotion.show_on_dashboard}
+                    onCheckedChange={(checked) => setNewPromotion({ ...newPromotion, show_on_dashboard: checked })}
+                  />
+                  <Label>Show on Dashboard</Label>
+                </div>
+              </div>
+              <Button onClick={createPromotion} className="w-full">
+                <Plus className="h-4 w-4 mr-2" />
+                Create Promotion
+              </Button>
+            </CardContent>
+          </Card>
+
+          {/* Existing Promotions */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Existing Promotions</CardTitle>
+              <CardDescription>{promotions.length} total promotions</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {promotions.map((promotion) => (
+                  <div key={promotion.id} className="border rounded-lg p-4 space-y-2">
+                    <div className="flex items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <h3 className="font-semibold">{promotion.title}</h3>
+                          <Badge variant={promotion.is_active ? 'default' : 'secondary'}>
+                            {promotion.is_active ? 'Active' : 'Inactive'}
+                          </Badge>
+                          <Badge variant="outline">{promotion.target_users}</Badge>
+                          {promotion.show_on_landing && <Badge variant="outline">Landing</Badge>}
+                          {promotion.show_on_dashboard && <Badge variant="outline">Dashboard</Badge>}
+                        </div>
+                        <p className="text-sm text-muted-foreground mt-1">{promotion.message}</p>
+                        <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
+                          <span>Button: {promotion.button_text}</span>
+                          {promotion.button_link && <span>Link: {promotion.button_link}</span>}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Created: {format(new Date(promotion.created_at), 'MMM d, yyyy h:mm a')}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <div className="flex items-center gap-2">
+                          <Switch
+                            checked={promotion.is_active}
+                            onCheckedChange={() => togglePromotionStatus(promotion.id, promotion.is_active)}
+                          />
+                          <span className="text-sm text-muted-foreground w-16">
+                            {promotion.is_active ? "Active" : "Inactive"}
+                          </span>
+                        </div>
+                        <Button 
+                          variant="ghost" 
+                          size="icon" 
+                          className="text-destructive hover:text-destructive"
+                          onClick={() => deletePromotion(promotion.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                {promotions.length === 0 && (
+                  <p className="text-center text-muted-foreground py-8">No promotions found. Create one to get started!</p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
         <TabsContent value="notifications" className="space-y-6">
           {/* Create Notification */}
           <Card>

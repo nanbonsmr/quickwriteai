@@ -177,6 +177,35 @@ export type Database = {
           },
         ]
       }
+      dismissed_promotions: {
+        Row: {
+          dismissed_at: string
+          id: string
+          promotion_id: string
+          user_id: string
+        }
+        Insert: {
+          dismissed_at?: string
+          id?: string
+          promotion_id: string
+          user_id: string
+        }
+        Update: {
+          dismissed_at?: string
+          id?: string
+          promotion_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "dismissed_promotions_promotion_id_fkey"
+            columns: ["promotion_id"]
+            isOneToOne: false
+            referencedRelation: "promotions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           created_at: string
@@ -270,6 +299,57 @@ export type Database = {
           user_id?: string
           words_limit?: number | null
           words_used?: number | null
+        }
+        Relationships: []
+      }
+      promotions: {
+        Row: {
+          button_link: string | null
+          button_text: string | null
+          created_at: string
+          end_date: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean | null
+          message: string
+          show_on_dashboard: boolean | null
+          show_on_landing: boolean | null
+          start_date: string | null
+          target_users: string | null
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          button_link?: string | null
+          button_text?: string | null
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          message: string
+          show_on_dashboard?: boolean | null
+          show_on_landing?: boolean | null
+          start_date?: string | null
+          target_users?: string | null
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          button_link?: string | null
+          button_text?: string | null
+          created_at?: string
+          end_date?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          message?: string
+          show_on_dashboard?: boolean | null
+          show_on_landing?: boolean | null
+          start_date?: string | null
+          target_users?: string | null
+          title?: string
+          updated_at?: string
         }
         Relationships: []
       }

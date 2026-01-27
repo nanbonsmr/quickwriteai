@@ -53,7 +53,7 @@ export function AppSidebar() {
   const mainItems = [
     { title: "Dashboard", url: "/app", icon: Home },
     { title: "Templates", url: "/app/templates", icon: Sparkles },
-    { title: "Tools", url: "/tools", icon: Wrench },
+    { title: "Tools", url: "/app/tools", icon: Wrench },
     { title: "Tasks", url: "/app/tasks", icon: CheckSquare },
     { title: "Usage", url: "/app/usage", icon: BarChart3 },
     { title: "Pricing", url: "/app/pricing", icon: CreditCard },

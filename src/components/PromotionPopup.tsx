@@ -119,20 +119,27 @@ export function PromotionPopup({ showOnDashboard = false, showOnLanding = false 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleDismiss()}>
       <DialogContent className="sm:max-w-md p-0 overflow-hidden border-0 bg-transparent">
-        <div className="relative bg-gradient-to-br from-primary via-primary/90 to-primary-glow rounded-xl overflow-hidden shadow-2xl">
+        <div className="relative bg-gradient-to-br from-primary via-primary/90 to-primary/80 rounded-xl overflow-hidden shadow-xl">
+          {/* Background pattern */}
+          <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmZmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PGNpcmNsZSBjeD0iMzAiIGN5PSIzMCIgcj0iMiIvPjwvZz48L2c+PC9zdmc+')] opacity-50" />
+          
           {/* Close button */}
           <button
             onClick={handleDismiss}
-            className="absolute top-3 right-3 z-10 p-1.5 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
+            className="absolute top-3 right-3 z-10 p-1.5 rounded-full bg-primary-foreground/20 hover:bg-primary-foreground/30 transition-colors"
           >
-            <X className="w-4 h-4 text-white" />
+            <X className="w-4 h-4 text-primary-foreground" />
           </button>
 
+          {/* Decorative elements */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-primary-foreground/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-primary-foreground/5 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2" />
+
           {/* Content */}
-          <div className="p-6 sm:p-8">
+          <div className="relative p-6 sm:p-8">
             {/* Icon */}
-            <div className="w-12 h-12 rounded-xl bg-white/20 flex items-center justify-center mb-4">
-              <Sparkles className="w-6 h-6 text-white" />
+            <div className="w-12 h-12 rounded-xl bg-primary-foreground/20 backdrop-blur-sm flex items-center justify-center mb-4">
+              <Sparkles className="w-6 h-6 text-primary-foreground" />
             </div>
 
             {/* Image */}
@@ -147,19 +154,19 @@ export function PromotionPopup({ showOnDashboard = false, showOnLanding = false 
             )}
 
             {/* Title */}
-            <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">
+            <h2 className="text-xl sm:text-2xl font-bold text-primary-foreground mb-2">
               {promotion.title}
             </h2>
 
             {/* Message */}
-            <p className="text-white/90 text-sm sm:text-base mb-6 leading-relaxed">
+            <p className="text-primary-foreground/80 text-sm sm:text-base mb-6 leading-relaxed">
               {promotion.message}
             </p>
 
             {/* CTA Button */}
             <Button
               onClick={handleButtonClick}
-              className="w-full bg-white text-primary hover:bg-white/90 font-semibold"
+              className="w-full bg-primary-foreground text-primary hover:bg-primary-foreground/90 font-semibold"
               size="lg"
             >
               {promotion.button_text || 'Learn More'}
@@ -168,15 +175,11 @@ export function PromotionPopup({ showOnDashboard = false, showOnLanding = false 
             {/* Dismiss text */}
             <button
               onClick={handleDismiss}
-              className="w-full mt-3 text-white/70 hover:text-white text-sm transition-colors"
+              className="w-full mt-3 text-primary-foreground/70 hover:text-primary-foreground text-sm transition-colors"
             >
               Maybe later
             </button>
           </div>
-
-          {/* Decorative elements */}
-          <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
-          <div className="absolute bottom-0 left-0 w-24 h-24 bg-white/5 rounded-full blur-2xl translate-y-1/2 -translate-x-1/2" />
         </div>
       </DialogContent>
     </Dialog>

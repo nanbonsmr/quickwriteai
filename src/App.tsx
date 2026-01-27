@@ -30,6 +30,7 @@ import PublicPricing from "./pages/PublicPricing";
 import Features from "./pages/Features";
 import ResetPassword from "./pages/ResetPassword";
 import FreeTools from "./pages/FreeTools";
+import Tools from "./pages/Tools";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import SharedTask from "./pages/SharedTask";
@@ -55,6 +56,7 @@ function AnimatedRoutes() {
         <Route path="/pricing" element={<PageTransition><PublicPricing /></PageTransition>} />
         <Route path="/features" element={<PageTransition><Features /></PageTransition>} />
         <Route path="/free-tools" element={<PageTransition><FreeTools /></PageTransition>} />
+        <Route path="/tools" element={<PageTransition><Tools /></PageTransition>} />
         <Route path="/blog" element={<PageTransition><Blog /></PageTransition>} />
         <Route path="/blog/:slug" element={<PageTransition><BlogPost /></PageTransition>} />
         <Route path="/shared/task/:token" element={<PageTransition><SharedTask /></PageTransition>} />

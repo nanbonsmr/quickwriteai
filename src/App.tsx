@@ -12,6 +12,7 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { ThemeProvider } from "next-themes";
 import { PageTransition } from "@/components/PageTransition";
 import { AnimatePresence } from "framer-motion";
+import { AdminLayout } from "@/components/admin/AdminLayout";
 import Dashboard from "./pages/Dashboard";
 import Auth from "./pages/Auth";
 import Landing from "./pages/Landing";
@@ -20,7 +21,6 @@ import Settings from "./pages/Settings";
 import Usage from "./pages/Usage";
 import Templates from "./pages/Templates";
 import Tasks from "./pages/Tasks";
-import Admin from "./pages/Admin";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import RefundPolicy from "./pages/RefundPolicy";
 import TermsAndConditions from "./pages/TermsAndConditions";
@@ -37,6 +37,11 @@ import SharedTask from "./pages/SharedTask";
 import NotFound from "./pages/NotFound";
 import Editor from "./pages/Editor";
 import DashboardTools from "./pages/DashboardTools";
+import AdminOverview from "./pages/admin/AdminOverview";
+import AdminUsers from "./pages/admin/AdminUsers";
+import AdminTemplates from "./pages/admin/AdminTemplates";
+import AdminPromotions from "./pages/admin/AdminPromotions";
+import AdminNotifications from "./pages/admin/AdminNotifications";
 
 const queryClient = new QueryClient();
 
@@ -78,7 +83,6 @@ function AnimatedRoutes() {
                         <Route path="templates/*" element={<PageTransition><Templates /></PageTransition>} />
                         <Route path="tasks" element={<PageTransition><Tasks /></PageTransition>} />
                         <Route path="pricing" element={<PageTransition><Pricing /></PageTransition>} />
-                        <Route path="admin" element={<PageTransition><Admin /></PageTransition>} />
                         <Route path="editor" element={<PageTransition><Editor /></PageTransition>} />
                         <Route path="tools" element={<PageTransition><DashboardTools /></PageTransition>} />
                       </Routes>
@@ -87,6 +91,25 @@ function AnimatedRoutes() {
                 </SidebarInset>
               </div>
             </SidebarProvider>
+          </ProtectedRoute>
+        } />
+        {/* Admin Routes - Separate Layout */}
+        <Route path="/admin/*" element={
+          <ProtectedRoute>
+            <AdminLayout>
+              <AnimatePresence mode="wait">
+                <Routes location={location} key={location.pathname}>
+                  <Route path="/" element={<PageTransition><AdminOverview /></PageTransition>} />
+                  <Route path="analytics" element={<PageTransition><AdminOverview /></PageTransition>} />
+                  <Route path="users" element={<PageTransition><AdminUsers /></PageTransition>} />
+                  <Route path="templates" element={<PageTransition><AdminTemplates /></PageTransition>} />
+                  <Route path="promotions" element={<PageTransition><AdminPromotions /></PageTransition>} />
+                  <Route path="notifications" element={<PageTransition><AdminNotifications /></PageTransition>} />
+                  <Route path="discounts" element={<PageTransition><AdminOverview /></PageTransition>} />
+                  <Route path="settings" element={<PageTransition><AdminOverview /></PageTransition>} />
+                </Routes>
+              </AnimatePresence>
+            </AdminLayout>
           </ProtectedRoute>
         } />
         <Route path="*" element={<PageTransition><NotFound /></PageTransition>} />

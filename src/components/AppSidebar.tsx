@@ -64,7 +64,7 @@ export function AppSidebar() {
   if (isAdmin) {
     mainItems.push({
       title: "Admin",
-      url: "/app/admin",
+      url: "/admin",
       icon: Shield,
     });
   }

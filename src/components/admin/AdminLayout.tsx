@@ -12,7 +12,7 @@ interface AdminLayoutProps {
 }
 
 export function AdminLayout({ children }: AdminLayoutProps) {
-  const { user, isAdmin } = useAuth();
+  const { user } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [serverVerifiedAdmin, setServerVerifiedAdmin] = useState(false);
@@ -42,12 +42,12 @@ export function AdminLayout({ children }: AdminLayoutProps) {
       setLoading(false);
     };
 
-    if (isAdmin && user) {
+    if (user) {
       verifyAdmin();
     } else {
       setLoading(false);
     }
-  }, [isAdmin, user]);
+  }, [user]);
 
   if (loading) {
     return (
@@ -60,7 +60,7 @@ export function AdminLayout({ children }: AdminLayoutProps) {
     );
   }
 
-  if (!isAdmin || !serverVerifiedAdmin) {
+  if (!serverVerifiedAdmin) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-background">
         <Alert className="max-w-md">

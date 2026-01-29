@@ -265,7 +265,6 @@ serve(async (req) => {
           { role: 'user', content: prompt }
         ],
         max_completion_tokens: 2048,
-        temperature: template_type === 'humanize' ? 0.9 : 0.7,
       }),
     });
 

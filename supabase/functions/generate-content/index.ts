@@ -264,7 +264,7 @@ serve(async (req) => {
           { role: 'system', content: systemPrompt },
           { role: 'user', content: prompt }
         ],
-        max_tokens: 2048,
+        max_completion_tokens: 2048,
         temperature: template_type === 'humanize' ? 0.9 : 0.7,
       }),
     });

@@ -259,12 +259,13 @@ serve(async (req) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-5-nano',
+        model: 'gpt-4o-mini',
         messages: [
           { role: 'system', content: systemPrompt },
           { role: 'user', content: prompt }
         ],
-        max_completion_tokens: 2048,
+        max_tokens: 2048,
+        temperature: template_type === 'humanize' ? 0.9 : 0.7,
       }),
     });
 

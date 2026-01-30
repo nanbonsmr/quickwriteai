@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Slider } from '@/components/ui/slider';
 import { useToast } from '@/hooks/use-toast';
 import { useSearchParams } from 'react-router-dom';
+import { PDFDocument } from 'pdf-lib';
 import { 
   QrCode, 
   Palette, 
@@ -24,7 +25,11 @@ import {
   Globe,
   Mail,
   Target,
-  Image
+  Image,
+  FileText,
+  Scissors,
+  Merge,
+  ImageIcon
 } from 'lucide-react';
 
 // Tool Components
@@ -925,6 +930,312 @@ const SocialMediaSizeGuide = () => {
   );
 };
 
+// PDF Tools
+const PDFMerger = () => {
+  const [files, setFiles] = useState<File[]>([]);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [mergedUrl, setMergedUrl] = useState('');
+  const { toast } = useToast();
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = Array.from(e.target.files || []);
+    const pdfFiles = selectedFiles.filter(f => f.type === 'application/pdf');
+    setFiles(prev => [...prev, ...pdfFiles]);
+    setMergedUrl('');
+  };
+
+  const removeFile = (index: number) => {
+    setFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const mergePDFs = async () => {
+    if (files.length < 2) {
+      toast({ title: "Error", description: "Please select at least 2 PDF files", variant: "destructive" });
+      return;
+    }
+    setIsProcessing(true);
+
+    try {
+      const mergedPdf = await PDFDocument.create();
+
+      for (const file of files) {
+        const arrayBuffer = await file.arrayBuffer();
+        const pdf = await PDFDocument.load(arrayBuffer);
+        const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+        copiedPages.forEach((page) => mergedPdf.addPage(page));
+      }
+
+      const mergedPdfBytes = await mergedPdf.save();
+      const blob = new Blob([mergedPdfBytes as BlobPart], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      setMergedUrl(url);
+      toast({ title: "Success!", description: "PDFs merged successfully" });
+    } catch (error) {
+      toast({ title: "Error", description: "Failed to merge PDFs", variant: "destructive" });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="space-y-2">
+        <Label>Select PDF Files</Label>
+        <Input type="file" accept=".pdf" multiple onChange={handleFileSelect} />
+      </div>
+
+      {files.length > 0 && (
+        <div className="space-y-2">
+          <Label>Selected Files ({files.length})</Label>
+          <div className="space-y-1">
+            {files.map((file, index) => (
+              <div key={index} className="flex items-center justify-between p-2 bg-muted rounded">
+                <span className="text-sm truncate flex-1">{file.name}</span>
+                <Button variant="ghost" size="sm" onClick={() => removeFile(index)}>×</Button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <Button onClick={mergePDFs} disabled={files.length < 2 || isProcessing} className="w-full">
+        {isProcessing ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Merging...</> : <><Merge className="mr-2 h-4 w-4" /> Merge PDFs</>}
+      </Button>
+
+      {mergedUrl && (
+        <Button asChild className="w-full">
+          <a href={mergedUrl} download="merged.pdf"><Download className="mr-2 h-4 w-4" /> Download Merged PDF</a>
+        </Button>
+      )}
+    </div>
+  );
+};
+
+const PDFSplitter = () => {
+  const [file, setFile] = useState<File | null>(null);
+  const [pageCount, setPageCount] = useState(0);
+  const [startPage, setStartPage] = useState('1');
+  const [endPage, setEndPage] = useState('1');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [splitUrl, setSplitUrl] = useState('');
+  const { toast } = useToast();
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile && selectedFile.type === 'application/pdf') {
+      setFile(selectedFile);
+      setSplitUrl('');
+      try {
+        const arrayBuffer = await selectedFile.arrayBuffer();
+        const pdf = await PDFDocument.load(arrayBuffer);
+        const count = pdf.getPageCount();
+        setPageCount(count);
+        setStartPage('1');
+        setEndPage(String(count));
+      } catch (error) {
+        toast({ title: "Error", description: "Failed to read PDF", variant: "destructive" });
+      }
+    }
+  };
+
+  const splitPDF = async () => {
+    if (!file) return;
+    const start = parseInt(startPage);
+    const end = parseInt(endPage);
+
+    if (start < 1 || end > pageCount || start > end) {
+      toast({ title: "Error", description: "Invalid page range", variant: "destructive" });
+      return;
+    }
+
+    setIsProcessing(true);
+
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const sourcePdf = await PDFDocument.load(arrayBuffer);
+      const newPdf = await PDFDocument.create();
+      
+      const pageIndices = Array.from({ length: end - start + 1 }, (_, i) => start - 1 + i);
+      const copiedPages = await newPdf.copyPages(sourcePdf, pageIndices);
+      copiedPages.forEach(page => newPdf.addPage(page));
+
+      const pdfBytes = await newPdf.save();
+      const blob = new Blob([pdfBytes as BlobPart], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      setSplitUrl(url);
+      toast({ title: "Success!", description: `Extracted pages ${start}-${end}` });
+    } catch (error) {
+      toast({ title: "Error", description: "Failed to split PDF", variant: "destructive" });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="space-y-2">
+        <Label>Select PDF File</Label>
+        <Input type="file" accept=".pdf" onChange={handleFileSelect} />
+      </div>
+
+      {file && pageCount > 0 && (
+        <>
+          <p className="text-sm text-muted-foreground">Total pages: {pageCount}</p>
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Start Page</Label>
+              <Input type="number" min="1" max={pageCount} value={startPage} onChange={(e) => setStartPage(e.target.value)} />
+            </div>
+            <div className="space-y-2">
+              <Label>End Page</Label>
+              <Input type="number" min="1" max={pageCount} value={endPage} onChange={(e) => setEndPage(e.target.value)} />
+            </div>
+          </div>
+
+          <Button onClick={splitPDF} disabled={isProcessing} className="w-full">
+            {isProcessing ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Processing...</> : <><Scissors className="mr-2 h-4 w-4" /> Extract Pages</>}
+          </Button>
+        </>
+      )}
+
+      {splitUrl && (
+        <Button asChild className="w-full">
+          <a href={splitUrl} download="extracted-pages.pdf"><Download className="mr-2 h-4 w-4" /> Download Extracted PDF</a>
+        </Button>
+      )}
+    </div>
+  );
+};
+
+const ImageToPDF = () => {
+  const [files, setFiles] = useState<File[]>([]);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [pdfUrl, setPdfUrl] = useState('');
+  const { toast } = useToast();
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFiles = Array.from(e.target.files || []);
+    const imageFiles = selectedFiles.filter(f => f.type.startsWith('image/'));
+    setFiles(prev => [...prev, ...imageFiles]);
+    setPdfUrl('');
+  };
+
+  const removeFile = (index: number) => {
+    setFiles(prev => prev.filter((_, i) => i !== index));
+  };
+
+  const convertToPDF = async () => {
+    if (files.length === 0) {
+      toast({ title: "Error", description: "Please select at least one image", variant: "destructive" });
+      return;
+    }
+    setIsProcessing(true);
+
+    try {
+      const pdfDoc = await PDFDocument.create();
+
+      for (const file of files) {
+        const arrayBuffer = await file.arrayBuffer();
+        const uint8Array = new Uint8Array(arrayBuffer);
+        
+        let image;
+        if (file.type === 'image/jpeg' || file.type === 'image/jpg') {
+          image = await pdfDoc.embedJpg(uint8Array);
+        } else if (file.type === 'image/png') {
+          image = await pdfDoc.embedPng(uint8Array);
+        } else {
+          // Convert other formats to PNG using canvas
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          const img = new window.Image();
+          
+          await new Promise<void>((resolve) => {
+            img.onload = () => {
+              canvas.width = img.width;
+              canvas.height = img.height;
+              ctx?.drawImage(img, 0, 0);
+              resolve();
+            };
+            img.src = URL.createObjectURL(file);
+          });
+          
+          const pngDataUrl = canvas.toDataURL('image/png');
+          const pngBase64 = pngDataUrl.split(',')[1];
+          const pngBytes = Uint8Array.from(atob(pngBase64), c => c.charCodeAt(0));
+          image = await pdfDoc.embedPng(pngBytes);
+        }
+
+        const page = pdfDoc.addPage([image.width, image.height]);
+        page.drawImage(image, { x: 0, y: 0, width: image.width, height: image.height });
+      }
+
+      const pdfBytes = await pdfDoc.save();
+      const blob = new Blob([pdfBytes as BlobPart], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      setPdfUrl(url);
+      toast({ title: "Success!", description: "Images converted to PDF" });
+    } catch (error) {
+      toast({ title: "Error", description: "Failed to convert images", variant: "destructive" });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="space-y-2">
+        <Label>Select Images</Label>
+        <Input type="file" accept="image/*" multiple onChange={handleFileSelect} />
+      </div>
+
+      {files.length > 0 && (
+        <div className="space-y-2">
+          <Label>Selected Images ({files.length})</Label>
+          <div className="space-y-1">
+            {files.map((file, index) => (
+              <div key={index} className="flex items-center justify-between p-2 bg-muted rounded">
+                <span className="text-sm truncate flex-1">{file.name}</span>
+                <Button variant="ghost" size="sm" onClick={() => removeFile(index)}>×</Button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <Button onClick={convertToPDF} disabled={files.length === 0 || isProcessing} className="w-full">
+        {isProcessing ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Converting...</> : <><FileText className="mr-2 h-4 w-4" /> Convert to PDF</>}
+      </Button>
+
+      {pdfUrl && (
+        <Button asChild className="w-full">
+          <a href={pdfUrl} download="images.pdf"><Download className="mr-2 h-4 w-4" /> Download PDF</a>
+        </Button>
+      )}
+    </div>
+  );
+};
+
+const PDFToImage = () => {
+  const { toast } = useToast();
+
+  return (
+    <div className="space-y-4">
+      <div className="p-6 bg-muted rounded-lg text-center">
+        <ImageIcon className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
+        <h3 className="font-semibold mb-2">PDF to Image Converter</h3>
+        <p className="text-sm text-muted-foreground mb-4">
+          Due to browser limitations, PDF to image conversion requires a server-side solution. 
+          For now, you can use our other PDF tools or try online services.
+        </p>
+        <Button variant="outline" onClick={() => toast({ title: "Tip", description: "Try smallpdf.com or ilovepdf.com for PDF to image conversion" })}>
+          Learn More
+        </Button>
+      </div>
+    </div>
+  );
+};
+
+
 export const tools = [
   // General Tools
   { id: 'image-compress', name: 'Image Compressor', description: 'Reduce image file size while maintaining quality', icon: Minimize2, color: 'text-blue-500', component: ImageCompressor },
@@ -934,6 +1245,11 @@ export const tools = [
   { id: 'qr-generator', name: 'QR Code Generator', description: 'Generate QR codes from text or URLs', icon: QrCode, color: 'text-pink-500', component: QRCodeGenerator },
   { id: 'color-converter', name: 'Color Converter', description: 'Convert colors between HEX, RGB, and HSL', icon: Palette, color: 'text-cyan-500', component: ColorConverter },
   { id: 'lorem-generator', name: 'Lorem Ipsum Generator', description: 'Generate placeholder text for your designs', icon: AlignLeft, color: 'text-yellow-500', component: LoremGenerator },
+  // PDF Tools
+  { id: 'pdf-merge', name: 'PDF Merger', description: 'Combine multiple PDF files into one document', icon: Merge, color: 'text-red-500', component: PDFMerger },
+  { id: 'pdf-split', name: 'PDF Splitter', description: 'Extract specific pages from a PDF file', icon: Scissors, color: 'text-orange-600', component: PDFSplitter },
+  { id: 'image-to-pdf', name: 'Image to PDF', description: 'Convert images to PDF documents', icon: FileText, color: 'text-blue-600', component: ImageToPDF },
+  { id: 'pdf-to-image', name: 'PDF to Image', description: 'Convert PDF pages to image files', icon: ImageIcon, color: 'text-green-600', component: PDFToImage },
   // Marketing Tools
   { id: 'utm-builder', name: 'UTM Link Builder', description: 'Create trackable campaign URLs with UTM parameters', icon: Link2, color: 'text-indigo-500', component: UTMBuilder },
   { id: 'meta-tags', name: 'Meta Tag Generator', description: 'Generate SEO meta tags and Open Graph tags', icon: Globe, color: 'text-emerald-500', component: MetaTagGenerator },

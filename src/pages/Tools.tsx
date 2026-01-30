@@ -22,7 +22,11 @@ import {
   Globe,
   Mail,
   Target,
-  Image
+  Image,
+  FileText,
+  Scissors,
+  Merge,
+  ImageIcon
 } from 'lucide-react';
 
 const tools = [
@@ -34,6 +38,11 @@ const tools = [
   { id: 'qr-generator', name: 'QR Code Generator', description: 'Generate QR codes from text or URLs', icon: QrCode, color: 'text-pink-500' },
   { id: 'color-converter', name: 'Color Converter', description: 'Convert colors between HEX, RGB, and HSL', icon: Palette, color: 'text-cyan-500' },
   { id: 'lorem-generator', name: 'Lorem Ipsum Generator', description: 'Generate placeholder text for your designs', icon: AlignLeft, color: 'text-yellow-500' },
+  // PDF Tools
+  { id: 'pdf-merge', name: 'PDF Merger', description: 'Combine multiple PDF files into one document', icon: Merge, color: 'text-red-500' },
+  { id: 'pdf-split', name: 'PDF Splitter', description: 'Extract specific pages from a PDF file', icon: Scissors, color: 'text-orange-600' },
+  { id: 'image-to-pdf', name: 'Image to PDF', description: 'Convert images to PDF documents', icon: FileText, color: 'text-blue-600' },
+  { id: 'pdf-to-image', name: 'PDF to Image', description: 'Convert PDF pages to image files', icon: ImageIcon, color: 'text-green-600' },
   // Marketing Tools
   { id: 'utm-builder', name: 'UTM Link Builder', description: 'Create trackable campaign URLs with UTM parameters', icon: Link2, color: 'text-indigo-500' },
   { id: 'meta-tags', name: 'Meta Tag Generator', description: 'Generate SEO meta tags and Open Graph tags', icon: Globe, color: 'text-emerald-500' },

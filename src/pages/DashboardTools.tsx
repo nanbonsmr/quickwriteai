@@ -29,7 +29,8 @@ import {
   FileText,
   Scissors,
   Merge,
-  ImageIcon
+  ImageIcon,
+  Lock
 } from 'lucide-react';
 
 // Tool Components
@@ -1235,6 +1236,162 @@ const PDFToImage = () => {
   );
 };
 
+const PDFPasswordProtect = () => {
+  const [file, setFile] = useState<File | null>(null);
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [protectedUrl, setProtectedUrl] = useState('');
+  const { toast } = useToast();
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile && selectedFile.type === 'application/pdf') {
+      setFile(selectedFile);
+      setProtectedUrl('');
+    }
+  };
+
+  const protectPDF = async () => {
+    if (!file) {
+      toast({ title: "Error", description: "Please select a PDF file", variant: "destructive" });
+      return;
+    }
+    if (!password) {
+      toast({ title: "Error", description: "Please enter a password", variant: "destructive" });
+      return;
+    }
+    if (password !== confirmPassword) {
+      toast({ title: "Error", description: "Passwords do not match", variant: "destructive" });
+      return;
+    }
+    if (password.length < 4) {
+      toast({ title: "Error", description: "Password must be at least 4 characters", variant: "destructive" });
+      return;
+    }
+
+    setIsProcessing(true);
+
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const pdfDoc = await PDFDocument.load(arrayBuffer);
+      
+      // pdf-lib doesn't support encryption directly, so we'll use a workaround
+      // by embedding the password requirement info and using browser crypto
+      // For full encryption, we need to inform users about limitations
+      
+      // Create a new PDF with the same content
+      const newPdf = await PDFDocument.create();
+      const copiedPages = await newPdf.copyPages(pdfDoc, pdfDoc.getPageIndices());
+      copiedPages.forEach(page => newPdf.addPage(page));
+      
+      // Set PDF metadata to indicate protection
+      newPdf.setTitle(pdfDoc.getTitle() || file.name.replace('.pdf', ''));
+      newPdf.setAuthor(pdfDoc.getAuthor() || 'Protected PDF');
+      newPdf.setSubject('Password Protected Document');
+      newPdf.setCreator('PeakDraft PDF Tools');
+      
+      const pdfBytes = await newPdf.save();
+      
+      // For client-side password protection, we'll encrypt the PDF bytes
+      const encoder = new TextEncoder();
+      const passwordKey = await crypto.subtle.importKey(
+        'raw',
+        encoder.encode(password.padEnd(32, '0').slice(0, 32)),
+        { name: 'AES-GCM' },
+        false,
+        ['encrypt']
+      );
+      
+      const iv = crypto.getRandomValues(new Uint8Array(12));
+      const pdfBuffer = (pdfBytes as unknown as Uint8Array).buffer as ArrayBuffer;
+      const encryptedData = await crypto.subtle.encrypt(
+        { name: 'AES-GCM', iv: iv.buffer as ArrayBuffer },
+        passwordKey,
+        pdfBuffer
+      );
+      
+      // Combine IV and encrypted data
+      const combined = new Uint8Array(iv.length + new Uint8Array(encryptedData).length);
+      combined.set(iv);
+      combined.set(new Uint8Array(encryptedData), iv.length);
+      
+      // Create downloadable encrypted file
+      const blob = new Blob([combined], { type: 'application/octet-stream' });
+      const url = URL.createObjectURL(blob);
+      setProtectedUrl(url);
+      
+      toast({ 
+        title: "Success!", 
+        description: "PDF encrypted successfully. Keep your password safe - you'll need it to decrypt the file." 
+      });
+    } catch (error) {
+      console.error('Encryption error:', error);
+      toast({ title: "Error", description: "Failed to protect PDF", variant: "destructive" });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+        <p className="text-sm text-amber-700 dark:text-amber-400">
+          <strong>Note:</strong> This tool encrypts your PDF using AES-256 encryption. 
+          The output is an encrypted file (.enc) that can be decrypted with the password you set.
+          Standard PDF readers won't open the encrypted file directly.
+        </p>
+      </div>
+
+      <div className="space-y-2">
+        <Label>Select PDF File</Label>
+        <Input type="file" accept=".pdf" onChange={handleFileSelect} />
+        {file && <p className="text-sm text-muted-foreground">{file.name}</p>}
+      </div>
+
+      <div className="space-y-2">
+        <Label>Password</Label>
+        <Input 
+          type="password" 
+          value={password} 
+          onChange={(e) => setPassword(e.target.value)} 
+          placeholder="Enter password (min 4 characters)"
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label>Confirm Password</Label>
+        <Input 
+          type="password" 
+          value={confirmPassword} 
+          onChange={(e) => setConfirmPassword(e.target.value)} 
+          placeholder="Confirm your password"
+        />
+      </div>
+
+      <Button 
+        onClick={protectPDF} 
+        disabled={!file || !password || !confirmPassword || isProcessing} 
+        className="w-full"
+      >
+        {isProcessing ? (
+          <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Encrypting...</>
+        ) : (
+          <><Lock className="mr-2 h-4 w-4" /> Encrypt PDF</>
+        )}
+      </Button>
+
+      {protectedUrl && (
+        <Button asChild className="w-full">
+          <a href={protectedUrl} download={`${file?.name.replace('.pdf', '')}-protected.enc`}>
+            <Download className="mr-2 h-4 w-4" /> Download Encrypted File
+          </a>
+        </Button>
+      )}
+    </div>
+  );
+};
+
 
 export const tools = [
   // General Tools
@@ -1250,6 +1407,7 @@ export const tools = [
   { id: 'pdf-split', name: 'PDF Splitter', description: 'Extract specific pages from a PDF file', icon: Scissors, color: 'text-orange-600', component: PDFSplitter },
   { id: 'image-to-pdf', name: 'Image to PDF', description: 'Convert images to PDF documents', icon: FileText, color: 'text-blue-600', component: ImageToPDF },
   { id: 'pdf-to-image', name: 'PDF to Image', description: 'Convert PDF pages to image files', icon: ImageIcon, color: 'text-green-600', component: PDFToImage },
+  { id: 'pdf-password', name: 'PDF Password Protect', description: 'Encrypt PDF files with password protection', icon: Lock, color: 'text-purple-600', component: PDFPasswordProtect },
   // Marketing Tools
   { id: 'utm-builder', name: 'UTM Link Builder', description: 'Create trackable campaign URLs with UTM parameters', icon: Link2, color: 'text-indigo-500', component: UTMBuilder },
   { id: 'meta-tags', name: 'Meta Tag Generator', description: 'Generate SEO meta tags and Open Graph tags', icon: Globe, color: 'text-emerald-500', component: MetaTagGenerator },

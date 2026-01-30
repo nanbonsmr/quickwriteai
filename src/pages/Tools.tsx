@@ -26,7 +26,8 @@ import {
   FileText,
   Scissors,
   Merge,
-  ImageIcon
+  ImageIcon,
+  Shield
 } from 'lucide-react';
 
 const tools = [
@@ -43,6 +44,7 @@ const tools = [
   { id: 'pdf-split', name: 'PDF Splitter', description: 'Extract specific pages from a PDF file', icon: Scissors, color: 'text-orange-600' },
   { id: 'image-to-pdf', name: 'Image to PDF', description: 'Convert images to PDF documents', icon: FileText, color: 'text-blue-600' },
   { id: 'pdf-to-image', name: 'PDF to Image', description: 'Convert PDF pages to image files', icon: ImageIcon, color: 'text-green-600' },
+  { id: 'pdf-password', name: 'PDF Password Protect', description: 'Encrypt PDF files with password protection', icon: Shield, color: 'text-purple-600' },
   // Marketing Tools
   { id: 'utm-builder', name: 'UTM Link Builder', description: 'Create trackable campaign URLs with UTM parameters', icon: Link2, color: 'text-indigo-500' },
   { id: 'meta-tags', name: 'Meta Tag Generator', description: 'Generate SEO meta tags and Open Graph tags', icon: Globe, color: 'text-emerald-500' },

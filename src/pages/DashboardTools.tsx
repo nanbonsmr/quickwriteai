@@ -30,7 +30,8 @@ import {
   Scissors,
   Merge,
   ImageIcon,
-  Lock
+  Lock,
+  Unlock
 } from 'lucide-react';
 
 // Tool Components
@@ -1392,6 +1393,126 @@ const PDFPasswordProtect = () => {
   );
 };
 
+const PDFDecrypt = () => {
+  const [file, setFile] = useState<File | null>(null);
+  const [password, setPassword] = useState('');
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [decryptedUrl, setDecryptedUrl] = useState('');
+  const { toast } = useToast();
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = e.target.files?.[0];
+    if (selectedFile && selectedFile.name.endsWith('.enc')) {
+      setFile(selectedFile);
+      setDecryptedUrl('');
+    } else {
+      toast({ title: "Error", description: "Please select an encrypted .enc file", variant: "destructive" });
+    }
+  };
+
+  const decryptPDF = async () => {
+    if (!file) {
+      toast({ title: "Error", description: "Please select an encrypted file", variant: "destructive" });
+      return;
+    }
+    if (!password) {
+      toast({ title: "Error", description: "Please enter the password", variant: "destructive" });
+      return;
+    }
+
+    setIsProcessing(true);
+
+    try {
+      const arrayBuffer = await file.arrayBuffer();
+      const combined = new Uint8Array(arrayBuffer);
+      
+      // Extract IV (first 12 bytes) and encrypted data
+      const iv = combined.slice(0, 12);
+      const encryptedData = combined.slice(12);
+      
+      // Derive key from password
+      const encoder = new TextEncoder();
+      const passwordKey = await crypto.subtle.importKey(
+        'raw',
+        encoder.encode(password.padEnd(32, '0').slice(0, 32)),
+        { name: 'AES-GCM' },
+        false,
+        ['decrypt']
+      );
+      
+      // Decrypt the data
+      const decryptedData = await crypto.subtle.decrypt(
+        { name: 'AES-GCM', iv: iv.buffer as ArrayBuffer },
+        passwordKey,
+        encryptedData.buffer as ArrayBuffer
+      );
+      
+      // Create PDF blob
+      const blob = new Blob([decryptedData], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
+      setDecryptedUrl(url);
+      
+      toast({ title: "Success!", description: "PDF decrypted successfully" });
+    } catch (error) {
+      console.error('Decryption error:', error);
+      toast({ 
+        title: "Error", 
+        description: "Failed to decrypt PDF. Please check your password and try again.", 
+        variant: "destructive" 
+      });
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="p-4 bg-blue-500/10 border border-blue-500/20 rounded-lg">
+        <p className="text-sm text-blue-700 dark:text-blue-400">
+          <strong>Note:</strong> This tool decrypts PDF files that were encrypted using the PDF Password Protect tool. 
+          You'll need the password that was used during encryption.
+        </p>
+      </div>
+
+      <div className="space-y-2">
+        <Label>Select Encrypted File (.enc)</Label>
+        <Input type="file" accept=".enc" onChange={handleFileSelect} />
+        {file && <p className="text-sm text-muted-foreground">{file.name}</p>}
+      </div>
+
+      <div className="space-y-2">
+        <Label>Password</Label>
+        <Input 
+          type="password" 
+          value={password} 
+          onChange={(e) => setPassword(e.target.value)} 
+          placeholder="Enter the decryption password"
+        />
+      </div>
+
+      <Button 
+        onClick={decryptPDF} 
+        disabled={!file || !password || isProcessing} 
+        className="w-full"
+      >
+        {isProcessing ? (
+          <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Decrypting...</>
+        ) : (
+          <><Unlock className="mr-2 h-4 w-4" /> Decrypt PDF</>
+        )}
+      </Button>
+
+      {decryptedUrl && (
+        <Button asChild className="w-full">
+          <a href={decryptedUrl} download={`${file?.name.replace('.enc', '')}.pdf`}>
+            <Download className="mr-2 h-4 w-4" /> Download Decrypted PDF
+          </a>
+        </Button>
+      )}
+    </div>
+  );
+};
+
 
 export const tools = [
   // General Tools
@@ -1408,6 +1529,7 @@ export const tools = [
   { id: 'image-to-pdf', name: 'Image to PDF', description: 'Convert images to PDF documents', icon: FileText, color: 'text-blue-600', component: ImageToPDF },
   { id: 'pdf-to-image', name: 'PDF to Image', description: 'Convert PDF pages to image files', icon: ImageIcon, color: 'text-green-600', component: PDFToImage },
   { id: 'pdf-password', name: 'PDF Password Protect', description: 'Encrypt PDF files with password protection', icon: Lock, color: 'text-purple-600', component: PDFPasswordProtect },
+  { id: 'pdf-decrypt', name: 'PDF Decrypt', description: 'Decrypt password-protected PDF files', icon: Unlock, color: 'text-teal-600', component: PDFDecrypt },
   // Marketing Tools
   { id: 'utm-builder', name: 'UTM Link Builder', description: 'Create trackable campaign URLs with UTM parameters', icon: Link2, color: 'text-indigo-500', component: UTMBuilder },
   { id: 'meta-tags', name: 'Meta Tag Generator', description: 'Generate SEO meta tags and Open Graph tags', icon: Globe, color: 'text-emerald-500', component: MetaTagGenerator },

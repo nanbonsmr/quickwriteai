@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Helmet } from 'react-helmet-async';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -15,6 +16,7 @@ import { useParallax } from '@/hooks/useParallax';
 import { PublicNavbar } from '@/components/PublicNavbar';
 import PublicFooter from '@/components/PublicFooter';
 import { PromotionPopup } from '@/components/PromotionPopup';
+import { HeroAnimatedElements } from '@/components/landing/HeroAnimatedElements';
 
 const siteUrl = 'https://peakdraft.app';
 
@@ -206,16 +208,25 @@ export default function Landing() {
       <PublicNavbar />
       <PromotionPopup showOnLanding />
 
-      {/* Hero Section with 3D Animation */}
+      {/* Hero Section with Animations */}
       <section className="relative pt-24 sm:pt-32 pb-12 sm:pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
+        {/* Animated Background Elements */}
+        <HeroAnimatedElements />
+        
         {/* Animated Gradient Overlays with Parallax */}
-        <div 
-          className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary-glow/10 to-accent/20 animate-gradient-shift"
+        <motion.div 
+          className="absolute inset-0 bg-gradient-to-br from-primary/20 via-primary-glow/10 to-accent/20"
           style={{ transform: `translateY(${parallaxOffset * 0.5}px)` }}
+          animate={{ 
+            backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
         />
-        <div 
-          className="absolute inset-0 bg-gradient-to-tr from-transparent via-primary/10 to-transparent animate-gradient-rotate"
+        <motion.div 
+          className="absolute inset-0 bg-gradient-to-tr from-transparent via-primary/10 to-transparent"
           style={{ transform: `translateY(${parallaxOffset * 0.3}px)` }}
+          animate={{ opacity: [0.5, 0.8, 0.5] }}
+          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
         />
         <div 
           className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,hsl(var(--primary)/0.15),transparent_60%)] animate-gradient-pulse"
@@ -226,57 +237,131 @@ export default function Landing() {
           <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
             {/* Left Column - Text Content */}
             <div className="text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6 animate-fade-in">
-                <Sparkles className="h-4 w-4 text-primary animate-pulse" />
+              <motion.div 
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 border border-primary/20 mb-6"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5 }}
+              >
+                <motion.div
+                  animate={{ rotate: [0, 360] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: 'linear' }}
+                >
+                  <Sparkles className="h-4 w-4 text-primary" />
+                </motion.div>
                 <span className="text-sm font-medium">AI-Powered Content Generation</span>
-              </div>
+              </motion.div>
               
-              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 sm:mb-6 animate-fade-in bg-gradient-to-r from-primary via-primary-glow to-primary bg-clip-text text-transparent leading-tight">
+              <motion.h1 
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 sm:mb-6 bg-gradient-to-r from-primary via-primary-glow to-primary bg-clip-text text-transparent leading-tight bg-[length:200%_auto]"
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0, backgroundPosition: ['0% center', '200% center'] }}
+                transition={{ 
+                  opacity: { duration: 0.6, delay: 0.2 },
+                  y: { duration: 0.6, delay: 0.2 },
+                  backgroundPosition: { duration: 5, repeat: Infinity, ease: 'linear' }
+                }}
+              >
                 AI Content Generator
                 <br />
                 & Task Manager
-              </h1>
+              </motion.h1>
               
-              <p className="text-base sm:text-lg lg:text-xl text-muted-foreground mb-6 sm:mb-8 animate-fade-in">
+              <motion.p 
+                className="text-base sm:text-lg lg:text-xl text-muted-foreground mb-6 sm:mb-8"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.4 }}
+              >
                 Create professional blog posts, social media content, emails & ad copy with 14+ AI templates. 
                 Organize your workflow with built-in task management, Kanban boards & analytics.
-              </p>
+              </motion.p>
               
-              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start animate-fade-in">
-                <Button size="lg" onClick={() => navigate('/auth')} className="group w-full sm:w-auto">
-                  Start Writing Now
-                  <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                </Button>
-                <Button size="lg" variant="outline" onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })} className="w-full sm:w-auto">
-                  Learn More
-                </Button>
-              </div>
+              <motion.div 
+                className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.6 }}
+              >
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button size="lg" onClick={() => navigate('/auth')} className="group w-full sm:w-auto">
+                    Start Writing Now
+                    <motion.span
+                      className="ml-2"
+                      animate={{ x: [0, 5, 0] }}
+                      transition={{ duration: 1.5, repeat: Infinity }}
+                    >
+                      <ArrowRight className="h-4 w-4" />
+                    </motion.span>
+                  </Button>
+                </motion.div>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <Button size="lg" variant="outline" onClick={() => document.getElementById('features')?.scrollIntoView({ behavior: 'smooth' })} className="w-full sm:w-auto">
+                    Learn More
+                  </Button>
+                </motion.div>
+              </motion.div>
             </div>
 
             {/* Right Column - Dashboard Preview with Browser Chrome */}
-            <div className="relative animate-fade-in animate-float drop-shadow-[0_10px_30px_rgba(139,92,246,0.2)] sm:drop-shadow-[0_20px_50px_rgba(139,92,246,0.3)]">
-              {/* Browser Chrome Frame */}
-              <div className="bg-muted/80 backdrop-blur-sm rounded-t-lg sm:rounded-t-xl border border-border/50 px-2 sm:px-4 py-2 sm:py-3 flex items-center gap-2 sm:gap-3">
-                {/* Traffic Lights */}
-                <div className="flex items-center gap-1.5 sm:gap-2">
-                  <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-red-500/80"></div>
-                  <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-yellow-500/80"></div>
-                  <div className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-green-500/80"></div>
+            <motion.div 
+              className="relative drop-shadow-[0_10px_30px_rgba(139,92,246,0.2)] sm:drop-shadow-[0_20px_50px_rgba(139,92,246,0.3)]"
+              initial={{ opacity: 0, scale: 0.9, y: 40 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+            >
+              <motion.div
+                animate={{ y: [0, -15, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+              >
+                {/* Browser Chrome Frame */}
+                <div className="bg-muted/80 backdrop-blur-sm rounded-t-lg sm:rounded-t-xl border border-border/50 px-2 sm:px-4 py-2 sm:py-3 flex items-center gap-2 sm:gap-3">
+                  {/* Traffic Lights */}
+                  <div className="flex items-center gap-1.5 sm:gap-2">
+                    <motion.div 
+                      className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-red-500/80"
+                      animate={{ scale: [1, 1.2, 1] }}
+                      transition={{ duration: 2, repeat: Infinity, delay: 0 }}
+                    />
+                    <motion.div 
+                      className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-yellow-500/80"
+                      animate={{ scale: [1, 1.2, 1] }}
+                      transition={{ duration: 2, repeat: Infinity, delay: 0.3 }}
+                    />
+                    <motion.div 
+                      className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-green-500/80"
+                      animate={{ scale: [1, 1.2, 1] }}
+                      transition={{ duration: 2, repeat: Infinity, delay: 0.6 }}
+                    />
+                  </div>
+                  {/* URL Bar */}
+                  <div className="flex-1 bg-background/50 rounded-md px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs text-muted-foreground font-mono truncate">
+                    peakdraft.app/dashboard
+                  </div>
                 </div>
-                {/* URL Bar */}
-                <div className="flex-1 bg-background/50 rounded-md px-2 sm:px-3 py-1 sm:py-1.5 text-[10px] sm:text-xs text-muted-foreground font-mono truncate">
-                  peakdraft.app/dashboard
+                {/* Browser Content */}
+                <div className="bg-background/30 backdrop-blur-sm rounded-b-lg sm:rounded-b-xl border border-t-0 border-border/50 overflow-hidden">
+                  <motion.img 
+                    src={dashboardPreview} 
+                    alt="PeakDraft Dashboard - Create blog posts, social media content, emails and ad copy with AI"
+                    className="w-full h-auto object-contain"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 1, delay: 0.5 }}
+                  />
                 </div>
-              </div>
-              {/* Browser Content */}
-              <div className="bg-background/30 backdrop-blur-sm rounded-b-lg sm:rounded-b-xl border border-t-0 border-border/50 overflow-hidden">
-                <img 
-                  src={dashboardPreview} 
-                  alt="PeakDraft Dashboard - Create blog posts, social media content, emails and ad copy with AI"
-                  className="w-full h-auto object-contain"
-                />
-              </div>
-            </div>
+              </motion.div>
+              
+              {/* Glowing ring around preview */}
+              <motion.div
+                className="absolute -inset-1 rounded-xl bg-gradient-to-r from-primary via-primary-glow to-primary opacity-20 blur-xl -z-10"
+                animate={{ 
+                  opacity: [0.15, 0.3, 0.15],
+                  scale: [1, 1.02, 1],
+                }}
+                transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
+              />
+            </motion.div>
           </div>
         </div>
       </section>

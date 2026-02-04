@@ -31,6 +31,7 @@ import Features from "./pages/Features";
 import ResetPassword from "./pages/ResetPassword";
 import FreeTools from "./pages/FreeTools";
 import Tools from "./pages/Tools";
+import DashboardFreeAITools from "./pages/DashboardFreeAITools";
 import Blog from "./pages/Blog";
 import BlogPost from "./pages/BlogPost";
 import SharedTask from "./pages/SharedTask";
@@ -86,6 +87,7 @@ function AnimatedRoutes() {
                         <Route path="pricing" element={<PageTransition><Pricing /></PageTransition>} />
                         <Route path="editor" element={<PageTransition><Editor /></PageTransition>} />
                         <Route path="tools" element={<PageTransition><DashboardTools /></PageTransition>} />
+                        <Route path="free-ai-tools" element={<PageTransition><DashboardFreeAITools /></PageTransition>} />
                       </Routes>
                     </AnimatePresence>
                   </main>

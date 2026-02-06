@@ -54,12 +54,12 @@ export function AppSidebar() {
 
   const mainItems = [
     { title: "Dashboard", url: "/app", icon: Home },
-    { title: "Templates", url: "/app/templates", icon: Sparkles },
-    { title: "Free AI Tools", url: "/app/free-ai-tools", icon: Wand2, badge: "Free" },
-    { title: "Tools", url: "/app/tools", icon: Wrench },
+    { title: "Templates", url: "/app/templates", icon: Sparkles, badge: "25+", badgeVariant: "default" as const },
+    { title: "Free AI Tools", url: "/app/free-ai-tools", icon: Wand2, badge: "Free", badgeVariant: "free" as const },
+    { title: "Tools", url: "/app/tools", icon: Wrench, badge: "New", badgeVariant: "new" as const },
     { title: "Tasks", url: "/app/tasks", icon: CheckSquare },
     { title: "Usage", url: "/app/usage", icon: BarChart3 },
-    { title: "Pricing", url: "/app/pricing", icon: CreditCard },
+    { title: "Pricing", url: "/app/pricing", icon: CreditCard, badge: "Pro", badgeVariant: "pro" as const },
     { title: "Settings", url: "/app/settings", icon: Settings },
   ];
 
@@ -112,7 +112,18 @@ export function AppSidebar() {
                         <span className="flex items-center gap-2">
                           {item.title}
                           {item.badge && (
-                            <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 bg-emerald-500/20 text-emerald-400 border-emerald-500/30">
+                            <Badge 
+                              variant="secondary" 
+                              className={`text-[10px] px-1.5 py-0 h-4 ${
+                                item.badgeVariant === 'free' 
+                                  ? 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' 
+                                  : item.badgeVariant === 'new'
+                                  ? 'bg-amber-500/20 text-amber-400 border-amber-500/30'
+                                  : item.badgeVariant === 'pro'
+                                  ? 'bg-violet-500/20 text-violet-400 border-violet-500/30'
+                                  : 'bg-primary/20 text-primary border-primary/30'
+                              }`}
+                            >
                               {item.badge}
                             </Badge>
                           )}

@@ -9,6 +9,7 @@ import {
   Shield,
   CheckSquare,
   Wrench,
+  Wand2,
 } from "lucide-react";
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
@@ -53,6 +54,7 @@ export function AppSidebar() {
   const mainItems = [
     { title: "Dashboard", url: "/app", icon: Home },
     { title: "Templates", url: "/app/templates", icon: Sparkles },
+    { title: "Free AI Tools", url: "/app/free-ai-tools", icon: Wand2 },
     { title: "Tools", url: "/app/tools", icon: Wrench },
     { title: "Tasks", url: "/app/tasks", icon: CheckSquare },
     { title: "Usage", url: "/app/usage", icon: BarChart3 },

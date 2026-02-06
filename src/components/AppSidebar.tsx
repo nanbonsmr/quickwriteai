@@ -14,6 +14,7 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { supabase } from "@/integrations/supabase/client";
 import { WordUsageProgress } from "@/components/WordUsageProgress";
+import { Badge } from "@/components/ui/badge";
 
 import {
   Sidebar,
@@ -54,7 +55,7 @@ export function AppSidebar() {
   const mainItems = [
     { title: "Dashboard", url: "/app", icon: Home },
     { title: "Templates", url: "/app/templates", icon: Sparkles },
-    { title: "Free AI Tools", url: "/app/free-ai-tools", icon: Wand2 },
+    { title: "Free AI Tools", url: "/app/free-ai-tools", icon: Wand2, badge: "Free" },
     { title: "Tools", url: "/app/tools", icon: Wrench },
     { title: "Tasks", url: "/app/tasks", icon: CheckSquare },
     { title: "Usage", url: "/app/usage", icon: BarChart3 },
@@ -107,7 +108,16 @@ export function AppSidebar() {
                   <SidebarMenuButton asChild>
                     <NavLink to={item.url} end className={getNavCls}>
                       <item.icon className="w-4 h-4" />
-                      {state !== "collapsed" && <span>{item.title}</span>}
+                      {state !== "collapsed" && (
+                        <span className="flex items-center gap-2">
+                          {item.title}
+                          {item.badge && (
+                            <Badge variant="secondary" className="text-[10px] px-1.5 py-0 h-4 bg-emerald-500/20 text-emerald-400 border-emerald-500/30">
+                              {item.badge}
+                            </Badge>
+                          )}
+                        </span>
+                      )}
                     </NavLink>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

@@ -26,10 +26,21 @@ export default function Auth() {
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
     try {
+      // Get redirect URL from sessionStorage for OAuth redirect
+      const redirectUrl = sessionStorage.getItem('redirectAfterLogin');
+      const redirectTo = redirectUrl 
+        ? `${window.location.origin}${redirectUrl}` 
+        : `${window.location.origin}/app`;
+      
+      // Clear it since OAuth will handle the redirect
+      if (redirectUrl) {
+        sessionStorage.removeItem('redirectAfterLogin');
+      }
+
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/app`,
+          redirectTo,
         },
       });
       if (error) {
@@ -52,7 +63,14 @@ export default function Auth() {
 
   useEffect(() => {
     if (!loading && isSignedIn) {
-      navigate('/app', { replace: true });
+      // Check for redirect URL stored in sessionStorage
+      const redirectUrl = sessionStorage.getItem('redirectAfterLogin');
+      if (redirectUrl) {
+        sessionStorage.removeItem('redirectAfterLogin');
+        navigate(redirectUrl, { replace: true });
+      } else {
+        navigate('/app', { replace: true });
+      }
     }
   }, [isSignedIn, loading, navigate]);
 
@@ -132,7 +150,14 @@ export default function Auth() {
             variant: "destructive",
           });
         } else {
-          navigate('/app', { replace: true });
+          // Check for redirect URL stored in sessionStorage
+          const redirectUrl = sessionStorage.getItem('redirectAfterLogin');
+          if (redirectUrl) {
+            sessionStorage.removeItem('redirectAfterLogin');
+            navigate(redirectUrl, { replace: true });
+          } else {
+            navigate('/app', { replace: true });
+          }
         }
       } else {
         const { error } = await signUp(email, password, displayName);
